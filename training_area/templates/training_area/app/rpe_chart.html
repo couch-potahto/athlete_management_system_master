@@ -1,0 +1,46 @@
+{% extends 'navbar.html' %}
+{% block content %}
+<div class="container section">
+<div class = "card is-fluid">
+  <div class = "card-content">
+    <div class="content">
+      <div class="table-container">
+<table class = "table is-responsive">
+
+	<thead class="has-text-centered">
+    <tr>
+      <th>Reps/RPE</th>
+      <th>1</th>
+      <th>2</th>
+      <th>3</th>
+      <th>4</th>
+      <th>5</th>
+      <th>6</th>
+      <th>7</th>
+      <th>8</th>
+      <th>9</th>
+      <th>10</th>
+    </tr>
+  </thead>
+
+  <tbody>
+
+  	{% for cell in all_rpe %}
+  	{% if forloop.counter0|divisibleby:10 %}
+  	<th scope="row">{{cell.exertion_scale}}</th>
+  	{% endif %}
+
+  	<td>{{cell.get_percent|floatformat:2}}%</td>
+
+  	{% if forloop.counter|divisibleby:10 %}
+  	<tr></tr>
+  	{% endif %}
+  	{% endfor %}
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+{% endblock %}

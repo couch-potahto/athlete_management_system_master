@@ -1,0 +1,205 @@
+{% extends 'navbar.html' %}
+
+{% block content %}
+<section class="hero is-dark">
+<div class="hero-body">
+  <div class="container has-text-centered">
+      <h1 class="title">
+        Training Log
+      </h1>
+    </div>
+</div>
+
+<div class="hero-foot">
+<nav class="tabs is-boxed is-fullwidth is-large">
+        <div class="container">
+          <ul>
+            <li class="tab is-active" onclick="openTab(event,'WebDev')"><a >Workouts</a></li>
+            <li class="tab" onclick="openTab(event,'WebAud')"><a >Microcycles</a></li>
+            <li class="tab" onclick="openTab(event,'Support')"><a >Macrocycles</a></li>
+          </ul>
+        </div>
+      </nav>
+  </div>
+</section>
+
+
+<div class="container section">
+    <div id="WebDev" class="content-tab" >
+      <div class="field is-grouped is-grouped-centered">
+      {% if user.is_authenticated and user.is_coach %}
+      <p class="control">
+        <a class="button is-primary" href="{% url 'coach:add_workout' pk=pk %}">Add Workout</a>
+      </p>
+      {% endif %}
+
+        <div class="field has-addons">
+          <p class="control">
+            <input id="search_box" class="input" type="text" name="search_box" placeholder="Search">
+          </p>
+          <div class="control">
+            <form method = "GET" action="{% url 'app:search_coach' %}">
+            <button class="button" type = "submit">Search</button>
+            </form>
+          </div>
+        </div>
+
+      </div>
+      {% for workout in all_workouts %}
+      <div class="column is-half is-offset-one-quarter">
+
+        <div class="box content">
+
+              <h4><a href="{% url 'app:workout_detail' pk=workout.athlete.pk pk_2=workout.pk %}">{{workout.workout_name}}</a></h4>
+              {% if not workout.completed %}
+              <span class="tag">In Progress</span> &nbsp;
+              {%else%}
+              <span class="tag is-success">Completed!</span> &nbsp;
+              {%endif%}
+              <span class="has-text-grey-light"><i class="fa fa-comments"></i> 1</span>
+
+
+          </div>
+        </div>
+        {% endfor %}
+    </div>
+
+
+
+
+    <div id="WebAud" class="content-tab" style="display:none">
+        <div class="field is-grouped is-grouped-centered">
+      {% if user.is_authenticated and user.is_coach %}
+      <p class="control">
+        <a class="button is-primary" href="{% url 'coach:create_micro' pk=pk %}">Create Microcycle</a>
+      </p>
+
+      {% endif %}
+
+        <div class="field has-addons">
+          <p class="control">
+            <input id="search_box" class="input" type="text" name="search_box" placeholder="Search">
+          </p>
+          <div class="control">
+            <form method = "GET" action="{% url 'app:search_coach' %}">
+            <button class="button" type = "submit">Search</button>
+            </form>
+          </div>
+        </div>
+
+      </div>
+
+      {% for microcycle in all_microcycles %}
+
+          <div class="column is-half is-offset-one-quarter">
+            <div class="card">
+              <header class="card-header">
+                <p class="card-header-title is-size-4">{{microcycle.microcycle_name}}</p>
+                <a class="card-header-icon card-toggle">
+                  <i class="fa fa-angle-down"></i>
+                </a>
+                <a class="card-header-icon">
+                  {% if request.user.is_authenticated and request.user.is_coach %}
+                  <form action="{% url 'coach:delete_micro' athlete_id=microcycle.athlete.pk microcycle_id=microcycle.pk %}"
+                    method="post" style="display: inline;" onsubmit="window.mytest()">
+                    {% csrf_token %}
+                    <button type="submit" class="button is-white" id="BtnDeleteYesNo">
+                    <span class="icon has-text-danger">
+                    <i class="far fa-trash-alt"></i>
+                  </span>
+                  </button>
+                </form>
+                {% endif %}
+                </a>
+              </header>
+              <div class="card-content is-hidden">
+                <div class="content">
+                  {% if microcycle.micro.all %}
+                  {{microcycle.micro.workout_name}}
+                    {% for workout in microcycle.micro.all %}
+                      <a href="{% url 'app:workout_detail' pk=workout.athlete.pk pk_2=workout.pk %}">{{workout.workout_name}}</a>
+                    {% endfor %}
+                  {% else %}
+                    Microcycle is empty!
+                  {% endif %}
+                </div>
+                    {% if request.user.is_authenticated and request.user.is_coach %}
+                    <footer class="card-footer">
+                      <a href="{% url 'coach:add_wo_to_micro' athlete_id=microcycle.athlete.pk pk_2=microcycle.pk %}" class="card-footer-item">Add Workout?</a>
+                    </footer>
+                    {% endif %}
+
+                </div>
+            </div>
+          </div>
+
+        {% endfor %}
+
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3 class="modal-title" id="myModalLabel">Warning!</h3>
+
+                </div>
+                <div class="modal-body">
+                    <h4>Are you sure you want to DELETE?</h4>
+
+                </div>
+                <!--/modal-body-collapse -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" id="btnDelteYes" href="#">Yes</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                </div>
+                <!--/modal-footer-collapse -->
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+    </div>
+
+
+
+
+
+
+
+
+    <div id="Support" class="content-tab" style="display:none">
+       <div class="field is-grouped is-grouped-centered">
+      {% if user.is_authenticated and user.is_coach %}
+      <p class="control">
+        <a class="button is-primary" href="{% url 'coach:add_workout' pk=pk %}">Add Macrocycle</a>
+      </p>
+      {% endif %}
+
+        <div class="field has-addons">
+          <p class="control">
+            <input id="search_box" class="input" type="text" name="search_box" placeholder="Search Microcycles">
+          </p>
+          <div class="control">
+            <form method = "GET" action="{% url 'app:search_coach' %}">
+            <button class="button" type = "submit">Search</button>
+            </form>
+          </div>
+        </div>
+
+      </div>
+      {% for workout in all_workouts %}
+      <div class="column is-half is-offset-one-quarter">
+
+        <div class="box content">
+
+              <h4><a href="{% url 'app:workout_detail' pk=workout.athlete.pk pk_2=workout.pk %}">{{workout.workout_name}}</a></h4><span class="tag">In Progress</span> &nbsp;
+              <span class="has-text-grey-light"><i class="fa fa-comments"></i> 1</span>
+
+
+          </div>
+        </div>
+        {% endfor %}
+</div>
+{% endblock %}
+

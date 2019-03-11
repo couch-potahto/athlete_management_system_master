@@ -1,0 +1,127 @@
+{% extends 'navbar.html' %}
+
+{% block content %}
+<section class="hero is-light">
+    <div class="hero-body">
+      <div class="container">Hello! I am
+        <h1 class="title is-1">
+        {% if object.is_coach %}
+          {{object.coach.first_name}}
+          {{object.coach.last_name}}
+        {% else %}
+            {{object.first_name}}
+            {{object.last_name}}
+        {% endif %}
+
+        </h1>
+        <h2 class="subtitle is-3">
+          <!--title?-->
+        </h2>
+      </div>
+    </div>
+  </section>
+
+
+<div class = "container">
+<div class="hero-body">
+            <div class="container has-text-centered">
+
+                <div class="columns is-vcentered">
+
+                    <div class="column is-5">
+                        <figure class="image is-4by3">
+                            <img src="https://picsum.photos/800/600/?random" alt="Description">
+                        </figure>
+                    </div>
+                <div class = "container">
+                    <div class = "column is-half is-offset-1">
+                        {% if object.is_coach %}
+
+                        <br>
+
+                        <p class="has-text-centered">
+                          <h2 class="subtitle is-4">{{object.coach.bio}} </h2>
+                        </p>
+                        {% elif object.is_athlete %}
+                        <p class="has-text-centered">
+                          {% for rep_max in object.athlete.athlete_rm.all %}
+                          <h2 class="subtitle is-4">{{rep_max}} </h2>
+                          {% endfor %}
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+
+
+                </div>
+            {% if request.user.is_authenticated and request.user == object and request.user.is_coach%}
+            <div class="buttons is-right ">
+              <form method="get" action="{% url 'coach:edit_profile' object.pk %}" >
+                {% csrf_token %}
+                <button class = 'button' type="submit"><i class="fas fa-edit"></i></button>
+              </form>
+            </div>
+            {% elif request.user.is_authenticated and object.is_athlete and request.user.is_coach%}
+            <div class="buttons is-right ">
+              <form method="get" action="{% url 'coach:add_rep_max' object.pk %}" >
+                {% csrf_token %}
+                <button class = 'button' type="submit"><i class="fas fa-edit">Add Rep Max</i></button>
+              </form>
+            </div>
+            {% endif %}
+            </div>
+            </div>
+{% if request.user.is_athlete and request.user.is_authenticated %}
+  <div class = "buttons has-add-ons is-centered">
+  {% if object.is_coach %}
+  {% if request.user.athlete.coach == object.coach %}
+  <form method="post" action="{% url 'athlete:add_coach' object.coach.user_id %}" >
+          {% csrf_token %}
+          <button class="button is-success" type = "submit" disabled>
+            <span>Add Coach</span>
+              </button></form>
+
+  <form method="post" action="{% url 'athlete:remove_coach' request.user.athlete.coach.user_id %}" >
+          {% csrf_token %}
+          <button class="button is-danger" type = "submit">
+            <span>Remove</span>
+            <span class="icon">
+              <i class="fas fa-times"></i>
+                </span>
+              </button></form>
+    {% elif request.user.athlete.coach == None %}
+    <form method="post" action="{% url 'athlete:add_coach' object.coach.user_id %}" >
+          {% csrf_token %}
+          <button class="button is-success" type = "submit">
+            <span>Add Coach</span>
+              </button></form>
+
+  <form method="post" action="#" >
+          {% csrf_token %}
+          <button class="button is-danger" type = "submit" disabled>
+            <span>Remove</span>
+            <span class="icon">
+              <i class="fas fa-times"></i>
+                </span>
+              </button></form>
+    {% else %}
+    <form method="post" action="{% url 'athlete:add_coach' object.coach.user_id %}" >
+          {% csrf_token %}
+          <button class="button is-success" type = "submit" disabled>
+            <span>Add Coach</span>
+              </button></form>
+
+  <form method="post" action="{% url 'athlete:remove_coach' request.user.athlete.coach.user_id %}" >
+          {% csrf_token %}
+          <button class="button is-danger" type = "submit" disabled>
+            <span>Remove</span>
+            <span class="icon">
+              <i class="fas fa-times"></i>
+                </span>
+              </button></form>
+</div>
+{% endif %}
+{%endif%}
+  {%endif%}
+
+{% endblock %}

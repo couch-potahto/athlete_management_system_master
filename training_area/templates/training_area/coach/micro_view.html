@@ -1,0 +1,7 @@
+<h3>Micro detail</h3>
+<p>{{microcycle.microocycle_name}}</p>
+<form method="post" action="{% url 'coach:create_wo' pk=microcycle.mesocycle.macrocycle.athlete.pk pk_2=microcycle.mesocycle.macrocycle.pk pk_3=microcycle.mesocycle.pk pk_4=microcycle.pk %}" >
+    {% csrf_token %}
+    <input type="submit" name="remove_coach" value="Add Workout" />
+</form>
+<p></p>

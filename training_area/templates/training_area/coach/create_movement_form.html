@@ -1,0 +1,66 @@
+ {% extends 'navbar.html' %}
+ {% load bulma_tags %}
+
+ {% block content %}
+ <div class="container section">
+ <div class="column is-half is-offset-one-quarter">
+ <div class="box">
+ <h2 class="mb-3">Add a new movement</h2>
+  <div class="row">
+    <div class="col-md-6 col-sm-8 col-12">
+      <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="field">
+          <div class="control">
+            {{ form.movement_name|bulma }}
+          </div>
+        </div>
+        <div class="field is-horizontal">
+
+          <div class="control is-expanded">
+            {{ form.num_reps|bulma }}
+          </div>
+          &nbsp;
+          <div class="control is-expanded">
+            {{ form.percentage|bulma }}
+          </div>
+          &nbsp;
+          <div class="control is-expanded">
+            {{ form.kg|bulma }}
+          </div>
+          &nbsp;
+          <div class="control is-expanded">
+            {{ form.rpe|bulma }}
+          </div>
+          &nbsp;
+
+        </div>
+        <div class="field is-horizontal">
+          <div class="control is-expanded">
+            {{ form.is_backoff|bulma }}
+          </div>
+          &nbsp;
+        <div class="form-group">
+        <div class="control is-expanded">
+          &nbsp;
+
+          <select name = 'rm'>
+            <option value="None">Rep Maxes</option>
+            {% for rm in athlete %}
+              <option value = "{{rm.rep_max}}">{{rm.rep_max_name}}: {{rm.rep_max}}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+          &nbsp;
+        </div>
+        <div class="form-row">
+        <button type="submit" class="button is-success"><i class="fas fa-check"></i>Save</button>
+        <a href="{% url 'app:workout_detail' pk pk_2%}" class="button is-light" role="button">Nevermind</a>
+      </form>
+    </div>
+  </div>
+  </div>
+</div>
+</div>
+  {% endblock %}

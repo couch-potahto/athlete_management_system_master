@@ -1,0 +1,20 @@
+{% block content %}
+  <h1>Available Coaches</h1>
+  {% if available_coaches %}
+  <ul>
+    {% for coach in available_coaches %}
+      <li>
+        <a href="{{coach.get_absolute_url}}">{{ coach.user }}</a> ({{coach.user_id}})
+        <form method="post" action="{% url 'athlete:add_coach' coach.user_id %}" >
+          {% csrf_token %}
+          <input type="submit" name="add_coach" value="Add Coach" />
+        </form>
+      </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+    <p>There are no books in the library.</p>
+  {% endif %}
+
+
+{% endblock %}

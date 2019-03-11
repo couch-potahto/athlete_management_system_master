@@ -1,0 +1,22 @@
+{% extends 'navbar.html' %}
+ {% load bulma_tags %}
+{% block content %}
+  <form method="post">
+    {% csrf_token %}
+    <div class = container>
+    	<div class="column is-one-third">
+
+        	{{ form.first_name|bulma }}
+        	{{ form.last_name|bulma}}
+
+
+        </div>
+        <div class="column">
+    	{{ form.bio|bulma}}
+    	<div class = "buttons is-right">
+    	<button type="submit" class="button is-success is-medium is-right">Save Changes</button>
+    	</div>
+    	</div>
+	</div>
+  </form>
+{% endblock %}

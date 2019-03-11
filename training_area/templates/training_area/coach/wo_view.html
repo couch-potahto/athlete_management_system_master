@@ -1,0 +1,22 @@
+<h3>Workout</h3>
+<p>{{workout.workout_name}}</p>
+
+<form method="post" action="{% url 'coach:create_mo' pk=workout.microcycle.mesocycle.macrocycle.athlete.pk pk_2=workout.microcycle.mesocycle.macrocycle.pk pk_3=workout.microcycle.mesocycle.pk pk_4=workout.microcycle.pk pk_5=workout.pk %}" >
+    {% csrf_token %}
+    <input type="submit" name="remove_coach" value="Add Movement" />
+</form>
+<p></p>
+
+<h1>Program List</h1>
+
+  {% if all_movements %}
+  <ul>
+    {% for movement in all_movements %}
+      <li>
+        {{movement.movement_name}}
+      </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+    <p>There are no books in the library.</p>
+  {% endif %}

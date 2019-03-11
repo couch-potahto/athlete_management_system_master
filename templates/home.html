@@ -1,0 +1,34 @@
+{% load static %}
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hello Bulma!</title>
+    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">-->
+    <link rel="stylesheet" type="text/css" href="{% static 'bulma/css/style.css' %}">
+  </head>
+</html>
+
+
+  <section class="section">
+    
+    <div class="container has-text-centered">
+      <img src="{% static 'images/agoge.png'%}" alt="Agoge">
+      <p class="subtitle">
+        Guiding the Strong
+      </p>
+    </div>
+  <section class ="section">
+    <div class="container has-text-centered">
+      <a href="{% url 'login' %}" class="button" role="button">Log in</a>
+      <a href="{% url 'signup' %}" class="button is-success" role="button">Sign Up</a>
+    </div>
+  </section>
+    <div class="container">
+    <div class="notification">
+      This container is <strong>centered</strong> on desktop.
+    </div>
+</div>
+  </section>
+
+

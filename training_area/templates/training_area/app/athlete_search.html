@@ -1,0 +1,37 @@
+{% extends 'navbar.html' %}
+{% block content %}
+  <div class="container section">
+<div class = "card is-fluid">
+  <header class = "card-header-title">
+    <p class = "has-text-centered">
+      Search Results
+   </p>
+  </header>
+  <div class = "card-content">
+    <div class="content">
+      <div class="table-container">
+  {% if relevant_athletes %}
+    <table class = "table is-responsive">
+    <thead class="has-text-centered">
+      <th>Athlete</th>
+      <th>Actions</th>
+    </thead>
+
+    <tbody>
+    {% for athlete in relevant_athletes %}
+
+      <tr>
+        <td><a href="{% url 'app:profile_view' athlete.user %}">{{ athlete.user }}</a></td>
+
+        <td><a href="{% url 'app:profile_view' slug=athlete.user %}"><i class="fas fa-eye"></i></a>
+            <a href="{% url 'app:log_view' pk=athlete.pk %}"><i class="fas fa-dumbbell"></i></a></td>
+
+      {% endfor %}
+  {% else %}
+    <p>Try a different term! No Athlete by that user</p>
+  {% endif %}
+
+
+
+
+{% endblock %}

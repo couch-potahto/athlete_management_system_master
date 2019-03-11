@@ -1,0 +1,26 @@
+{% for program in program_list %}
+	{{program.macrocycle_name}}
+{% endfor %}
+<div class="card">
+    <table class="table mb-0">
+      <thead>
+        <tr>
+          <th>All Programs</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for program in program_list %}
+          <tr>
+            <td>
+            	<a href="{% url 'coach:all_mesocycles' pk=program.athlete.pk pk_2=program.pk %}">{{program.macrocycle_name}}</a>
+            	<a href="{% url 'coach:program_view' pk=program.athlete.pk pk_2=program.pk %}">View</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td class="bg-light text-center font-italic" colspan="3">You haven't completed any quiz yet.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>

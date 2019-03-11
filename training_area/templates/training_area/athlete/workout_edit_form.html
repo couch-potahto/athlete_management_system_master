@@ -1,0 +1,43 @@
+
+ {% extends 'navbar.html' %}
+ {% load bulma_tags %}
+
+ {% block content %}
+
+ <div class="container section">
+  <div class = "section">
+<form method="post" novalidate>
+    {% csrf_token %}
+    {{ formset.management_form }}
+      {% for form in formset %}
+      {{ form.id }}
+    <div class = "card">
+      <div class="card-content">
+
+      <div class ="columns">
+        <div class="column">
+          {{ form.kg|bulma }}
+        </div>
+        <div class="column">
+          {{ form.kg_done|bulma }}
+        </div>
+        <div class="column">
+          {{ form.num_reps_done|bulma }}
+        </div>
+        <div class="column ">
+          {{ form.rpe|bulma }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class = "column"></div>
+
+      {% endfor %}
+
+  <button type="submit" class="button is-success">Save changes</button>
+
+</form>
+</div>
+</div>
+{% endblock %}
+

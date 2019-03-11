@@ -1,0 +1,156 @@
+from django.http import HttpResponse, HttpResponseRedirect
+from django.contrib.auth import login
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.decorators import method_decorator
+from django.views.generic import CreateView, ListView, UpdateView, DetailView
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect, HttpResponse
+from django.contrib import messages
+from django.urls import reverse
+from django.forms import formset_factory, inlineformset_factory
+from decimal import *
+
+from ..decorators import athlete_required
+from ..forms import AthleteSignUpForm, WorkoutForm, EditMovementFormAthlete
+from ..models import User, Coach, Athlete, Macrocycle, Mesocycle, Microcycle, Workout, Movement, ExertionPerceived
+
+class AthleteSignUpView(CreateView):
+	model = User
+	form_class = AthleteSignUpForm
+	template_name = 'registration/signup_form.html'
+
+	def get_context_data(self, **kwargs):
+		kwargs['user_type'] = 'Athlete'
+		return super().get_context_data(**kwargs)
+
+	def form_valid(self, form):
+		user = form.save()
+		login(self.request, user)
+		return redirect('login')
+
+
+@method_decorator([login_required, athlete_required], name='dispatch')
+class DashboardView(ListView):
+	model = Workout
+	context_object_name = 'all_workouts'
+	template_name = 'training_area/athlete/dashboard.html'
+
+	def get_queryset(self):
+		return Workout.objects.filter(athlete__user=self.request.user).order_by('-created_at')
+
+class SearchCoachView(ListView):
+	model = Coach
+	context_object_name = 'available_coaches'
+	queryset = Coach.objects.all()
+	template_name = 'training_area/athlete/search_coach.html'
+
+class AthleteDetailView(DetailView):
+	model = Athlete
+	template_name = 'training_area/athlete/athlete_detail.html'
+	slug_field = 'user__username'
+	#program here
+class ProgramDetailView(DetailView):
+	model = Macrocycle
+	template_name = 'training_area/athlete/program_view.html'
+
+@login_required
+@athlete_required
+def add_coach(request, coach_id):
+	coach = get_object_or_404(Coach, pk=coach_id)
+	athlete = Athlete.objects.get(user=request.user)
+	athlete.coach = coach
+	athlete.save()
+	messages.success(request, "Coach Added!")
+	return HttpResponseRedirect(reverse('athlete:dashboard'))
+
+@login_required
+@athlete_required
+def remove_coach(request, coach_id):
+	coach = get_object_or_404(Coach, pk = coach_id)
+	athlete = Athlete.objects.get(user=request.user)
+	athlete.coach = None
+	athlete.workout_athlete.clear()
+	athlete.save()
+	messages.success(request, "Coach Removed!")
+	return HttpResponseRedirect(reverse('athlete:dashboard'))
+
+@login_required
+@athlete_required
+def edit_workout(request, workout_id):
+    workout = get_object_or_404(Workout, pk=workout_id)
+    MovementFormSet = inlineformset_factory(
+        Workout,
+        Movement,
+        form = EditMovementFormAthlete,
+        fields=( 'kg', 'kg_done', 'num_reps_done', 'rpe'),
+        can_delete=False,
+        extra=0
+    )
+    if request.method == 'POST':
+
+        form = WorkoutForm(request.POST, instance=workout)
+        formset=MovementFormSet(request.POST, request.FILES, instance=workout)
+        print(form.errors)
+        if formset.is_valid() and form.is_valid():
+            form.save()
+            formset.save()
+            messages.success(request, 'Workout Changed!')
+            return redirect('app:workout_detail', workout.athlete.pk, workout.pk)
+    else:
+        #form = WorkoutForm(instance=workout)
+
+        formset=MovementFormSet(instance=workout)
+
+    return render(request, 'training_area/athlete/workout_edit_form.html', {
+        'formset': formset
+    })
+
+@login_required
+@athlete_required
+def edit_movement(request, movement_id):
+	movement = get_object_or_404(Movement, pk=movement_id)
+	if request.POST:
+		form = EditMovementFormAthlete(request.POST, instance=movement)
+		if form.is_valid():
+			form.save()
+			messages.success(request, 'Movement Changed!')
+			return redirect('app:workout_detail', movement.workout.athlete.pk, movement.workout.pk)
+		else:
+			for field in form:
+				print(field.errors)
+				for error in field.errors:
+					if 'equal to 10' in error:
+						error += " RPE"
+					messages.warning(request, error)
+
+			return redirect('app:workout_detail', movement.workout.athlete.pk, movement.workout.pk)
+@login_required
+@athlete_required
+def gen_backoff(request, movement_id):
+	movement = get_object_or_404(Movement, pk=movement_id)
+	workout = movement.workout
+	if request.POST:
+		exertion = ExertionPerceived.objects.filter(rep_scale=movement.num_reps, exertion_scale=movement.rpe)[0] #gives the object
+		load_percent = exertion.percent
+		daily_rm = movement.kg_done / load_percent
+		backoff_movements = Movement.objects.filter(workout=workout, is_backoff=True, movement_name=movement.movement_name) #queryset
+		for backoff in backoff_movements: #update all objects
+			backoff.kg = round((daily_rm * (backoff.percentage/Decimal(100)))/Decimal(2.5)) * Decimal(2.5)
+			backoff.save()
+		messages.success(request, "Backoff generated!")
+		return redirect('app:workout_detail', movement.workout.athlete.pk, movement.workout.pk)
+	else:
+		messages.error(request, "Oops, something went wrong!")
+
+@login_required
+@athlete_required
+def submit_workout(request, workout_id):
+	workout = get_object_or_404(Workout, pk=workout_id)
+
+	if workout.completed == False:
+
+		workout.completed = True
+	else:
+		workout.completed = False
+	workout.save()
+	return redirect('app:workout_detail', workout.athlete.pk, workout.pk)

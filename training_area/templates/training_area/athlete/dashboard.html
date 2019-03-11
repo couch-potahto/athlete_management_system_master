@@ -1,0 +1,82 @@
+{% extends 'navbar.html' %}
+{% block content %}
+
+<section class="hero is-info welcome is-small">
+  <div class="hero-body">
+    <div class="container">
+      <h1 class="title">
+        Hello, <u><a href="{% url 'app:profile_view' request.user %}">{{request.user}}</a></u>
+      </h1>
+      <h2 class="subtitle">
+        Welcome To Your Dashboard!
+      </h2>
+
+
+      <h2 class="subtitle">
+        {% if request.user.athlete.coach.user %}
+        Currently coached by: &nbsp;<a href="{% url 'app:profile_view' request.user.athlete.coach.user %}">{{request.user.athlete.coach.first_name}}</a>
+     </h2>
+      {% else %}
+        You have no coach yet!
+         {% endif %}
+       </div>
+       </div>
+
+
+
+</section>
+
+<div class = "container">
+<section class="section">
+<div class = "container is-fluid">
+  <div class="columns">
+    <div class="column is-6">
+      <div class="card is-fluid">
+        <header class="card-header">
+            <p class="card-header-title">
+                  Training Log
+            </p>
+            <a href="#" class="card-header-icon" aria-label="more options">
+    <span class="icon">
+      <i class="fas fa-dumbbell"></i>
+    </span>
+    </a>
+        </header>
+        <div class="card-table">
+          <div class="content">
+            <table class="table is-fullwidth is-striped">
+              <tbody>
+                {% if all_workouts %}
+                  {% for workout in all_workouts %}
+                    <tr>
+                      <td width="5%"><i class="fas fa-dumbbell"></i></td>
+                      <td><a href="{% url 'app:workout_detail' pk=workout.athlete.pk pk_2=workout.pk %}">{{workout.workout_name}}</a></td>
+                    </tr>
+                  {% endfor %}
+                  {% else %}
+                    <tr>
+                      <td width="5%"><i class="fas fa-exclamation-triangle"></i></i></td>
+                      <td>You have no programs yet!</td>
+                    </tr>
+                  {% endif %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <footer class="card-footer">
+
+            <a href="{% url 'app:log_view' pk=request.user.pk %}" class="card-footer-item">View All</a>
+
+
+          </footer>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+{% endblock %}
+

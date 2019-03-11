@@ -1,0 +1,38 @@
+{% extends 'navbar.html' %}
+{% block content %}
+  <div class="container section">
+<div class = "card is-fluid">
+  <header class = "card-header-title">
+    <p class = "has-text-centered">
+      Search Results
+   </p>
+  </header>
+  <div class = "card-content">
+    <div class="content">
+      <div class="table-container">
+  {% if relevant_coaches %}
+    <table class = "table is-responsive">
+    <thead class="has-text-centered">
+      <th>Coach</th>
+      <th>Actions</th>
+    </thead>
+
+    <tbody>
+    {% for coach in relevant_coaches %}
+      <tr>
+        <td><a href="{% url 'app:profile_view' coach.user %}">{{ coach.user }}</a></td>
+        {% if request.user.athlete.coach != coach %}
+        <td><form method="post" action="{% url 'athlete:add_coach' coach.user_id %}" >
+          {% csrf_token %}
+          <button type="submit" name="add_coach" class='button'><i class="fas fa-plus"></i></button>
+        </form></td></li>
+        {%endif%}
+      {% endfor %}
+  {% else %}
+    <p>Try a different term! No Coach by that user</p>
+  {% endif %}
+
+
+
+
+{% endblock %}

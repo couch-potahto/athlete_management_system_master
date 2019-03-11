@@ -1,0 +1,35 @@
+
+{% load static %}
+{% load bulma_tags %}
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hello Bulma!</title>
+    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">-->
+    <link rel="stylesheet" type="text/css" href="{% static 'bulma/css/style.css' %}">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+  </head>
+
+
+<section class="section">
+  <div class="container has-text-centered">
+      <img src="{% static 'images/agoge.png'%}" alt="Agoge">
+      <div class="column"></div>
+      <h1 class = 'title'>{{ user_type }} Sign up</h1>
+  </div>
+  <div class="column is-half is-offset-one-quarter">
+  
+    <div class="col-md-8 col-sm-10 col-12">
+      
+      <form method="post" novalidate>
+        <p class = "control">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}">
+        {{ form|bulma }}
+      </p>
+        <button type="submit" class="button is-success">Sign up</button>
+      </form>
+    </div>
+  
+</div>
+</section>

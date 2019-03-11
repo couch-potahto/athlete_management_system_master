@@ -1,0 +1,51 @@
+ {% extends 'navbar.html' %}
+ {% load bulma_tags %}
+
+ {% block content %}
+
+ <div class="container section">
+
+<form method="post" novalidate>
+
+    {% csrf_token %}
+    {{ formset.management_form }}
+    <div class="column is-half">
+      <a class="is-medium">{{ form.workout_name|bulma }}</a>
+    </div>
+    {{ formset.management_form }}
+      {% for form in formset %}
+      {{ form.id }}
+    <div class = "card">
+      <div class="card-content">
+      <div class="columns">
+
+        <div class="column is-three-fifths">
+          {{ form.movement_name|bulma }}
+        </div>
+      </div>
+      <div class ="columns">
+        <div class="column">
+          {{ form.percentage|bulma }}
+        </div>
+        <div class="column">
+          {{ form.kg|bulma }}
+        </div>
+        <div class="column">
+          {{ form.num_reps|bulma }}
+        </div>
+        <div class="column">
+          {{ form.rpe|bulma }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class = "column"></div>
+
+      {% endfor %}
+
+    <button type="submit" class="button is-success is-large">Save changes</button>
+
+</form>
+</div>
+
+{% endblock %}

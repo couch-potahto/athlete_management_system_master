@@ -1,0 +1,41 @@
+{% load static %}
+{% load bulma_tags %}
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hello Bulma!</title>
+    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">-->
+    <link rel="stylesheet" type="text/css" href="{% static 'bulma/css/style.css' %}">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+  </head>
+
+{% block content %}
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      {% for error in form.non_field_errors %}
+        <p{% if forloop.last %} class="mb-0"{% endif %}>{{ error }}</p>
+      {% endfor %}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  {% endif %}
+  <section class="section">
+  <div class="container has-text-centered">
+      <img src="{% static 'images/agoge.png'%}" alt="Agoge">
+      <div class="column"></div>
+      <h1 class = 'title'>Log In</h1>
+  </div>
+  <div class="column is-half is-offset-one-quarter">
+      <form method="post" novalidate>
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}">
+        {{ form.username|bulma }}
+        {{ form.password|bulma }}
+        <button type="submit" class="button is-success">Log in</button>
+        <a href="{% url 'signup' %}" class="button" role="button">Signup now!</a>
+      </form>
+  </div>
+</section>
+
+{% endblock %}

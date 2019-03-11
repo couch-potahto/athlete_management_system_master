@@ -1,0 +1,20 @@
+<div class="card">
+    <table class="table mb-0">
+      <thead>
+        <tr>
+          <th>All Workouts</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for workout in workout_list %}
+          <tr>
+            <td><a href="{% url 'coach:program_view' pk=program.athlete.pk pk_2=program.pk %}">{{program.macrocycle_name}}</a></td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td class="bg-light text-center font-italic" colspan="3">You haven't completed any quiz yet.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>

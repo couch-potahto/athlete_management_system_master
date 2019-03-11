@@ -1,0 +1,153 @@
+{% load static %}
+
+
+{% block js %}
+  <script src="{% static 'js/app.js' %}"></script>
+  <script src="{% static 'js/jquery-3.3.1.js' %}"></script>
+{% endblock %}
+<script>
+    $(document).ready(function() {
+        // messages timeout for 10 sec
+        setTimeout(function() {
+            $('.notification').fadeOut('slow');
+        }, 1000); // <-- time in milliseconds, 1000 =  1 sec
+
+        // delete message
+        $('.del-msg').live('click',function(){
+            $('.del-msg').parent().attr('style', 'display:none;');
+        })
+    });
+</script>
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard</title>
+    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">-->
+    <link rel="stylesheet" type="text/css" href="{% static 'bulma/css/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'bulma/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'bulma/css/style.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'font-awesome/css/all.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'font-awesome/css/fontawesome.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'font-awesome/css/solid.css' %}">
+ </head>
+
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    {% if request.user.is_authenticated and request.user.is_coach %}
+      <a class="navbar-item brand-text" href="{% url 'coach:dashboard' %}">Dashboard</a>
+      {% else %}
+      <a class="navbar-item brand-text" href="{% url 'athlete:dashboard' %}">Dashboard</a>
+        {% endif %}
+      </a>
+
+
+    <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample" onclick="document.querySelector('.navbar-menu').classList.toggle('is-active');">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+
+  <div id="navbarBasicExample" class="navbar-menu"">
+    <div class="navbar-start">
+
+
+      <a class="navbar-item">
+        Documentation
+      </a>
+
+      <div class="navbar-item has-dropdown is-hoverable " >
+        <a class="navbar-link">
+          More
+        </a>
+
+        <div class="navbar-dropdown">
+          <a class="navbar-item">
+            About
+          </a>
+          <a class="navbar-item">
+            Jobs
+          </a>
+          <a class="navbar-item">
+            Contact
+          </a>
+          <hr class="navbar-divider">
+          <a class="navbar-item">
+            Report an issue
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="navbar-item">
+      <div class="field has-addons">
+
+        {% if request.user.is_authenticated and request.user.is_athlete %}
+        <form method = "GET" action="{% url 'app:search_coach' %}">
+        <div class="control">
+          <input name="search_box" class="input" type="text"  placeholder="Find a Coach">
+        </div>
+        <div class="control">
+          <button class="button is-info" type = "submit">
+            Search
+          </button>
+
+
+        </div>
+        </form>
+        {% else %}
+        <div class="control">
+        <form method = "GET" action="{% url 'app:search_athlete' request.user.id %}">
+
+          <input name="search_box" class="input" type="text" name="search_box" placeholder="Find an Athlete">
+
+
+          <button class="button is-info" type = "submit">
+            Search
+          </button>
+        </form>
+
+        </div>
+        {% endif %}
+
+      </div>
+    </div>
+
+    <div class="navbar-end">
+      <div class="navbar-item">
+        <div class="buttons">
+          {% if user.is_authenticated %}
+            <a href="{% url 'logout' %}" class="button is-danger">
+              <strong>Logout</strong>
+            </a>
+          {% else %}
+            <a class="button is-light">
+              Log in
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</nav>
+{% for message in messages %}
+  <div class="container">
+    <div class="notification">
+        {{ message }}
+        <a href="#" class="del-msg">&times;</a>
+    </div>
+  </div>
+{% endfor %}
+<div id="site-wrapper">
+        {% block content %}
+            if you see this, something is wrong!
+        {% endblock content %}
+    </div>
+</html>
+

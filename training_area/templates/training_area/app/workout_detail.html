@@ -1,0 +1,275 @@
+{% extends 'navbar.html' %}
+
+{% block content %}
+<div class="column is-half is-offset-one-quarter">
+            <div class="card">
+              <header class="card-header">
+                <p class="card-header-title is-size-4">Instructions</p>
+                <a class="card-header-icon card-toggle">
+                  <i class="fa fa-angle-down"></i>
+                </a>
+              </header>
+            <div class="card-content is-hidden">
+                <div class="content">
+                  <p><strong>1)</strong> Quick Save only works on a single row! To edit the entire workout, it would be wiser to use 'Mass Edit Workout'</p>
+                  <p><strong>2)</strong> Movements which do not have RPE placed in would automatically be designated as a 'back-off set' when the athlete
+                      generates his back-off work for the day. The top set would be whichever set the athlete chooses to back off from</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+
+
+
+
+<div class="container section">
+<div class = "card is-fluid">
+  <header class = "card-header-title">
+    <p class = "card-header-title">
+      {{ workout.workout_name }}
+      {% if not workout.completed %}
+      &nbsp;<span class="tag">In Progress</span>
+      {%else%}
+      &nbsp;<span class="tag is-success">Completed!</span>
+      {%endif%}
+    </p>
+    {% if request.user.is_authenticated and request.user.is_coach %}
+    <a href="{% url 'coach:delete_workout' athlete_id=workout.athlete.pk workout_id=workout.pk %}" class="buttons is-danger float-right">
+      <span class="icon has-text-danger is-large">
+        <i class="fas fa-dumpster-fire fa-1.5x"></i>
+      </span>
+    </a>
+    {% endif %}
+  </header>
+  <div class = "card-content">
+    <div class="content">
+      <div class="table-container">
+{% if movements %}
+<table class = "table is-responsive">
+  <thead class="has-text-centered">
+    <th>Movement</th>
+    <th>Percentage</th>
+    <th>Load</th>
+    <th>Load Done</th>
+    <th>Reps</th>
+    <th>Reps Done</th>
+    <th>RPE</th>
+
+      <th>Actions</th>
+      <th></th>
+      <th></th>
+      <th></th>
+
+  </thead>
+
+  <tbody>
+  {% for movement in movements %}
+
+    {% if user.is_authenticated and user.is_athlete %}
+    <form action="{% url 'athlete:edit_movement' movement.pk %}" method="post">
+      {% csrf_token %}
+      <td>{{movement.movement_name}}</td>
+      {% if movement.percentage == None %}
+      <td></td>
+      {%else%}
+      <td>{{movement.percentage}}%</td>
+      {%endif%}
+      {% if movement.kg == None or movement.kg == 0%}
+      <td></td>
+      {% else %}
+      <td>{{movement.kg}}kg</td>
+      {%endif%}
+      {% if movement.kg_done %}
+      <td>
+          <div class="field has-addons is-small">
+          <div class="control">
+            <input name="kg_done" class="input is-small" type="number" step="0.01" min=0 value="{{movement.kg_done}}">
+          </div>
+          </div>
+      </td>
+      {% else %}
+      <td>
+          <div class="field has-addons is-small">
+          <div class="control">
+            <input name="kg_done" class="input is-small" type="number" step="0.01" min=0 value="{{movement.kg}}">
+          </div>
+          </div>
+      </td>
+      {%endif%}
+      <td>{{movement.num_reps}}</td>
+      {% if movement.num_reps_done %}
+      <td>
+          <div class="field has-addons is-one-fifth">
+          <p class="control">
+            <input name="num_reps_done" class="input is-small" type="number" value="{{movement.num_reps_done}}">
+          </p>
+          </div>
+
+      </td>
+      {% else %}
+      <td>
+          <div class="field has-addons is-small">
+          <div class="control">
+            <input name="num_reps_done" class="input is-small" type="number" step="0.01" min=0 value="{{movement.num_reps}}">
+          </div>
+          </div>
+      </td>
+      {%endif%}
+      <td>
+          <div class="field has-addons is-one-fifth">
+          <div class="control">
+            <input name="rpe" class="input is-small" type="number" step="0.5" min=2 value="{{movement.rpe}}">
+          </div>
+          </div>
+      </td>
+
+      <td>
+        <button class = 'button is-small is-success' type="submit" value="Save">
+          <span class="icon is-small">
+            <i class="fas fa-check"></i>
+          </span>
+          <span>Save</span>
+        </button>
+      </form>
+    </td>
+    <td>
+      <!----add generate backoff-->
+
+    {%if movement.is_backoff == False and movement.kg == None and movement.percentage == None %}
+      <form method="post" action="{% url 'athlete:generate_backoff' movement.pk %}" >
+           {% csrf_token %}
+           <button class = 'button is-small is-link' type="submit">
+            <i class="fas fa-divide" type="submit"></i>
+           </button>
+      </form>
+    {% endif %}
+    </td>
+
+
+
+
+    {% else %}
+
+    <form action="{% url 'coach:edit_movement_quick' movement.pk %}" method="post">
+      {% csrf_token %}
+      <td>
+          <div class="field is-small">
+          <div class="control">
+            <input name="movement_name" class="input is-small" type="text" value="{{movement.movement_name}}">
+          </div>
+          </div>
+      </td>
+      <td>
+          <div class="field is-small">
+          <div class="control">
+            <input name="percentage" class="input is-small" type="number" step="0.01" min=0 value="{{movement.percentage}}">
+          </div>
+          </div>
+      </td>
+      <td>
+          <div class="field is-small">
+          <div class="control">
+            <input name="kg" class="input is-small" type="number" step="0.01" min=0 value="{{movement.kg}}">
+          </div>
+          </div>
+      </td>
+      <td>{{movement.kg_done}}</td>
+      <td>
+          <div class="field is-small">
+          <div class="control">
+            <input name="num_reps" class="input is-small" type="number" value="{{movement.num_reps}}">
+          </div>
+          </div>
+      </td>
+      <td>{{movement.num_reps_done}}</td>
+      <td>
+          <div class="field is-one-fifth">
+          <div class="control">
+            <input name="rpe" class="input is-small" type="number" step="0.1" min=2 value="{{movement.rpe}}">
+          </div>
+          </div>
+      </td>
+      <td>
+          <div class="custom-control custom-checkbox">
+            <input type="checkbox" class="custom-control-input" name="is_backoff"{% if movement.is_backoff %} checked {% endif %}>
+            <label class="custom-control-label" for="customCheck1">Back-off Set</label>
+          </div>
+      </td>
+      <td>
+
+        <select name = 'rm'>
+            <option value="None">Rep Max</option>
+            {% for max in rm %}
+              <option value = "{{max.rep_max}}">{{max.rep_max_name}}: {{max.rep_max}}</option>
+            {% endfor %}
+        </select>
+      </td>
+      <td>
+
+
+        <button class = 'button is-small is-success' type="submit" value="Save">
+          <span class="icon is-small">
+            <i class="fas fa-check"></i>
+          </span>
+          <span>Quick Save</span>
+        </button>
+        </form>
+      </td>
+      <td>
+          <table class = "table is-responsive">
+
+          <form method="post" action="{% url 'coach:duplicate' movement.pk %}" >
+           {% csrf_token %}
+           <button class = 'button is-small' type="submit">
+            <i class="fas fa-clone" type="submit"></i>
+           </button>
+           </form>
+
+        <form method="post" action="{% url 'coach:delete' movement.pk %}" >
+          {% csrf_token %}
+          <button class = 'button is-small' type="submit">
+            <i class="fas fa-eraser" type="submit"></i>
+           </button>
+        </form>
+
+        </table>
+       </td>
+    {% endif %}
+
+    </tr>
+  {% endfor %}
+{% endif %}
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+
+<footer class="card-footer">
+
+ <a href="{% url 'app:log_view' pk=workout.athlete.pk%}" class="card-footer-item" role="button">Back to Logs</a>
+
+
+ {% if user.is_authenticated and user.is_coach %}
+
+ 	<a href="{% url 'coach:add_movement_test' pk=workout.athlete.pk pk_2=workout.pk %}" class="card-footer-item" role="button">Add Movement</a>
+
+
+  <a href="{% url 'coach:edit_workout' workout_id=workout.pk%}" class="card-footer-item" role="button">Mass Edit Workout</a>
+
+ {% endif %}
+ {% if user.is_authenticated and user.is_athlete %}
+
+  <a href="{% url 'athlete:edit_workout' workout_id=workout.pk%}" class="card-footer-item" role="button">Mass Edit Workout</a>
+  {% if not workout.completed %}
+  <a href="{% url 'athlete:submit' workout_id=workout.pk%}" class="card-footer-item" role="button">Complete Workout!</a>
+  {% else %}
+  <a href="{% url 'athlete:submit' workout_id=workout.pk%}" class="card-footer-item" role="button">Workout in Progress!</a>
+  {% endif %}
+{% endif %}
+</footer>
+</div>
+</div>
+{% endblock %}
