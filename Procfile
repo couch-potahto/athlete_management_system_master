@@ -1,1 +1,1 @@
-web: gunicorn athlete_management.wsgi --log-file - 
+web: gunicorn athlete_management_system.wsgi --log-file - 
