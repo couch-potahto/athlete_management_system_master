@@ -1,0 +1,33 @@
+{% extends 'navbar.html' %}
+{% block content %}
+  <div class="container section">
+<div class = "card is-fluid">
+  <header class = "card-header-title">
+    <p class = "has-text-centered">
+      Search Results
+   </p>
+  </header>
+  <div class = "card-content">
+    <div class="content">
+      <div class="table-container">
+  {% if relevant_workouts %}
+    <table class = "table is-responsive">
+    <thead class="has-text-centered">
+      <th>Workout</th>
+    </thead>
+
+    <tbody>
+    {% for workout in relevant_workouts %}
+
+      <tr>
+        <td><a href="{% url 'app:workout_detail' pk=workout.athlete.pk pk_2=workout.pk %}">{{ workout.workout_name }}</a></td>
+
+      {% endfor %}
+  {% else %}
+    <p>Try a different term! No Workout by that name</p>
+  {% endif %}
+
+
+
+
+{% endblock %}

@@ -25,6 +25,7 @@ class LogView(ListView):
 		context = super(LogView, self).get_context_data(**kwargs)
 		context['pk'] = self.kwargs['pk']
 		context['all_microcycles'] = Microcycle.objects.filter(athlete__user__id=self.kwargs['pk'])
+		context['all_macrocycles'] = Macrocycle.objects.filter(athlete__user__id=self.kwargs['pk'])
 
 		return context
 
@@ -90,8 +91,7 @@ class SearchAthleteView(ListView):
 	template_name = 'training_area/app/athlete_search.html'
 
 	def get_queryset(self):
-		#result = Athlete.objects.filter(coach__user__id=self.kwargs['pk'])
-		result = Athlete.objects.all()
+		result = Athlete.objects.filter(coach__user__id=self.kwargs['pk'])
 
 		query = self.request.GET.get('search_box')
 
@@ -102,6 +102,24 @@ class SearchAthleteView(ListView):
 			result = result.filter(
 				reduce(operator.and_,
 						(Q(user__username__icontains=q) for q in query_list))
+			)
+
+		return result
+
+
+class SearchWorkoutView(ListView):
+	model = Workout
+	context_object_name = 'relevant_workouts'
+	template_name = 'training_area/app/workout_search.html'
+
+	def get_queryset(self):
+		result = Workout.objects.filter(athlete__user__id=self.kwargs['pk'])
+		query = self.request.GET.get('search_box')
+		if query:
+			query_list = query.split()
+			result = result.filter(
+				reduce(operator.and_,
+						(Q(workout_name__icontains=q) for q in query_list))
 			)
 
 		return result

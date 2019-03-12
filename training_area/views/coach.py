@@ -14,7 +14,7 @@ from django.utils.translation import gettext_lazy as _
 from decimal import Decimal
 
 from ..decorators import coach_required
-from ..forms import CoachSignUpForm, AddWoToMicroForm, WorkoutForm, EditMovementFormCoach, AddRepMaxForm, AddMovementFormCoach
+from ..forms import CoachSignUpForm, AddWoToMicroForm, WorkoutForm, EditMovementFormCoach, AddRepMaxForm, AddMovementFormCoach, AddMicroToMacroForm
 from ..models import User, Coach, Athlete, Macrocycle, Mesocycle, Microcycle, Workout, Movement, ExertionPerceived, RepMax
 
 
@@ -214,6 +214,27 @@ class CreateMicrocycleView(CreateView):
         messages.success(self.request, 'Micro Created!')
         return redirect('coach:add_wo_to_micro', microcycle.athlete.pk, microcycle.pk)
 
+
+@method_decorator([login_required, coach_required], name='dispatch')
+class CreateMacrocycleView(CreateView):
+    model=Macrocycle
+    fields = ('macrocycle_name', )
+    template_name = 'training_area/coach/create_macro_form.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(CreateMacrocycleView,self).get_context_data(**kwargs)
+        context['pk']=self.kwargs['pk']
+        return context
+
+    def form_valid(self, form):
+        macrocycle = form.save()
+        macrocycle.athlete = Athlete.objects.filter(user__id=self.get_context_data()['pk'])[0]
+        macrocycle.coach = macrocycle.athlete.coach
+        macrocycle.save()
+        messages.success(self.request, 'Macro Created!')
+        return redirect('coach:add_micro_to_macro', macrocycle.athlete.pk, macrocycle.pk)
+
+
 @login_required
 @coach_required
 def edit_workout(request, workout_id):
@@ -266,6 +287,28 @@ def change_profile(request):
 @login_required
 @coach_required
 def add_wo_to_micro(request, athlete_id, pk_2):
+
+    template = 'training_area/coach/add_wo_to_micro.html'
+    microcycle = Microcycle.objects.get(pk=pk_2)
+    if request.method == "POST":
+
+        form = AddWoToMicroForm(request.POST, athlete_id=athlete_id)
+
+
+        workouts = []
+        for pk in request.POST.getlist("workouts"):
+            workout = get_object_or_404(Workout, pk=pk)
+            workout.microcycle = microcycle
+            workout.save()
+            microcycle.save()
+        return redirect('app:log_view', athlete_id)
+    else:
+        form = AddWoToMicroForm(athlete_id=athlete_id)
+        return render(request, template, {"form" : form, "microcycle" : microcycle})
+
+@login_required
+@coach_required
+def add_micro_to_macro(request, athlete_id, pk_2):
     print(athlete_id)
     template = 'training_area/coach/add_wo_to_micro.html'
     microcycle = Microcycle.objects.get(pk=pk_2)
@@ -286,6 +329,8 @@ def add_wo_to_micro(request, athlete_id, pk_2):
     else:
         form = AddWoToMicroForm(athlete_id=athlete_id)
         return render(request, template, {"form" : form, "microcycle" : microcycle})
+
+
 
 @login_required
 @coach_required

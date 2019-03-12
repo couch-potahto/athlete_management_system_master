@@ -29,16 +29,17 @@
       <div class="field is-grouped is-grouped-centered">
       {% if user.is_authenticated and user.is_coach %}
       <p class="control">
-        <a class="button is-primary" href="{% url 'coach:add_workout' pk=pk %}">Add Workout</a>
+        <a class="button is-primary" href="{% url 'coach:add_workout' pk=pk %}">Create Workout</a>
       </p>
       {% endif %}
-
+        <form method = "GET" action="{% url 'app:search_workout' pk %}">
         <div class="field has-addons">
+
           <p class="control">
             <input id="search_box" class="input" type="text" name="search_box" placeholder="Search">
           </p>
           <div class="control">
-            <form method = "GET" action="{% url 'app:search_coach' %}">
+            
             <button class="button" type = "submit">Search</button>
             </form>
           </div>
@@ -168,7 +169,7 @@
 
 
 
-    <div id="Support" class="content-tab" style="display:none">
+<!--    <div id="Support" class="content-tab" style="display:none">
        <div class="field is-grouped is-grouped-centered">
       {% if user.is_authenticated and user.is_coach %}
       <p class="control">
@@ -188,11 +189,11 @@
         </div>
 
       </div>
-      {% for workout in all_workouts %}
+      {% for macrocycle in all_macrocycles %}
       <div class="column is-half is-offset-one-quarter">
 
         <div class="box content">
-
+          for will link to macrocycle review
               <h4><a href="{% url 'app:workout_detail' pk=workout.athlete.pk pk_2=workout.pk %}">{{workout.workout_name}}</a></h4><span class="tag">In Progress</span> &nbsp;
               <span class="has-text-grey-light"><i class="fa fa-comments"></i> 1</span>
 
@@ -200,6 +201,6 @@
           </div>
         </div>
         {% endfor %}
-</div>
+</div>-->
 {% endblock %}
 

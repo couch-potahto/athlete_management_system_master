@@ -12,8 +12,8 @@
             <div class="card-content is-hidden">
                 <div class="content">
                   <p><strong>1)</strong> Quick Save only works on a single row! To edit the entire workout, it would be wiser to use 'Mass Edit Workout'</p>
-                  <p><strong>2)</strong> Movements which do not have RPE placed in would automatically be designated as a 'back-off set' when the athlete
-                      generates his back-off work for the day. The top set would be whichever set the athlete chooses to back off from</p>
+                  <p><strong>2)</strong> The Blue Divide Button (athletes only) require you to key in your load done and reps done before
+                  it can calculate your backoff sets</p>
                 </div>
               </div>
             </div>
@@ -50,7 +50,9 @@
 <table class = "table is-responsive">
   <thead class="has-text-centered">
     <th>Movement</th>
+    {% if user.is_authenticated and user.is_coach %}
     <th>Percentage</th>
+    {% endif %}
     <th>Load</th>
     <th>Load Done</th>
     <th>Reps</th>
@@ -71,11 +73,11 @@
     <form action="{% url 'athlete:edit_movement' movement.pk %}" method="post">
       {% csrf_token %}
       <td>{{movement.movement_name}}</td>
-      {% if movement.percentage == None %}
+      <!--{% if movement.percentage == None %}
       <td></td>
       {%else%}
       <td>{{movement.percentage}}%</td>
-      {%endif%}
+      {%endif%}-->
       {% if movement.kg == None or movement.kg == 0%}
       <td></td>
       {% else %}

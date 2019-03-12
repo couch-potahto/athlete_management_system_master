@@ -84,10 +84,9 @@
     </div>
 
     <div class="navbar-item">
-      <div class="field has-addons">
-
-        {% if request.user.is_authenticated and request.user.is_athlete %}
-        <form method = "GET" action="{% url 'app:search_coach' %}">
+      {% if request.user.is_authenticated and request.user.is_athlete %}
+      <form method = "GET" action="{% url 'app:search_coach' %}">
+      <div class="field has-addons">        
         <div class="control">
           <input name="search_box" class="input" type="text"  placeholder="Find a Coach">
         </div>
@@ -98,24 +97,26 @@
 
 
         </div>
+      </div>
         </form>
         {% else %}
-        <div class="control">
         <form method = "GET" action="{% url 'app:search_athlete' request.user.id %}">
-
-          <input name="search_box" class="input" type="text" name="search_box" placeholder="Find an Athlete">
-
-
+          <div class="field has-addons"> 
+            <div class="control">
+              <input name="search_box" class="input" type="text" name="search_box" placeholder="Find an Athlete">
+            </div>
+          <div class="control">
           <button class="button is-info" type = "submit">
             Search
           </button>
+          </div>
+        </div>
         </form>
 
-        </div>
+        
         {% endif %}
 
       </div>
-    </div>
 
     <div class="navbar-end">
       <div class="navbar-item">
