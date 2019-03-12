@@ -1,4 +1,4 @@
-'''from django.contrib import admin
+from django.contrib import admin
 from .models import Athlete, Coach, Team, Macrocycle, Mesocycle, Microcycle, Workout, Movement, ExertionPerceived, RepMax, User
 
 # Register your models here.
@@ -13,4 +13,3 @@ admin.site.register(Workout)
 admin.site.register(Movement)
 admin.site.register(ExertionPerceived)
 admin.site.register(RepMax)
-'''
