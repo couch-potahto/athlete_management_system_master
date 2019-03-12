@@ -38,7 +38,7 @@ class WorkoutDetail(DetailView):
 	def get_context_data(self, **kwargs):
 		 # xxx will be available in the template as the related objects
 		context = super(WorkoutDetail, self).get_context_data(**kwargs)
-		context['movements'] = Movement.objects.filter(workout=self.get_object())
+		context['movements'] = Movement.objects.filter(workout=self.get_object()).order_by('id')
 		context['rm'] = RepMax.objects.filter(athlete__user_id=self.kwargs['pk'])
 		return context
 
