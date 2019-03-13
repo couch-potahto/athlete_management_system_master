@@ -51,6 +51,14 @@
                     <tr>
                       <td width="5%"><i class="fas fa-dumbbell"></i></td>
                       <td><a href="{% url 'app:workout_detail' pk=workout.athlete.pk pk_2=workout.pk %}">{{workout.workout_name}}</a></td>
+                       <td>
+                        {% if not workout.completed %}
+                        <span class="tag">In Progress</span>
+                        {% else %}
+                        <span class="tag is-success">Completed!</span>
+                        {% endif %}
+                      </td>
+
                     </tr>
                   {% endfor %}
                   {% else %}

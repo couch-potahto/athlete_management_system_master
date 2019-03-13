@@ -117,9 +117,15 @@
                 <div class="content">
                   {% if microcycle.micro.all %}
                   {{microcycle.micro.workout_name}}
+                  <table>
                     {% for workout in microcycle.micro.all %}
+                    
+                    <tr><td>
                       <a href="{% url 'app:workout_detail' pk=workout.athlete.pk pk_2=workout.pk %}">{{workout.workout_name}}</a>
+                    </tr></td>
+
                     {% endfor %}
+                  <table>
                   {% else %}
                     Microcycle is empty!
                   {% endif %}

@@ -55,7 +55,7 @@ class AddWoToMicroForm(forms.Form):
         print(athlete_id)
         super(AddWoToMicroForm, self).__init__(*args, **kwargs)
         self.fields["workouts"]=forms.ModelMultipleChoiceField(
-            queryset=Workout.objects.filter(athlete__user__id = athlete_id),
+            queryset=Workout.objects.filter(athlete__user__id = athlete_id, microcycle=None).order_by('created_at'),
             widget=forms.CheckboxSelectMultiple()
             )
 

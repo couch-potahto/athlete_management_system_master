@@ -19,12 +19,12 @@ class LogView(ListView):
 	template_name = 'training_area/app/log_view.html'
 
 	def get_queryset(self):
-		return Workout.objects.filter(athlete__user__id=self.kwargs['pk'])
+		return Workout.objects.filter(athlete__user__id=self.kwargs['pk']).order_by('completed', '-created_at')
 
 	def get_context_data(self, **kwargs):
 		context = super(LogView, self).get_context_data(**kwargs)
 		context['pk'] = self.kwargs['pk']
-		context['all_microcycles'] = Microcycle.objects.filter(athlete__user__id=self.kwargs['pk'])
+		context['all_microcycles'] = Microcycle.objects.filter(athlete__user__id=self.kwargs['pk']).order_by('id')
 		context['all_macrocycles'] = Macrocycle.objects.filter(athlete__user__id=self.kwargs['pk'])
 
 		return context

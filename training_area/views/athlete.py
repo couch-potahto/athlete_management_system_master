@@ -36,7 +36,7 @@ class DashboardView(ListView):
 	template_name = 'training_area/athlete/dashboard.html'
 
 	def get_queryset(self):
-		return Workout.objects.filter(athlete__user=self.request.user).order_by('-created_at')
+		return Workout.objects.filter(athlete__user=self.request.user).order_by('completed', '-created_at')
 
 class SearchCoachView(ListView):
 	model = Coach
