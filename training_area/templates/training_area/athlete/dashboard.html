@@ -1,7 +1,7 @@
 {% extends 'navbar.html' %}
 {% block content %}
 
-<section class="hero is-info welcome is-small">
+<section class="hero welcome is-small">
   <div class="hero-body">
     <div class="container">
       <h1 class="title">
@@ -12,7 +12,7 @@
       </h2>
 
 
-      <h2 class="subtitle">
+      <h2 class="subtitle is-italic is-7 has-text-right">
         {% if request.user.athlete.coach.user %}
         Currently coached by: &nbsp;<a href="{% url 'app:profile_view' request.user.athlete.coach.user %}">{{request.user.athlete.coach.first_name}}</a>
      </h2>
@@ -25,8 +25,8 @@
 
 
 </section>
-
-<div class = "container">
+<div class = "has-background-grey-darker">
+<div class = "container has-background-grey-darker">
 <section class="section">
 <div class = "container is-fluid">
   <div class="columns">
@@ -85,6 +85,6 @@
   </div>
 </section>
 </div>
-
+</div>
 {% endblock %}
 
