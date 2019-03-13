@@ -29,6 +29,28 @@ class LogView(ListView):
 
 		return context
 
+@method_decorator([login_required], name='dispatch')		
+class MicrocycleDetail(DetailView):
+	model = Microcycle
+	context_object_name = 'microcycle'
+	pk_url_kwarg = 'pk_2'
+	template_name = 'training_area/app/micro_detail.html'
+
+	def get_context_data(self, **kwargs):
+		report = {}
+		context = super(MicrocycleDetail, self).get_context_data(**kwargs)
+		workouts_in_micro = Workout.objects.filter(microcycle_id=self.kwargs['pk_2']).order_by('created_at')
+		for workout in workouts_in_micro:
+			report[workout.workout_name]={}
+			for movement in workout.work.all().order_by('id'):
+				if movement.movement_name not in report[workout.workout_name]:
+					report[workout.workout_name][movement.movement_name]=[[movement.kg, movement.num_reps, movement.rpe, movement.kg_done],]
+				else:
+					report[workout.workout_name][movement.movement_name].append([movement.kg, movement.num_reps, movement.rpe, movement.kg_done])
+		context['report'] = report
+		context['all_workouts'] = workouts_in_micro
+		return context
+
 @method_decorator([login_required], name='dispatch')
 class WorkoutDetail(DetailView):
 	model = Workout

@@ -7,6 +7,7 @@ urlpatterns = [
     path('app/', include(([
         path('user=<int:pk>/log', app.LogView.as_view(), name='log_view'),
         path('user=<int:pk>/workout=<int:pk_2>', app.WorkoutDetail.as_view(), name='workout_detail'),
+        path('user=<int:pk>/micro=<int:pk_2>', app.MicrocycleDetail.as_view(), name='micro_detail'),
         path('<str:slug>/profile', app.ProfileView.as_view(), name='profile_view'),
         path('search_coach', app.SearchCoachView.as_view(), name='search_coach'),
         path('<int:pk>/search_athlete', app.SearchAthleteView.as_view(), name='search_athlete'),

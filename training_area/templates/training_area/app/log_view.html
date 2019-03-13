@@ -95,7 +95,7 @@
           <div class="column is-half is-offset-one-quarter">
             <div class="card">
               <header class="card-header">
-                <p class="card-header-title is-size-4">{{microcycle.microcycle_name}}</p>
+                <p class="card-header-title is-size-4"><a href ="{% url 'app:micro_detail' pk=microcycle.athlete.pk pk_2=microcycle.pk %}">{{microcycle.microcycle_name}}</a></p>
                 <a class="card-header-icon card-toggle">
                   <i class="fa fa-angle-down"></i>
                 </a>
@@ -116,7 +116,8 @@
               <div class="card-content is-hidden">
                 <div class="content">
                   {% if microcycle.micro.all %}
-                  {{microcycle.micro.workout_name}}
+                  <a>{{microcycle.micro.workout_name}}</a>
+
                   <table>
                     {% for workout in microcycle.micro.all %}
                     

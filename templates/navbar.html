@@ -37,12 +37,14 @@
 
 <nav class="navbar" role="navigation" aria-label="main navigation">
   <div class="navbar-brand">
+    
     {% if request.user.is_authenticated and request.user.is_coach %}
-      <a class="navbar-item brand-text" href="{% url 'coach:dashboard' %}">Dashboard</a>
+      <a class="navbar-item brand-text" href="{% url 'coach:dashboard' %}"><img src="{% static 'images/gen_boutons.png'%}" alt="Agoge"></a>
       {% else %}
-      <a class="navbar-item brand-text" href="{% url 'athlete:dashboard' %}">Dashboard</a>
+      <a class="navbar-item brand-text" href="{% url 'athlete:dashboard' %}"><img src="{% static 'images/gen_boutons.png'%}" alt="Agoge"></a>
         {% endif %}
       </a>
+    
 
 
     <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample" onclick="document.querySelector('.navbar-menu').classList.toggle('is-active');">
