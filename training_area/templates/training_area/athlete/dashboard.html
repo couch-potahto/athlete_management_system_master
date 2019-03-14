@@ -2,7 +2,7 @@
 {% block content %}
 
 <section class="hero welcome is-small">
-  <div class="hero-body">
+  <div class="hero-body has-background-light">
     <div class="container">
       <h1 class="title">
         Hello, <u><a href="{% url 'app:profile_view' request.user %}">{{request.user}}</a></u>
@@ -25,8 +25,8 @@
 
 
 </section>
-<div class = "has-background-grey-darker">
-<div class = "container has-background-grey-darker">
+
+<div class = "container">
 <section class="section">
 <div class = "container is-fluid">
   <div class="columns">
@@ -81,10 +81,37 @@
 
         </div>
       </div>
+      
+      <div class = "column is-3">
+        <div class = "box">
+          <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="eventsbar" onclick="document.querySelector('.all-events').classList.toggle('is-active');">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+    <div id="eventsbar" class="all-events">
+          <p class = "title is-size-5 has-text-centered all-events">Upcoming Events</p>
+          {% for day, value in calendar.items %}
+          
+            <div class = "box">
+              <p class = "subtitle is-size-6">{{value.0.day}}/{{value.0.month}}-{{value.1.day}}/{{value.1.month}}:</p>
+              <p class = "title has-text-centered is-size-6">{{day}}</p>
+            <!--{{day| date:"l"}}{{value}}-->
+             
+            </div>
+          
+          {% endfor %}
+          
+          It is {% now "jS F Y H:i" %}
+         
+        </div>
+      </div>
+      </div>
+      </div>
     </div>
+    
   </div>
 </section>
-</div>
 </div>
 {% endblock %}
 

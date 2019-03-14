@@ -9,10 +9,12 @@ from django.contrib import messages
 from django.urls import reverse
 from django.forms import formset_factory, inlineformset_factory
 from decimal import *
+from datetime import datetime, timedelta
+from django.db.models import Q
 
 from ..decorators import athlete_required
 from ..forms import AthleteSignUpForm, WorkoutForm, EditMovementFormAthlete
-from ..models import User, Coach, Athlete, Macrocycle, Mesocycle, Microcycle, Workout, Movement, ExertionPerceived
+from ..models import User, Coach, Athlete, Macrocycle, Mesocycle, Microcycle, Workout, Movement, ExertionPerceived, Event
 
 class AthleteSignUpView(CreateView):
 	model = User
@@ -37,6 +39,25 @@ class DashboardView(ListView):
 
 	def get_queryset(self):
 		return Workout.objects.filter(athlete__user=self.request.user).order_by('completed', '-created_at')
+
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		calendar = {}
+		today = datetime.now() + timedelta(days=-1)
+		x=today
+		in_thirty_days = today + timedelta(days=30)
+		print(today.day)
+		print(in_thirty_days.day)
+		events = Event.objects.filter(start_time__gte=today, end_time__lte=in_thirty_days).filter(Q(user=self.request.user) | Q(user=self.request.user.athlete.coach.user))
+		for item in events:
+			calendar[item.title]=[item.start_time, item.end_time]
+			#if today >= x and today<=in_thirty_days:
+			#	calendar[today] = True
+		events = Event.objects.filter(start_time__year=today.year, start_time__range=(today, in_thirty_days)).filter(Q(user=self.request.user) | Q(user=self.request.user.athlete.coach.user))
+		context['events'] = events
+		context['calendar'] = calendar
+		return context
+
 
 class SearchCoachView(ListView):
 	model = Coach

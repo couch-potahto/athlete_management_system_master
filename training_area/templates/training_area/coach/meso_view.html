@@ -1,7 +1,0 @@
-<h3>Prog detail</h3>
-<p>{{mesocycle.mesocycle_name}}</p>
-<form method="post" action="{% url 'coach:create_micro' pk=mesocycle.macrocycle.athlete.pk pk_2=mesocycle.macrocycle.pk pk_3=mesocycle.pk%}" >
-    {% csrf_token %}
-    <input type="submit" name="remove_coach" value="Add Microcycle" />
-</form>
-<p></p>

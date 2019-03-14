@@ -7,10 +7,15 @@ from django.views.generic import CreateView, ListView, UpdateView, DetailView
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
+from datetime import datetime
+from django.views import generic
+from django.utils.safestring import mark_safe
+
 
 from ..decorators import coach_required, athlete_required
 from ..forms import CoachSignUpForm
-from ..models import User, Coach, Athlete, Macrocycle, Mesocycle, Microcycle, Workout, Movement, ExertionPerceived, RepMax
+from ..models import User, Coach, Athlete, Macrocycle, Mesocycle, Microcycle, Workout, Movement, ExertionPerceived, RepMax, Event
+from ..utils import Calendar
 
 @method_decorator([login_required], name='dispatch')
 class LogView(ListView):
@@ -145,3 +150,4 @@ class SearchWorkoutView(ListView):
 			)
 
 		return result
+

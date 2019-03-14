@@ -7,6 +7,7 @@
             <div class="container has-text-centered">
                 <div class="columns is-vcentered">
                     <div class="column is-6">
+                      <div class = "card">
                     	<header class="card-header">
 					     <p class="card-header-title">
 					       Workload</p>
@@ -40,15 +41,17 @@
 				              </table>
 				             </div>
 				            </div>
+				        </div>
 				           </div>
                     
                     <div class="column is-4 is-offset-1">
+                      <div class = "box ">
                         <h1 class="title is-3 is-italic is-normal">
                             At a Glance
                         </h1>
                         {% for key, value in report.items %}
                         <strong>{{key}}</strong>
-                        <div class = "box">
+                        <div class = "box has-background-light">
                         	
                           <article class="media">
                           	<div class = "media-content">
@@ -81,6 +84,7 @@
                         
                    		</div>
                    		{%endfor%}
+                   	</div>
                         
                     </div>
                 </div>

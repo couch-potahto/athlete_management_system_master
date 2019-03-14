@@ -1,8 +1,0 @@
-<h2 class="mb-3">Confirm deletion</h2>
-<p class="lead">Are you sure you want to delete the quiz <strong>"{{ workout.workout_name }}"</strong>? There is no going back.</p>
-  <form method="post">
-  {% csrf_token %}
- <button type="submit" class="btn btn-danger btn-lg">Yes, I'm sure</button>
- <a href="{% url 'app:workout_detail' workout.athlete.pk workout.pk %}" class="btn btn-outline-secondary btn-lg" role="button">Nevermind</a>
-  </form>
-
