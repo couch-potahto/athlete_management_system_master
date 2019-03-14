@@ -1,0 +1,26 @@
+{% extends 'navbar.html' %}
+ {% load bulma_tags %}
+
+
+{% block content %}
+<div class = "section"></div>
+<div class = "container">
+	<div class = "column is-half is-offset-one-quarter">
+	<div class = "title has-text-centered">
+		Add an Event!
+
+	</div>
+	<a class="btn btn-info left" href="{% url 'app:calendar' %}">Back to Calendar </a>
+    <div class="box">
+
+	  <form method="post">
+       {% csrf_token %}
+       <table class="form form-table">
+        {{ form|bulma}}
+        <tr><td colspan="2"><button type="submit" class="button is-success"> Submit </button></td></tr>
+       </table>
+	  </form>
+	</div>
+  </div>
+</div>
+{% endblock %}

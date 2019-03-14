@@ -1,6 +1,26 @@
-{% extends 'navbar.html' %}
-{% block content %}
 
-{{ calendar }}
+{% extends 'navbar.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<head>
+
+    <title>AGOGE</title>
+    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">-->
+    <link rel="stylesheet" type="text/css" href="{% static 'calendar/css/styles.css' %}">
+  </head>
+</html>
+<div class = "section"></div>
+
+<div class = "container">
+	<div class="clearfix">
+		<a class="icon is-large is-pulled-left" href="{% url 'app:calendar' %}?{{ prev_month }}">
+		<i class="fas fa-angle-left"></i></a>
+		<a class="icon is-large is-pulled-right" href="{% url 'app:calendar' %}?{{ next_month }}"><i class="fas fa-angle-right"></i></a>
+		<a class="icon is-pulled-right is-large is-clearfix" href="{% url 'app:event_new' %}"><i class="fas fa-plus"></i></a>
+	</div>
+	{{ calendar }}
+
+</div>
 
 {% endblock %}

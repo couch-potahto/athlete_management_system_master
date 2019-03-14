@@ -37,14 +37,14 @@
 
 <nav class="navbar" role="navigation" aria-label="main navigation">
   <div class="navbar-brand">
-    
+
     {% if request.user.is_authenticated and request.user.is_coach %}
       <a class="navbar-item brand-text" href="{% url 'coach:dashboard' %}"><img src="{% static 'images/gen_boutons.png'%}" alt="Agoge"></a>
       {% else %}
       <a class="navbar-item brand-text" href="{% url 'athlete:dashboard' %}"><img src="{% static 'images/gen_boutons.png'%}" alt="Agoge"></a>
         {% endif %}
       </a>
-    
+
 
 
     <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample" onclick="document.querySelector('.navbar-menu').classList.toggle('is-active');">
@@ -54,7 +54,7 @@
     </a>
   </div>
 
-  <div id="navbarBasicExample" class="navbar-menu"">
+  <div id="navbarBasicExample" class="navbar-menu">
     <div class="navbar-start">
 
 
@@ -67,11 +67,11 @@
           More
         </a>
 
-        <!--<div class="navbar-dropdown">
-          <a href="{% url 'app:view_rpe' pk=request.user.id chart_type='RTS' %}" class="navbar-item">
-            RPE Chart
+        <div class="navbar-dropdown">
+          <a href="{% url 'app:calendar' %}" class="navbar-item">
+            Your Calendar
           </a>
-          <a class="navbar-item">
+          <!--<a class="navbar-item">
             Jobs
           </a>
           <a class="navbar-item">
@@ -80,15 +80,15 @@
           <hr class="navbar-divider">
           <a class="navbar-item">
             Report an issue
-          </a>
-        </div>-->
+          </a>-->
+        </div>
       </div>
     </div>
 
     <div class="navbar-item">
       {% if request.user.is_authenticated and request.user.is_athlete %}
       <form method = "GET" action="{% url 'app:search_coach' %}">
-      <div class="field has-addons">        
+      <div class="field has-addons">
         <div class="control">
           <input name="search_box" class="input" type="text"  placeholder="Find a Coach">
         </div>
@@ -103,7 +103,7 @@
         </form>
         {% else %}
         <form method = "GET" action="{% url 'app:search_athlete' request.user.id %}">
-          <div class="field has-addons"> 
+          <div class="field has-addons">
             <div class="control">
               <input name="search_box" class="input" type="text" name="search_box" placeholder="Find an Athlete">
             </div>
@@ -115,7 +115,7 @@
         </div>
         </form>
 
-        
+
         {% endif %}
 
       </div>

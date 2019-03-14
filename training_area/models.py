@@ -166,10 +166,14 @@ class ExertionPerceived(models.Model):
 # Create your models here.
 
 class Event(models.Model):
-	day = models.DateField()
 	title = models.CharField(max_length=200)
 	description = models.TextField(blank = True, null = True)
 	start_time = models.DateTimeField()
 	end_time = models.DateTimeField()
 	user = models.ForeignKey(User, related_name = 'user_calendar',
 		on_delete = models.CASCADE, null=True, blank=True)
+
+	@property
+	def get_html_url(self):
+		url = reverse('app:event_edit', args=(self.id,))
+		return f'<a href="{url}"> {self.user}: {self.title} </a>'

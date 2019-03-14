@@ -39,7 +39,7 @@
             <input id="search_box" class="input" type="text" name="search_box" placeholder="Search">
           </p>
           <div class="control">
-            
+
             <button class="button" type = "submit">Search</button>
             </form>
           </div>
@@ -120,7 +120,7 @@
 
                   <table>
                     {% for workout in microcycle.micro.all %}
-                    
+
                     <tr><td>
                       <a href="{% url 'app:workout_detail' pk=workout.athlete.pk pk_2=workout.pk %}">{{workout.workout_name}}</a>
                     </tr></td>

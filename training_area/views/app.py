@@ -4,16 +4,20 @@ from functools import reduce
 import operator
 from django.utils.decorators import method_decorator
 from django.views.generic import CreateView, ListView, UpdateView, DetailView
+from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
-from datetime import datetime
+from datetime import datetime, timedelta, date
 from django.views import generic
 from django.utils.safestring import mark_safe
+from django.urls import reverse
+from django import template
+import calendar
 
 
 from ..decorators import coach_required, athlete_required
-from ..forms import CoachSignUpForm
+from ..forms import CoachSignUpForm, EventForm
 from ..models import User, Coach, Athlete, Macrocycle, Mesocycle, Microcycle, Workout, Movement, ExertionPerceived, RepMax, Event
 from ..utils import Calendar
 
@@ -34,7 +38,7 @@ class LogView(ListView):
 
 		return context
 
-@method_decorator([login_required], name='dispatch')		
+@method_decorator([login_required], name='dispatch')
 class MicrocycleDetail(DetailView):
 	model = Microcycle
 	context_object_name = 'microcycle'
@@ -151,3 +155,58 @@ class SearchWorkoutView(ListView):
 
 		return result
 
+register = template.Library()
+@register.inclusion_tag("training_area/tags/my_calendar.html")
+class CalendarView(generic.ListView):
+    model = Event
+    template_name = 'training_area/app/calendar.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # use today's date for the calendar
+        d = get_date(self.request.GET.get('month', None))
+
+        # Instantiate our calendar class with today's year and date
+        cal = Calendar(self.request.user, d.year, d.month)
+
+        # Call the formatmonth method, which returns our calendar as a table
+        html_cal = cal.formatmonth(withyear=True)
+        context['calendar'] = mark_safe(html_cal)
+        d = get_date(self.request.GET.get('month', None))
+        context['prev_month'] = prev_month(d)
+        context['next_month'] = next_month(d)
+        return context
+
+def get_date(req_day):
+    if req_day:
+        year, month = (int(x) for x in req_day.split('-'))
+        return date(year, month, day=1)
+    return datetime.today()
+
+def prev_month(d):
+    first = d.replace(day=1)
+    prev_month = first - timedelta(days=1)
+    month = 'month=' + str(prev_month.year) + '-' + str(prev_month.month)
+    return month
+
+def next_month(d):
+    days_in_month = calendar.monthrange(d.year, d.month)[1]
+    last = d.replace(day=days_in_month)
+    next_month = last + timedelta(days=1)
+    month = 'month=' + str(next_month.year) + '-' + str(next_month.month)
+    return month
+
+def event(request, event_id=None):
+    instance = Event()
+    if event_id:
+        instance = get_object_or_404(Event, pk=event_id)
+    else:
+        instance = Event()
+
+    form = EventForm(request.POST or None, instance=instance)
+    if request.POST and form.is_valid():
+        event = form.save()
+        event.user = request.user
+        event.save()
+        return HttpResponseRedirect(reverse('app:calendar'))
+    return render(request, 'training_area/app/event.html', {'form': form})
