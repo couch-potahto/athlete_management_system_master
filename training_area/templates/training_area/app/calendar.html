@@ -2,16 +2,7 @@
 {% extends 'navbar.html' %}
 {% load static %}
 {% block content %}
-<!DOCTYPE html>
-<head>
-
-    <title>AGOGE</title>
-    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">-->
-    <link rel="stylesheet" type="text/css" href="{% static 'calendar/css/styles.css' %}">
-  </head>
-</html>
 <div class = "section"></div>
-
 <div class = "container">
 	<div class="clearfix">
 		<a class="icon is-large is-pulled-left" href="{% url 'app:calendar' %}?{{ prev_month }}">

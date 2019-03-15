@@ -9,6 +9,7 @@ from decimal import *
 class User(AbstractUser):
 	is_athlete = models.BooleanField(default = False)
 	is_coach = models.BooleanField(default = False)
+	email = models.EmailField(max_length=255, blank=True)
 
 class Coach(models.Model):
 	user = models.OneToOneField(User, on_delete = models.CASCADE, primary_key = True)

@@ -5,25 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>AGOGE</title>
     <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">-->
+    <!--<link rel="stylesheet" type="text/css" href="{% static 'bulma/css/landing.css' %}">-->
     <link rel="stylesheet" type="text/css" href="{% static 'bulma/css/style.css' %}">
+    
   </head>
 </html>
 
+<body>
+  <section class="hero is-dark is-fullheight">
+    <div class="hero-head">
+<div class="section"></div>
 
-  <section class="section">
-    
-    <div class="container has-text-centered">
-      <img src="{% static 'images/agoge.png'%}" alt="Agoge">
-      <p class="subtitle">
-        Guiding the Strong
-      </p>
-    </div>
-  <section class ="section">
-    <div class="container has-text-centered">
+  <div class="container has-text-centered">
+    <div class = "column is-4 is-offset-4">
+      <div class="box">
+      
+        <img src="{% static 'images/agoge.png'%}" alt="Agoge">
+      
+        <p class="subtitle has-text-weight-bold has-text-dark ">
+          Guiding You
+        </p>
+       
+    <section class ="section">
       <a href="{% url 'login' %}" class="button" role="button">Log in</a>
       <a href="{% url 'signup' %}" class="button is-success" role="button">Sign Up</a>
-    </div>
-  </section>
-  </section>
-
-
+    </section>
+  </div>
+  </div>
+  </div>
+</div>
+</div>
+</section>
+</body>

@@ -10,7 +10,7 @@ from training_area.models import Coach, Athlete, Team, User, Movement, Workout, 
 class AthleteSignUpForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = User
-        fields = ['username', 'first_name', 'last_name']
+        fields = ['username', 'first_name', 'last_name', 'email']
 
     @transaction.atomic
     def save(self):
@@ -27,7 +27,7 @@ class AthleteSignUpForm(UserCreationForm):
 class CoachSignUpForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = User
-        fields = ['username', 'first_name', 'last_name']
+        fields = ['username', 'first_name', 'last_name', 'email']
 
     @transaction.atomic
     def save(self):
