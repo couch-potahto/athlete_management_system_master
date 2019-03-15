@@ -84,25 +84,29 @@
 
       <div class = "column is-3">
         <div class = "box">
-          <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="eventsbar" onclick="document.querySelector('.all-events').classList.toggle('is-active');">
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-    </a>
-    <div id="eventsbar" class="all-events">
+          
           <p class = "title is-size-5 has-text-centered all-events">Upcoming Events</p>
-          {% for day, value in calendar.items %}
+          
+          <table class="table is-fullwidth is-striped">
+            <thead>
+              <tr>
+                <th>Dates</th>
+                <th>Event</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for day, value in calendar.items %}
+              <tr>
+              <td class = "subtitle is-size-6">{{value.0.day}}/{{value.0.month}}-{{value.1.day}}/{{value.1.month}}</td>
+              <td>{{day}}</td>
+            </tr>
+               {% endfor %}
+            </tbody>
 
-            <div class = "box">
-              <p class = "subtitle is-size-6">{{value.0.day}}/{{value.0.month}}-{{value.1.day}}/{{value.1.month}}:</p>
-              <p class = "title has-text-centered is-size-6">{{day}}</p>
-            <!--{{day| date:"l"}}{{value}}-->
+         
+        </table>
+      
 
-            </div>
-
-          {% endfor %}
-
-          It is {% now "jS F Y H:i" %}
 
         </div>
       </div>
@@ -113,6 +117,6 @@
   </div>
 </section>
 </div>
-
+          It is {% now "jS F Y H:i" %}
 {% endblock %}
 

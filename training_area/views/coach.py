@@ -12,10 +12,12 @@ from django import forms
 from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 from decimal import Decimal
+from datetime import datetime, timedelta
+from django.db.models import Q
 
 from ..decorators import coach_required
 from ..forms import CoachSignUpForm, AddWoToMicroForm, WorkoutForm, EditMovementFormCoach, AddRepMaxForm, AddMovementFormCoach, AddMicroToMacroForm
-from ..models import User, Coach, Athlete, Macrocycle, Mesocycle, Microcycle, Workout, Movement, ExertionPerceived, RepMax
+from ..models import User, Coach, Athlete, Macrocycle, Mesocycle, Microcycle, Workout, Movement, ExertionPerceived, RepMax, Event
 
 
 class CoachSignUpView(CreateView):
@@ -41,6 +43,24 @@ class DashboardView(ListView):
 
     def get_queryset(self):
         return Athlete.objects.filter(coach__user=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        calendar = {}
+        today = datetime.now() + timedelta(days=-1)
+        x=today
+        in_thirty_days = today + timedelta(days=30)
+        events = Event.objects.filter(end_time__lte=in_thirty_days)
+        all_athletes = self.request.user.coach.coach.all()
+        print(all_athletes)
+        if events:
+            for athlete in all_athletes:
+                events=events.filter(Q(user=self.request.user) | Q(user=athlete.user))
+            for item in events:
+                calendar[item.title]=[item.start_time, item.end_time, item.user]
+            context['calendar'] = calendar
+
+        return context
 
 @method_decorator([login_required, coach_required], name='dispatch')
 class AddWorkoutView(CreateView):

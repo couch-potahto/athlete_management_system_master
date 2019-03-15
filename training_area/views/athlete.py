@@ -46,9 +46,7 @@ class DashboardView(ListView):
 		today = datetime.now() + timedelta(days=-1)
 		x=today
 		in_thirty_days = today + timedelta(days=30)
-		print(today.day)
-		print(in_thirty_days.day)
-		events = Event.objects.filter(start_time__gte=today, end_time__lte=in_thirty_days)
+		events = Event.objects.filter(end_time__lte=in_thirty_days)
 		if events:
 			events=events.filter(Q(user=self.request.user) | Q(user=self.request.user.athlete.coach.user))
 			for item in events:
