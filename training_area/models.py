@@ -104,6 +104,11 @@ class Workout(models.Model):
 	def __str__(self):
 		return self.workout_name
 
+	@property
+	def get_html_url(self):
+		url = reverse('app:workout_detail', args=(self.athlete.user.id, self.id))
+		return f'<a href="{url}"> {self.workout_name} </a>'
+
 class Movement(models.Model):
 	movement_name = models.CharField(max_length = 255,blank = False, verbose_name= _('Movement Name'))
 	num_reps = models.SmallIntegerField(verbose_name= _('Repetitions'))

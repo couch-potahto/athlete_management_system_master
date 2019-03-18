@@ -6,6 +6,8 @@ urlpatterns = [
 
     path('app/', include(([
         path('user=<int:pk>/log', app.LogView.as_view(), name='log_view'),
+        path('workout=<int:workout_id>/add_comment', app.add_comment, name='add_comment'),
+        path('comment=<int:comment_id>/delete_comment', app.delete_comment, name='delete_comment'),
         path('<int:notif_id>/delete_notification', app.delete_notification, name='delete_notif'),
         path('delete_all_notifications', app.delete_all_notifications, name='delete_all_notif'),
         path('user=<int:pk>/workout=<int:pk_2>', app.WorkoutDetail.as_view(), name='workout_detail'),

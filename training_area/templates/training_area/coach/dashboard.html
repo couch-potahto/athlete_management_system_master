@@ -120,7 +120,7 @@
                 {% autoescape off %}
                 <td class = "subtitle is-size-7">{{message.title}}</td>
                 {% endautoescape %}
-                <td><button class = "button is-small is-danger" href="{% url 'app:delete_notif' notif_id=message.pk %}"><i class="fas fa-trash-alt"></i></butoon></td>
+                <td><a class = "button is-size-7 is-danger" href="{% url 'app:delete_notif' notif_id=message.pk %}"><i class="fas fa-trash-alt"></i></a></td>
               </tr>
               {% endfor %}
             </tbody>

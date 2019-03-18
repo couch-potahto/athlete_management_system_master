@@ -5,7 +5,7 @@ from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 
 
-from training_area.models import Coach, Athlete, Team, User, Movement, Workout, Microcycle, RepMax, Event
+from training_area.models import Coach, Athlete, Team, User, Movement, Workout, Microcycle, RepMax, Event, Comment
 
 class AthleteSignUpForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
@@ -122,6 +122,12 @@ class EventForm(ModelForm):
     # input_formats to parse HTML5 datetime-local input to datetime field
     self.fields['start_time'].input_formats = ('%Y-%m-%dT%H:%M',)
     self.fields['end_time'].input_formats = ('%Y-%m-%dT%H:%M',)
+
+
+class AddCommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ('content',)
 '''class ProfileForm(forms.ModelForm):
     class Meta:
         model = Coach

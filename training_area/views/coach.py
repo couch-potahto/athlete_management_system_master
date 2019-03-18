@@ -389,7 +389,6 @@ def add_micro_to_macro(request, athlete_id, pk_2):
 def edit_movement_quick(request, movement_id):
     movement = get_object_or_404(Movement, pk=movement_id)
     if request.POST:
-        print('<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>')
         form = EditMovementFormCoach(request.POST, instance=movement)
         print(request.POST['rm'])
         if form.is_valid():
