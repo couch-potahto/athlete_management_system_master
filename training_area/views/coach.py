@@ -113,6 +113,7 @@ class AddMovementViewTest(CreateView):
 
         movement=Movement.objects.create(
                 movement_name=form.cleaned_data['movement_name'],
+                kg=form.cleaned_data['kg'],
                 num_reps=form.cleaned_data['num_reps'],
                 percentage=form.cleaned_data['percentage'],
                 is_backoff=form.cleaned_data['is_backoff'],
