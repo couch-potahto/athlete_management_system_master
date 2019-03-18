@@ -11,8 +11,7 @@
               </header>
             <div class="card-content is-hidden">
                 <div class="content">
-                  <p><strong>1)</strong> Quick Save only works on a single row! To edit the entire workout, it would be wiser to use 'Mass Edit Workout'</p>
-                  <p><strong>2)</strong> The Blue Divide Button (athletes only) require you to key in your load done and reps done before
+                  <p><strong>1)</strong> The Blue Divide Button (athletes only) require you to key in your load done and reps done before
                   it can calculate your backoff sets</p>
                 </div>
               </div>
@@ -259,7 +258,9 @@
  	<a href="{% url 'coach:add_movement_test' pk=workout.athlete.pk pk_2=workout.pk %}" class="card-footer-item" role="button">Add Movement</a>
 
 
-  <a href="{% url 'coach:edit_workout' workout_id=workout.pk%}" class="card-footer-item" role="button">Mass Edit Workout</a>
+  <a href="{% url 'coach:edit_workout' workout_id=workout.pk%}" class="card-footer-item" role="button">Edit Workout Name</a>
+
+
 
  {% endif %}
  {% if user.is_authenticated and user.is_athlete %}
@@ -273,5 +274,55 @@
 {% endif %}
 </footer>
 </div>
+
+<div class = "section">
+  <div class = "title is-4">Comments:</div>
+  <form action="{% url 'app:add_comment' workout.pk %}" method="post">
+      {% csrf_token %}
+      
+          <div class="field is-small">
+          <div class="control">
+            <input name="content" class="textarea" type="text">
+          </div>
+          </div>
+          <button class = 'button is-small is-success' type="submit" value="Save">
+          <span class="icon is-small ">
+            <i class="fas fa-check"></i>
+          </span>
+          <span>Add Comment</span>
+        </button>
+        </form>
+{% if comments %}
+
+{% for comment in comments %}
+<div class = "column is-7">
+  <div class = "box">
+<article class="media">
+  <div class="media-content">
+    <div class="content">
+      <p>
+        <strong>{{comment.creator}}</strong> says:
+        <br>
+        {{comment.content}}
+      </p>
+      <p class = "subtitle is-7">
+        {{comment.created_at}}
+      </p>
+    </div>
+  </div>
+  <div class="media-right">
+    <a href="{% url 'app:delete_comment' comment_id=comment.pk %}" class="buttons is-danger float-right">
+      
+        <i class="fas fa-eraser"></i>
+      
+    </a>
+  </div>
+  </article>
 </div>
+</div>
+  {%endfor%}
+{% endif %}
+
+</div>
+
 {% endblock %}

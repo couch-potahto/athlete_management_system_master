@@ -82,6 +82,11 @@ class Microcycle(models.Model):
 	def __str__(self):
 		return self.microcycle_name
 
+	@property
+	def get_html_url(self):
+		url = reverse('app:micro_detail', args=(self.athlete.user.id, self.id))
+		return f'<a href="{url}"> {self.microcycle_name} </a>'
+
 class Workout(models.Model):
 	workout_name = models.CharField(max_length = 255, blank = False, verbose_name= _('Workout Name'))
 	alert = models.BooleanField(default = False, null = True)
@@ -98,6 +103,11 @@ class Workout(models.Model):
 
 	def __str__(self):
 		return self.workout_name
+
+	@property
+	def get_html_url(self):
+		url = reverse('app:workout_detail', args=(self.athlete.user.id, self.id))
+		return f'<a href="{url}"> {self.workout_name} </a>'
 
 class Movement(models.Model):
 	movement_name = models.CharField(max_length = 255,blank = False, verbose_name= _('Movement Name'))
@@ -178,3 +188,18 @@ class Event(models.Model):
 	def get_html_url(self):
 		url = reverse('app:event_edit', args=(self.id,))
 		return f'<a href="{url}"> {self.user}: {self.title} </a>'
+
+class Notifications(models.Model):
+	created_at = models.DateTimeField(auto_now_add=True, null=True)
+	title = models.CharField(max_length=150, verbose_name="Title")
+	content = models.TextField(verbose_name="Content", blank = True)
+	sender = models.ForeignKey(User, related_name = "notif_send", null = True, on_delete=models.CASCADE)
+	reciever = models.ForeignKey(User, related_name = "notif_recieve", null = True, on_delete=models.CASCADE)
+
+class Comment(models.Model):
+	created_at = models.DateTimeField(auto_now_add=True, null=True)
+	updated_at = models.DateTimeField(auto_now=True)
+	workout = models.ForeignKey(Workout, related_name = 'comments',
+		on_delete = models.CASCADE, null = True)
+	creator = models.ForeignKey(User, related_name = "user_comments", null = True, on_delete=models.CASCADE)
+	content = models.TextField(verbose_name="Content")

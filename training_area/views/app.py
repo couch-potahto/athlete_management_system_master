@@ -13,12 +13,13 @@ from django.views import generic
 from django.utils.safestring import mark_safe
 from django.urls import reverse
 from django import template
+from django.core.paginator import Paginator
 import calendar
 
 
 from ..decorators import coach_required, athlete_required
-from ..forms import CoachSignUpForm, EventForm
-from ..models import User, Coach, Athlete, Macrocycle, Mesocycle, Microcycle, Workout, Movement, ExertionPerceived, RepMax, Event
+from ..forms import CoachSignUpForm, EventForm, AddCommentForm
+from ..models import User, Coach, Athlete, Macrocycle, Mesocycle, Microcycle, Workout, Movement, ExertionPerceived, RepMax, Event, Notifications, Comment
 from ..utils import Calendar
 
 @method_decorator([login_required], name='dispatch')
@@ -26,6 +27,7 @@ class LogView(ListView):
 	model = Athlete
 	context_object_name = 'all_workouts'
 	template_name = 'training_area/app/log_view.html'
+	paginate_by = 5
 
 	def get_queryset(self):
 		return Workout.objects.filter(athlete__user__id=self.kwargs['pk']).order_by('completed', '-created_at')
@@ -33,7 +35,9 @@ class LogView(ListView):
 	def get_context_data(self, **kwargs):
 		context = super(LogView, self).get_context_data(**kwargs)
 		context['pk'] = self.kwargs['pk']
-		context['all_microcycles'] = Microcycle.objects.filter(athlete__user__id=self.kwargs['pk']).order_by('id')
+		#p = Paginator(Microcycle.objects.filter(athlete__user__id=self.kwargs['pk']).order_by('-id'), self.paginate_by)
+		#context['lolol'] = p.page(context['page_obj'].number)
+		context['all_microcycles'] = Microcycle.objects.filter(athlete__user__id=self.kwargs['pk']).order_by('-id')
 		context['all_macrocycles'] = Macrocycle.objects.filter(athlete__user__id=self.kwargs['pk'])
 
 		return context
@@ -72,6 +76,7 @@ class WorkoutDetail(DetailView):
 		context = super(WorkoutDetail, self).get_context_data(**kwargs)
 		context['movements'] = Movement.objects.filter(workout=self.get_object()).order_by('id')
 		context['rm'] = RepMax.objects.filter(athlete__user_id=self.kwargs['pk'])
+		context['comments'] = Comment.objects.filter(workout__id=self.kwargs['pk_2']).order_by('-created_at')
 		return context
 
 @method_decorator([login_required], name='dispatch')
@@ -137,7 +142,7 @@ class SearchAthleteView(ListView):
 
 		return result
 
-
+@method_decorator([login_required], name='dispatch')
 class SearchWorkoutView(ListView):
 	model = Workout
 	context_object_name = 'relevant_workouts'
@@ -154,6 +159,51 @@ class SearchWorkoutView(ListView):
 			)
 
 		return result
+
+
+
+def delete_notification(request, notif_id):
+	notif = get_object_or_404(Notifications, pk=notif_id)
+	person = notif.reciever
+	notif.delete()
+	if person.is_coach:
+		return redirect('coach:dashboard')
+	else:
+		return redirect('athlete:dashboard')
+
+def delete_all_notifications(request):
+	notif = Notifications.objects.filter(reciever=request.user)
+	for item in notif:
+		item.delete()
+	if request.user.is_coach:
+		return redirect('coach:dashboard')
+	else:
+		return redirect('athlete:dashboard')
+
+def add_comment(request, workout_id):
+	if request.POST:
+		form = AddCommentForm(request.POST)
+		if form.is_valid():
+			comment = form.save()
+			comment.workout = Workout.objects.filter(id=workout_id)[0]
+			comment.creator = request.user
+			comment.save()
+			message = comment.creator.username + " has added a comment to " + comment.workout.get_html_url
+			if comment.creator.is_coach:
+				notification = Notifications(title=message, sender=comment.creator, reciever=comment.workout.athlete.user)
+			else:
+				notification = Notifications(title=message, sender=comment.creator, reciever=comment.creator.athlete.coach.user)
+			notification.save()
+			messages.success(request, 'The Comment was Created!')
+		return redirect('app:workout_detail', comment.workout.athlete.pk, comment.workout.pk)
+
+def delete_comment(request, comment_id):
+	print(comment_id)
+	comment = get_object_or_404(Comment, pk=comment_id)
+	workout = comment.workout
+	comment.delete()
+	messages.success(request, "The Comment was Deleted!")
+	return redirect('app:workout_detail', workout.athlete.pk, workout.pk)
 
 register = template.Library()
 @register.inclusion_tag("training_area/tags/my_calendar.html")
@@ -195,18 +245,29 @@ def next_month(d):
     next_month = last + timedelta(days=1)
     month = 'month=' + str(next_month.year) + '-' + str(next_month.month)
     return month
-
+    
+@method_decorator([login_required], name='dispatch')
 def event(request, event_id=None):
-    instance = Event()
-    if event_id:
-        instance = get_object_or_404(Event, pk=event_id)
-    else:
-        instance = Event()
+	instance = Event()
+	if event_id:
+		instance = get_object_or_404(Event, pk=event_id)
+	else:
+		instance = Event()
 
-    form = EventForm(request.POST or None, instance=instance)
-    if request.POST and form.is_valid():
-        event = form.save()
-        event.user = request.user
-        event.save()
-        return HttpResponseRedirect(reverse('app:calendar'))
-    return render(request, 'training_area/app/event.html', {'form': form})
+	form = EventForm(request.POST or None, instance=instance)
+	if request.POST and form.is_valid():
+		event = form.save()
+		event.user = request.user
+		event.save()
+		message = event.user.username + " has added an event: " + event.get_html_url
+		if event.user.is_coach:
+			for athlete in event.user.coach.coach.all():
+				notification = Notifications(title=message, sender=event.user, reciever=athlete.user)
+				notification.save()
+		else:
+			notification = Notifications(title=message, sender=event.user, reciever=event.user.athlete.coach.user)
+			
+		notification.save()
+		return HttpResponseRedirect(reverse('app:calendar'))
+		messages.success(request, "Event has been added!")
+	return render(request, 'training_area/app/event.html', {'form': form})

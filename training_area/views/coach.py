@@ -16,8 +16,8 @@ from datetime import datetime, timedelta
 from django.db.models import Q
 
 from ..decorators import coach_required
-from ..forms import CoachSignUpForm, AddWoToMicroForm, WorkoutForm, EditMovementFormCoach, AddRepMaxForm, AddMovementFormCoach, AddMicroToMacroForm
-from ..models import User, Coach, Athlete, Macrocycle, Mesocycle, Microcycle, Workout, Movement, ExertionPerceived, RepMax, Event
+from ..forms import CoachSignUpForm, AddWoToMicroForm, WorkoutForm, EditMovementFormCoach, AddRepMaxForm, AddMovementFormCoach, AddMicroToMacroForm, MicroForm
+from ..models import User, Coach, Athlete, Macrocycle, Mesocycle, Microcycle, Workout, Movement, ExertionPerceived, RepMax, Event, Notifications
 
 
 class CoachSignUpView(CreateView):
@@ -52,15 +52,16 @@ class DashboardView(ListView):
         in_thirty_days = today + timedelta(days=30)
         events = Event.objects.filter(end_time__lte=in_thirty_days)
         all_athletes = self.request.user.coach.coach.all()
-        print(all_athletes)
         if events:
             for athlete in all_athletes:
                 events=events.filter(Q(user=self.request.user) | Q(user=athlete.user))
             for item in events:
                 calendar[item.title]=[item.start_time, item.end_time, item.user]
             context['calendar'] = calendar
-
+        notifications = Notifications.objects.filter(reciever=self.request.user)
+        context['notif'] = notifications
         return context
+
 
 @method_decorator([login_required, coach_required], name='dispatch')
 class AddWorkoutView(CreateView):
@@ -113,6 +114,7 @@ class AddMovementViewTest(CreateView):
 
         movement=Movement.objects.create(
                 movement_name=form.cleaned_data['movement_name'],
+                kg=form.cleaned_data['kg'],
                 num_reps=form.cleaned_data['num_reps'],
                 percentage=form.cleaned_data['percentage'],
                 is_backoff=form.cleaned_data['is_backoff'],
@@ -166,6 +168,32 @@ def duplicate(request, movement_id):
     copy_movement.save()
     messages.success(request, "Duplicated!")
     return redirect('app:workout_detail', copy_movement.workout.athlete.pk, copy_movement.workout.pk)
+
+@login_required
+@coach_required
+def duplicate_microcycle(request, microcycle_id):
+    copy_micro = get_object_or_404(Microcycle, pk=microcycle_id)
+    all_workouts = copy_micro.micro.all().order_by('created_at')
+    copy_micro.pk = None
+    copy_micro.save()
+    
+    print(all_workouts)
+    for workout in all_workouts:
+        movements = workout.work.all().order_by('id')
+        copy_workout = get_object_or_404(Workout, pk=workout.pk)
+        copy_workout.pk = None
+        copy_workout.microcycle=copy_micro
+        copy_workout.completed=False
+        copy_workout.save()
+        for move in movements:
+            copy_move = get_object_or_404(Movement, pk=move.pk)
+            copy_move.pk = None
+            copy_move.kg_done = 0
+            copy_move.num_reps_done = 0
+            copy_move.workout = copy_workout
+            copy_move.save()
+    messages.success(request, "Duplicated!")
+    return redirect('app:micro_detail', copy_micro.athlete.pk, copy_micro.pk)
 
 @login_required
 @coach_required
@@ -231,6 +259,10 @@ class CreateMicrocycleView(CreateView):
         microcycle.athlete = Athlete.objects.filter(user__id=self.get_context_data()['pk'])[0]
         microcycle.coach = microcycle.athlete.coach
         microcycle.save()
+        message = microcycle.coach.user.username + " has updated " + microcycle.get_html_url
+        notification = Notifications(title=message, sender=microcycle.coach.user, reciever=microcycle.athlete.user)
+        print(notification)
+        notification.save()
         messages.success(self.request, 'Micro Created!')
         return redirect('coach:add_wo_to_micro', microcycle.athlete.pk, microcycle.pk)
 
@@ -254,26 +286,28 @@ class CreateMacrocycleView(CreateView):
         messages.success(self.request, 'Macro Created!')
         return redirect('coach:add_micro_to_macro', macrocycle.athlete.pk, macrocycle.pk)
 
+@login_required
+@coach_required
+def edit_micro_name(request, microcycle_id):
+    micro = get_object_or_404(Microcycle, pk=microcycle_id)
+    if request.method == 'POST':
+        print(request)
+        form = MicroForm(request.POST, instance=micro)
+        form.save()
+    return redirect('app:micro_detail', micro.athlete.pk, micro.pk)
 
 @login_required
 @coach_required
 def edit_workout(request, workout_id):
     workout = get_object_or_404(Workout, pk=workout_id)
-    MovementFormSet = inlineformset_factory(
-        Workout,
-        Movement,
-        fields=('movement_name', 'percentage', 'kg', 'num_reps', 'rpe'),
-        can_delete=False,
-        extra=0
-    )
     if request.method == 'POST':
 
         form = WorkoutForm(request.POST, instance=workout)
-        formset=MovementFormSet(request.POST, request.FILES, instance=workout)
-        if formset.is_valid():
+        if form.is_valid():
             print('<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
             #form.save()
-            formset.save()
+            form.save()
+            
             messages.success(request, 'Workout changed!')
             return redirect('app:workout_detail', workout.athlete.pk, workout.pk)
         else:
@@ -282,10 +316,8 @@ def edit_workout(request, workout_id):
     else:
 
         form = WorkoutForm(instance=workout)
-        formset=MovementFormSet(instance=workout)
 
     return render(request, 'training_area/coach/workout_edit_form.html', {
-        'formset': formset,
         'form': form,
         'workout': workout
     })
@@ -357,7 +389,6 @@ def add_micro_to_macro(request, athlete_id, pk_2):
 def edit_movement_quick(request, movement_id):
     movement = get_object_or_404(Movement, pk=movement_id)
     if request.POST:
-        print('<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>')
         form = EditMovementFormCoach(request.POST, instance=movement)
         print(request.POST['rm'])
         if form.is_valid():

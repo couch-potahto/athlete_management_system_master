@@ -4,13 +4,36 @@
 
 
 <div class="hero-body">
+          <div class = "column is-half is-offset-one-quarter">
+            {% if request.user.is_coach and request.user.is_authenticated %}
+              <label><strong>Microcycle Name</strong></label>
+              <form action="{% url 'coach:edit_micro_name' microcycle_id=microcycle.pk %}" method="post">
+                {%csrf_token%}
+                <div class="field has-addons">
+                <p class="control is-expanded">
+                  <input name="microcycle_name" class="input" type="test" value="{{microcycle.microcycle_name}}">
+                </p>
+              <button class = 'button is-right' type="submit" value="Save">
+                <span class="icon is-small">
+                  <i class="fas fa-check"></i>
+                 </span>
+                <span>Save</span>
+               </button>
+               </form>
+               {%else%}
+               <div class = "title has-text-centered">
+                {{microcycle.microcycle_name}}
+              </div>
+              {% endif %}
+            </div>
+            </div>
+            
             <div class="container has-text-centered">
-                <div class="columns is-vcentered">
-                    <div class="column is-6">
+                <div class="columns">
+                    <div class="column is-5 is-offset-1">
                       <div class = "card">
                     	<header class="card-header">
-					     <p class="card-header-title">
-					       Workload</p>
+					     <p class="card-header-title">Workload</p>
 					    </header>
                       <div class="card-table">
           				<div class="content">
@@ -44,7 +67,7 @@
 				        </div>
 				           </div>
                     
-                    <div class="column is-4 is-offset-1">
+                    <div class="column is-4">
                       <div class = "box ">
                         <h1 class="title is-3 is-italic is-normal">
                             At a Glance
