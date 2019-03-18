@@ -6,6 +6,8 @@ urlpatterns = [
 
     path('app/', include(([
         path('user=<int:pk>/log', app.LogView.as_view(), name='log_view'),
+        path('<int:notif_id>/delete_notification', app.delete_notification, name='delete_notif'),
+        path('delete_all_notifications', app.delete_all_notifications, name='delete_all_notif'),
         path('user=<int:pk>/workout=<int:pk_2>', app.WorkoutDetail.as_view(), name='workout_detail'),
         path('user=<int:pk>/micro=<int:pk_2>', app.MicrocycleDetail.as_view(), name='micro_detail'),
         path('<str:slug>/profile', app.ProfileView.as_view(), name='profile_view'),
@@ -15,6 +17,7 @@ urlpatterns = [
         path('calendar', app.CalendarView.as_view(), name='calendar'),
         path('calendar/new_event', app.event, name='event_new'),
         path('calendar/event=<int:event_id>', app.event, name='event_edit'),
+
         #path('testtest', app.testtest, name='testtest'),
         path('user=<int:pk>/chart_type=<str:chart_type>', app.RPEView.as_view(), name='view_rpe'),
     ], 'training_area'), namespace='app')),
@@ -40,8 +43,9 @@ urlpatterns = [
         path('dashboard/', coach.DashboardView.as_view(), name='dashboard'),
         path('<str:slug>/', coach.CoachDetailView.as_view(), name = 'coach_detail'),
         path('athlete=<int:pk>/add_workout', coach.AddWorkoutView.as_view(), name = 'add_workout'),
-        #path('athlete=<int:pk>/workout=<int:pk_2>/add_movement', coach.AddMovementView.as_view(), name = 'add_movement'),
+        path('<int:microcycle_id>/edit_micro_name', coach.edit_micro_name, name = 'edit_micro_name'),
         path('duplicate/<int:movement_id>', coach.duplicate, name = 'duplicate'),
+        path('duplicate_micro/<int:microcycle_id>', coach.duplicate_microcycle, name = 'duplicate_micro'),
         path('delete/<int:movement_id>', coach.delete_movement, name = 'delete'),
 
         path('edit/<int:workout_id>', coach.edit_workout, name = 'edit_workout'),

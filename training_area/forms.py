@@ -49,6 +49,14 @@ class WorkoutForm(forms.ModelForm):
         "workout_name": _("Workout Name"),
     }
 
+class MicroForm(forms.ModelForm):
+    class Meta:
+        model = Microcycle
+        fields = ('microcycle_name',)
+        labels = {
+        "microcycle_name": _("Microcycle Name"),
+    }
+
 class AddWoToMicroForm(forms.Form):
     def __init__(self, *args, **kwargs):
         athlete_id = kwargs.pop('athlete_id', None)

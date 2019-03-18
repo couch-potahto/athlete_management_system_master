@@ -11,35 +11,45 @@
     <div class="col-md-6 col-sm-8 col-12">
       <form method="post" novalidate>
         {% csrf_token %}
-        <div class="field">
+        <div class="field is-horizonal">
           <div class="control">
             {{ form.movement_name|bulma }}
           </div>
+          <div class="control">
+            {{ form.rep_max|bulma }}
+          </div>
         </div>
         <div class="field is-horizontal">
-
-          <div class="control is-expanded">
-            {{ form.num_reps|bulma }}
-          </div>
-          &nbsp;
-          <div class="control is-expanded">
-            {{ form.percentage|bulma }}
-          </div>
-          &nbsp;
-          <div class="control is-expanded">
+          <div class="control is-small">
             {{ form.kg|bulma }}
           </div>
           &nbsp;
+          
+          &nbsp;
+          <div class="control is-small">
+            {{ form.percentage|bulma }}
+          </div>
+          
+          
+        </div>
+        <div class="field is-horizontal">
+          
+          <div class="control is-expanded">
+            
+            {{ form.num_reps|bulma }}
+          </div>
+        </div>
+        <div class="field is-horizontal">
+          
           <div class="control is-expanded">
             {{ form.rpe|bulma }}
           </div>
-          &nbsp;
+         
+        </div>
 
         </div>
         <div class="field is-horizontal">
-          <div class="control is-expanded">
-            {{ form.rep_max|bulma }}
-          </div>
+          
           &nbsp;
         <div class="form-group">
         <div class="control is-expanded">

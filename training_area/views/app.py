@@ -13,12 +13,13 @@ from django.views import generic
 from django.utils.safestring import mark_safe
 from django.urls import reverse
 from django import template
+from django.core.paginator import Paginator
 import calendar
 
 
 from ..decorators import coach_required, athlete_required
 from ..forms import CoachSignUpForm, EventForm
-from ..models import User, Coach, Athlete, Macrocycle, Mesocycle, Microcycle, Workout, Movement, ExertionPerceived, RepMax, Event
+from ..models import User, Coach, Athlete, Macrocycle, Mesocycle, Microcycle, Workout, Movement, ExertionPerceived, RepMax, Event, Notifications, Comment
 from ..utils import Calendar
 
 @method_decorator([login_required], name='dispatch')
@@ -26,6 +27,7 @@ class LogView(ListView):
 	model = Athlete
 	context_object_name = 'all_workouts'
 	template_name = 'training_area/app/log_view.html'
+	paginate_by = 5
 
 	def get_queryset(self):
 		return Workout.objects.filter(athlete__user__id=self.kwargs['pk']).order_by('completed', '-created_at')
@@ -33,7 +35,9 @@ class LogView(ListView):
 	def get_context_data(self, **kwargs):
 		context = super(LogView, self).get_context_data(**kwargs)
 		context['pk'] = self.kwargs['pk']
-		context['all_microcycles'] = Microcycle.objects.filter(athlete__user__id=self.kwargs['pk']).order_by('id')
+		#p = Paginator(Microcycle.objects.filter(athlete__user__id=self.kwargs['pk']).order_by('-id'), self.paginate_by)
+		#context['lolol'] = p.page(context['page_obj'].number)
+		context['all_microcycles'] = Microcycle.objects.filter(athlete__user__id=self.kwargs['pk']).order_by('-id')
 		context['all_macrocycles'] = Macrocycle.objects.filter(athlete__user__id=self.kwargs['pk'])
 
 		return context
@@ -137,7 +141,7 @@ class SearchAthleteView(ListView):
 
 		return result
 
-
+@method_decorator([login_required], name='dispatch')
 class SearchWorkoutView(ListView):
 	model = Workout
 	context_object_name = 'relevant_workouts'
@@ -154,6 +158,27 @@ class SearchWorkoutView(ListView):
 			)
 
 		return result
+
+
+
+def delete_notification(request, notif_id):
+	notif = get_object_or_404(Notifications, pk=notif_id)
+	person = notif.reciever
+	notif.delete()
+	if person.is_coach:
+		return redirect('coach:dashboard')
+	else:
+		return redirect('athlete:dashboard')
+
+def delete_all_notifications(request):
+	notif = Notifications.objects.filter(reciever=request.user)
+	for item in notif:
+		item.delete()
+	if request.user.is_coach:
+		return redirect('coach:dashboard')
+	else:
+		return redirect('athlete:dashboard')
+
 
 register = template.Library()
 @register.inclusion_tag("training_area/tags/my_calendar.html")

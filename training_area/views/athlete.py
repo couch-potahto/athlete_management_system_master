@@ -14,7 +14,7 @@ from django.db.models import Q
 
 from ..decorators import athlete_required
 from ..forms import AthleteSignUpForm, WorkoutForm, EditMovementFormAthlete
-from ..models import User, Coach, Athlete, Macrocycle, Mesocycle, Microcycle, Workout, Movement, ExertionPerceived, Event
+from ..models import User, Coach, Athlete, Macrocycle, Mesocycle, Microcycle, Workout, Movement, ExertionPerceived, Event, Notifications, Comment
 
 class AthleteSignUpView(CreateView):
 	model = User
@@ -38,7 +38,7 @@ class DashboardView(ListView):
 	template_name = 'training_area/athlete/dashboard.html'
 
 	def get_queryset(self):
-		return Workout.objects.filter(athlete__user=self.request.user).order_by('completed', '-created_at')
+		return Workout.objects.filter(athlete__user=self.request.user).order_by('completed', '-created_at')[:10]
 
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
@@ -52,10 +52,8 @@ class DashboardView(ListView):
 			for item in events:
 				calendar[item.title]=[item.start_time, item.end_time]
 			context['calendar'] = calendar
-			#if today >= x and today<=in_thirty_days:
-			#	calendar[today] = True
-		#events = Event.objects.filter(start_time__year=today.year, start_time__range=(today, in_thirty_days)).filter(Q(user=self.request.user) | Q(user=self.request.user.athlete.coach.user))
-		#context['events'] = events
+		notifications = Notifications.objects.filter(reciever=self.request.user)
+		context['notif'] = notifications
 
 		return context
 
@@ -156,6 +154,7 @@ def gen_backoff(request, movement_id):
 		load_percent = exertion.percent
 		daily_rm = movement.kg_done / load_percent
 		backoff_movements = Movement.objects.filter(workout=workout, is_backoff=True, movement_name=movement.movement_name) #queryset
+	
 		for backoff in backoff_movements: #update all objects
 			backoff.kg = round((daily_rm * (backoff.percentage/Decimal(100)))/Decimal(2.5)) * Decimal(2.5)
 			backoff.save()
@@ -170,9 +169,15 @@ def submit_workout(request, workout_id):
 	workout = get_object_or_404(Workout, pk=workout_id)
 
 	if workout.completed == False:
-
 		workout.completed = True
 	else:
 		workout.completed = False
 	workout.save()
+	if workout.microcycle:
+		uncompleted = workout.microcycle.micro.all().filter(completed=False)
+		print(uncompleted)
+		if not uncompleted:
+			message = workout.athlete.user.username + " has completed " + workout.microcycle.get_html_url
+			notification = Notifications(title=message, sender=workout.athlete.user, reciever=workout.athlete.coach.user)
+			notification.save()
 	return redirect('app:workout_detail', workout.athlete.pk, workout.pk)

@@ -11,8 +11,7 @@
               </header>
             <div class="card-content is-hidden">
                 <div class="content">
-                  <p><strong>1)</strong> Quick Save only works on a single row! To edit the entire workout, it would be wiser to use 'Mass Edit Workout'</p>
-                  <p><strong>2)</strong> The Blue Divide Button (athletes only) require you to key in your load done and reps done before
+                  <p><strong>1)</strong> The Blue Divide Button (athletes only) require you to key in your load done and reps done before
                   it can calculate your backoff sets</p>
                 </div>
               </div>
@@ -259,7 +258,7 @@
  	<a href="{% url 'coach:add_movement_test' pk=workout.athlete.pk pk_2=workout.pk %}" class="card-footer-item" role="button">Add Movement</a>
 
 
-  <a href="{% url 'coach:edit_workout' workout_id=workout.pk%}" class="card-footer-item" role="button">Mass Edit Workout</a>
+  <a href="{% url 'coach:edit_workout' workout_id=workout.pk%}" class="card-footer-item" role="button">Edit Workout Name</a>
 
  {% endif %}
  {% if user.is_authenticated and user.is_athlete %}
