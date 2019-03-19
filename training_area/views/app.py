@@ -128,10 +128,7 @@ class SearchAthleteView(ListView):
 
 	def get_queryset(self):
 		result = Athlete.objects.filter(coach__user__id=self.kwargs['pk'])
-
 		query = self.request.GET.get('search_box')
-
-
 		if query:
 			query_list = query.split()
 			print(query_list)
@@ -245,7 +242,7 @@ def next_month(d):
     next_month = last + timedelta(days=1)
     month = 'month=' + str(next_month.year) + '-' + str(next_month.month)
     return month
-    
+
 @method_decorator([login_required], name='dispatch')
 def event(request, event_id=None):
 	instance = Event()

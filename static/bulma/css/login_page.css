@@ -1,0 +1,65 @@
+.login{
+  min-height: 100vh;
+  background-color: #302e2e;
+}
+.login .login-page{
+  height: 100vh;display: flex;align-items: center;
+}
+.login .login-sidebar, .login-form-wrapper{
+  background: #f7f7f7;height: 80vh;
+}
+.login .login-sidebar{
+  background:  url('/static/images/the-vault-cover-blank.jpg')center center no-repeat;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.login .login-sidebar::before{
+  content: '';
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+  z-index: 1;
+	
+	opacity: .8;
+}
+.login .login-sidebar .login-gradient-background{
+  position: absolute;z-index: 2;
+}
+.login .login-sidebar .login-gradient-background h1{
+  font-size: 2em;font-weight: 600;text-transform: uppercase;color: #ffffff;
+}
+
+.login-form-wrapper .register-btn a{
+  color:#000000 ;border-radius: 18px;padding: 0.57em 2em;background: #ffffff;
+  border-color: #ffffff; border: 1px solid black;
+}
+.login-form-wrapper .register-btn a:hover{
+  opacity: .8;
+}
+.field-box .field{margin-bottom: 2.1em;}
+.login-form-wrapper .field-box{
+  display: flex;
+  height: 80%;
+  align-items: center;
+}
+.login-form-wrapper .field-box .login-heading{
+  font-size: 1.95em;
+}
+.login-form-wrapper .field-box .login-subheading{
+  margin-bottom: 2em;font-size: 0.85em;color: #787877;
+}
+
+  background: #000000;color: #ffffff;border-radius: 18px;padding: 0.57em 2em;
+}
+.login-form-wrapper .field-box .login-btn-group .forgot-link{
+  color: #777777;font-size: 0.85em;
+}
+.login-form-wrapper .field-box .login-btn-group .forgot-link:hover{
+  color: #444444;font-size: 0.85em;
+}

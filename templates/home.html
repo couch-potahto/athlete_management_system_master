@@ -4,7 +4,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>AGOGE</title>
-    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">-->
     <link rel="stylesheet" type="text/css" href="{% static 'bulma/css/landing.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'bulma/css/style.css' %}">
 
@@ -12,20 +11,45 @@
 </html>
 
 <body>
-  <section class="hero is-info is-fullheight">
+
+  <section class="hero is-dark is-fullheight">
     <div class="hero-head">
-<div class="section"></div>
-
-  <div class="container has-text-centered">
-    <div class = "column is-4 is-offset-4">
-    <section class ="section">
-      <a href="{% url 'login' %}" class="button" role="button">Log in</a>
-      <a href="{% url 'signup' %}" class="button is-success" role="button">Sign Up</a>
-    </section>
-
+    <header class="navbar">
+      <div class="container">
+        <div class="navbar-brand">
+          <a class="navbar-item">
+          </a>
+          <!--<span class="navbar-burger burger" data-target="navbarMenuHeroC" onclick="document.querySelector('.navbar-menu').classList.toggle('is-active');">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>-->
+        </div>
+       
+          <div class="navbar-end">
+            <a class="navbar-item" href="{% url 'login' %}">
+              <strong>Log In</strong>
+            </a>
+            <a class="navbar-item" href="{% url 'signup' %}">
+              <strong>Sign Up</strong>
+            </a>
+            <!--<a class="navbar-item">
+              
+            </a>
+            <span class="navbar-item">
+              <a class="button is-success is-inverted">
+                <span class="icon">
+                  <i class="fab fa-github"></i>
+                </span>
+                <span>Download</span>
+              </a>
+            </span>-->
+          </div>
+        </div>
+      
+    </header>
   </div>
-  </div>
-</div>
-</div>
-</section>
+  
+
+  </section>
 </body>

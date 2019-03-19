@@ -138,7 +138,7 @@
     <td>
       <!----add generate backoff-->
 
-    {%if movement.is_backoff == False and movement.kg == None and movement.percentage == None %}
+    {%if movement.is_backoff == False and movement.percentage == None %}
       <form method="post" action="{% url 'athlete:generate_backoff' movement.pk %}" >
            {% csrf_token %}
            <button class = 'button is-small is-link' type="submit">
