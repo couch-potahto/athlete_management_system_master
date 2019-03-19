@@ -128,11 +128,4 @@ class AddCommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ('content',)
-'''class ProfileForm(forms.ModelForm):
-    class Meta:
-        model = Coach
-
-    first_name = forms.CharField(label='Your Bio', widget=forms.TextInput(attrs={'placeholder': 'First Name'}))
-    last_name = forms.CharField(label='Your Bio', widget=forms.TextInput(attrs={'placeholder': 'Last Name'}))
-    bio = forms.CharField(label='Your Bio', widget=forms.TextInput(attrs={'placeholder': 'Bio'}))'''
 
