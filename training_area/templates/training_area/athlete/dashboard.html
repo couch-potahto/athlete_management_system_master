@@ -1,8 +1,8 @@
 {% extends 'navbar.html' %}
 {% block content %}
 
-<section class="hero welcome is-small">
-  <div class="hero-body has-background-light">
+<section class="hero welcome is-small is-dark">
+  <div class="hero-body">
     <div class="container">
       <h1 class="title">
         Hello, <u><a href="{% url 'app:profile_view' request.user %}">{{request.user}}</a></u>
@@ -21,15 +21,12 @@
          {% endif %}
        </div>
        </div>
-
-
-
 </section>
 
-<div class = "container">
+<div class = "container has-background-dark">
 <section class="section">
 <div class = "container is-fluid">
-  <div class="columns">
+  <div class="columns has-background-dark">
     <div class="column is-5">
       <div class="card is-fluid">
         <header class="card-header">

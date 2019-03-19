@@ -1,25 +1,101 @@
-html,body {
-  font-family: 'Open Sans', serif;
+body {
+  padding: 0;
+  margin: 0;
+  background: #444;
 }
-.hero.is-info {
-  background: linear-gradient(
-      rgba(0, 0, 0, 0.5),
-      rgba(0, 0, 0, 0.5)
-    ), url('/static/images/drawing.png') no-repeat center center fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
+
+.split-container {
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  height: 100vh;
+
+}
+
+.split-item {
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  
+  width: 50%;
+  padding: 3em 5em 6em 5em;
+}
+
+.split-right {
+  -webkit-box-ordinal-group: 0;
+  -webkit-order: -1;
+  -ms-flex-order: -1;
+  order: -1;
+  color: #000e;
+  background:  url('/static/images/coach.png') no-repeat center center ;
   background-size: cover;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
 }
-.hero .nav, .hero.is-success .nav {
-  -webkit-box-shadow: none;
-  box-shadow: none;
+
+.split-left {
+
+  background:  url('/static/images/athlete.png') no-repeat center center ;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  color: #fff; 
 }
-.hero .subtitle {
-  padding: 3rem 0;
+
+.split-image img {
+  width: 100%;
+  height: auto;
+  margin: 2em auto;
+  max-width: 100px;
+  display: block;
+}
+
+.split-item h3 {
+  text-align: center;
+  margin: 0 0 2em 0 auto;
+  font-size: 2em;
+  font-weight: 700;
+}
+
+.split-item p {
+  text-align: center;
+  margin: 0 auto;
+  max-width: 500px;
   line-height: 1.5;
 }
 
-.box.is-light {
-  opacity: 0.2;
+.split-item a {
+  color: currentColor;
+  margin: auto;
+  display: block;
+  text-align: center;
+  margin: 1em 0 0 0;
+  width: 100%;
 }

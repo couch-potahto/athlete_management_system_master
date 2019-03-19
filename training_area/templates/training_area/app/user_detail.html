@@ -1,10 +1,10 @@
 {% extends 'navbar.html' %}
 
 {% block content %}
-<section class="hero is-light">
+<section class="hero has-background-dark">
     <div class="hero-body">
-      <div class="container">Hello! I am
-        <h1 class="title is-1">
+      <div class="container has-text-white">Hello! I am
+        <h1 class="title is-1 has-text-white">
         {% if object.is_coach %}
           {{object.coach.first_name}}
           {{object.coach.last_name}}
@@ -22,7 +22,7 @@
   </section>
 
 
-<div class = "container">
+<div class = "container has-text-white">
 <div class="hero-body">
             <div class="container has-text-centered">
 
@@ -40,12 +40,12 @@
                         <br>
 
                         <p class="has-text-centered">
-                          <h2 class="subtitle is-4">{{object.coach.bio}} </h2>
+                          <h2 class="subtitle is-4 has-text-white">{{object.coach.bio}} </h2>
                         </p>
                         {% elif object.is_athlete %}
-                        <p class="has-text-centered">
+                        <p class="has-text-centered ">
                           {% for rep_max in object.athlete.athlete_rm.all %}
-                          <h2 class="subtitle is-4">{{rep_max}} </h2>
+                          <h2 class="subtitle is-4 has-text-white">{{rep_max}} </h2>
                           {% endfor %}
                         </p>
                         {% endif %}

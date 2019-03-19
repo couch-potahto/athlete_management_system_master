@@ -20,6 +20,10 @@
   }
 }
 
+body {
+  background-color: black;
+  height: 100vh;
+}
 
 
 .delete, .modal-close, .is-unselectable, .button, .file, .breadcrumb, .pagination-previous,

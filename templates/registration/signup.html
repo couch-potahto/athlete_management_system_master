@@ -11,23 +11,25 @@
     <link rel="stylesheet" type="text/css" href="{% static 'bulma/css/style.css' %}">
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
   </head>
-  <body>
-    <section class="hero is-info is-fullheight">
-    <div section></div>
-    <div class="container has-text-centered">
+<body>
 
-      <h1 class = 'title'>Register</h1>
-      <p class="subtitle">
-        Pick an Account Type
-      </p>
-      <div class="container has-text-centered">
-      <a href="{% url 'athlete_signup' %}" class="button is-link is-outlined" role="button">Athlete</a>
-      <a href="{% url 'coach_signup' %}" class="button is-info is-outlined" role="button">Coach</a>
+<div class="split-container">
+  <div class="split-item split-left">
+    <div class="split-image">
+      
     </div>
+    <div class = "column is-half">
+    <a href="{% url 'athlete_signup' %}" class="button is-white is-large is-fullwidth" role="button"> Athlete </a>
+    </div> 
+  </div>
+  <div class="split-item split-right">
+    <div class="split-image">
+      
     </div>
-  <section class ="section">
+    <div class = "column is-half">
+    <a href="{% url 'coach_signup' %}" class="button is-black is-large is-fullwidth" role="button"> Coach </a>
+  </div>
+  </div>
+</div>
 
-  </section>
-  </section>
 </body>
-

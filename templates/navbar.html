@@ -71,10 +71,10 @@
           <a href="{% url 'app:calendar' %}" class="navbar-item">
             Your Calendar
           </a>
-          <!--<a class="navbar-item">
-            Jobs
-          </a>
           <a class="navbar-item">
+            Analytics (Coming Soon)
+          </a>
+          <!--<a class="navbar-item">
             Contact
           </a>
           <hr class="navbar-divider">
@@ -147,7 +147,7 @@
     </div>
   </div>
 {% endfor %}
-<div id="site-wrapper">
+<div id="site-wrapper" class="has-background-dark">
         {% block content %}
             if you see this, something is wrong!
         {% endblock content %}

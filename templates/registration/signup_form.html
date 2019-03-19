@@ -11,13 +11,18 @@
   </head>
 
 
-<section class="section">
-  <div class="container has-text-centered">
-      <img src="{% static 'images/agoge.png'%}" alt="Agoge">
+<section class="hero is-dark">
+  <div class = "container">
+    
+      
+      <div class="container has-text-centered">
+      
       <div class="column"></div>
-      <h1 class = 'title'>{{ user_type }} Sign up</h1>
-  </div>
-  <div class="column is-half is-offset-one-quarter">
+      <h1 class = 'title'>{{ user_type }} Sign Up</h1>
+      </div>
+      <div class = "column is-half is-offset-one-quarter">
+      <div class = "box">
+  
 
     <div class="col-md-8 col-sm-10 col-12">
 
@@ -28,8 +33,11 @@
         {{ form|bulma }}
         </p>
         <button type="submit" class="button is-success">Sign up</button>
+        <a href="{% url 'signup' %}" class="button is-black is-outlined" role="button"> Back </a>
       </form>
     </div>
-
+  </div>
+    
+  </div>
 </div>
 </section>
