@@ -3,7 +3,7 @@ html,body {
 }
 
 .hero.is-dark {
-  background:  url('/static/images/alora-griffiths-768414-unsplash-ConvertImage.png') no-repeat center center fixed;
+  background:  url('/static/images/alora-griffiths-768414-unsplash-ConvertImage.jpg') no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;

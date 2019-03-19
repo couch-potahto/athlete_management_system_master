@@ -48,7 +48,7 @@ body {
   -ms-flex-order: -1;
   order: -1;
   color: #000e;
-  background:  url('/static/images/coach.png') no-repeat center center ;
+  background:  url('/static/images/coach.jpg') no-repeat center center ;
   background-size: cover;
   display: flex;
   flex-direction: column;
@@ -59,7 +59,7 @@ body {
 
 .split-left {
 
-  background:  url('/static/images/athlete.png') no-repeat center center ;
+  background:  url('/static/images/athlete.jpg') no-repeat center center ;
   background-size: cover;
   display: flex;
   flex-direction: column;
