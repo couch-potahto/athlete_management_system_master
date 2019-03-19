@@ -35,13 +35,13 @@
  </head>
 
 
-<nav class="navbar" role="navigation" aria-label="main navigation">
+<nav class="navbar has-background-dark" role="navigation" aria-label="main navigation">
   <div class="navbar-brand">
 
     {% if request.user.is_authenticated and request.user.is_coach %}
-      <a class="navbar-item brand-text" href="{% url 'coach:dashboard' %}"><img src="{% static 'images/gen_boutons.png'%}" alt="Agoge"></a>
+      <a class="navbar-item brand-text" href="{% url 'coach:dashboard' %}"><img src="{% static 'images/bitmap.png'%}" alt="Agoge"></a>
       {% else %}
-      <a class="navbar-item brand-text" href="{% url 'athlete:dashboard' %}"><img src="{% static 'images/gen_boutons.png'%}" alt="Agoge"></a>
+      <a class="navbar-item brand-text" href="{% url 'athlete:dashboard' %}"><img src="{% static 'images/bitmap.png'%}" alt="Agoge"></a>
         {% endif %}
       </a>
 
@@ -58,12 +58,12 @@
     <div class="navbar-start">
 
 
-      <a href="{% url 'app:view_rpe' pk=request.user.id chart_type='RTS' %}" class="navbar-item">
+      <a href="{% url 'app:view_rpe' pk=request.user.id chart_type='RTS' %}" class="navbar-item has-text-white">
         RPE Chart
       </a>
 
       <div class="navbar-item has-dropdown is-hoverable " >
-        <a class="navbar-link">
+        <a class="navbar-link has-text-white">
           More
         </a>
 
