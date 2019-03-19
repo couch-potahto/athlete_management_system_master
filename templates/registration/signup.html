@@ -7,25 +7,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Account Types</title>
     <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">-->
+    <link rel="stylesheet" type="text/css" href="{% static 'bulma/css/signup_page.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'bulma/css/style.css' %}">
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
   </head>
   <body>
-    <section class="section">
-      
+    <section class="hero is-info is-fullheight">
+    <div section></div>
     <div class="container has-text-centered">
-      <img src="{% static 'images/agoge.png'%}" alt="Agoge">
-      <div class="column"></div>
+
       <h1 class = 'title'>Register</h1>
       <p class="subtitle">
         Pick an Account Type
       </p>
-    </div>
-  <section class ="section">
-    <div class="container has-text-centered">
+      <div class="container has-text-centered">
       <a href="{% url 'athlete_signup' %}" class="button is-link is-outlined" role="button">Athlete</a>
       <a href="{% url 'coach_signup' %}" class="button is-info is-outlined" role="button">Coach</a>
     </div>
+    </div>
+  <section class ="section">
+
   </section>
   </section>
 </body>
