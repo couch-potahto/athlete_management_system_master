@@ -243,7 +243,8 @@ def next_month(d):
     month = 'month=' + str(next_month.year) + '-' + str(next_month.month)
     return month
 
-@method_decorator([login_required], name='dispatch')
+#@method_decorator([login_required], name='dispatch')
+@login_required
 def event(request, event_id=None):
 	instance = Event()
 	if event_id:
