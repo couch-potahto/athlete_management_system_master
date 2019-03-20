@@ -315,6 +315,14 @@ class ChartData(APIView):
 
 	def post(self, request, format=None):
 		req = request.POST.get('athlete')
+		
+		athlete = Athlete.objects.filter(user__username=req)
+		#labels = num microcycles
+		#items = highest e1rm of each lift
+		#need to get all movement name as a set
+		#find the highest e1rm
+		#put into list
+		print(athlete)
 		data = {
 			"request": req,
 		}
