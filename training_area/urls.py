@@ -19,9 +19,11 @@ urlpatterns = [
         path('calendar', app.CalendarView.as_view(), name='calendar'),
         path('calendar/new_event', app.event, name='event_new'),
         path('calendar/event=<int:event_id>', app.event, name='event_edit'),
-
-        #path('testtest', app.testtest, name='testtest'),
         path('user=<int:pk>/chart_type=<str:chart_type>', app.RPEView.as_view(), name='view_rpe'),
+        #######
+        path('testviews', app.ChartView.as_view(), name='test'),
+        path('api/chartdata', app.ChartData.as_view(), name ='testdata'),
+        path('api/data', app.get_data, name='api-data'),
     ], 'training_area'), namespace='app')),
 
     path('athlete/', include(([

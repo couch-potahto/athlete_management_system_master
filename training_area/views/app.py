@@ -1,9 +1,10 @@
 from django.contrib.auth import login
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from functools import reduce
 import operator
 from django.utils.decorators import method_decorator
-from django.views.generic import CreateView, ListView, UpdateView, DetailView
+from django.views.generic import CreateView, ListView, UpdateView, DetailView, View
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -21,6 +22,9 @@ from ..decorators import coach_required, athlete_required
 from ..forms import CoachSignUpForm, EventForm, AddCommentForm
 from ..models import User, Coach, Athlete, Macrocycle, Mesocycle, Microcycle, Workout, Movement, ExertionPerceived, RepMax, Event, Notifications, Comment
 from ..utils import Calendar
+from rest_framework.views import APIView
+from rest_framework.response import Response
+
 
 @method_decorator([login_required], name='dispatch')
 class LogView(ListView):
@@ -269,3 +273,49 @@ def event(request, event_id=None):
 		return HttpResponseRedirect(reverse('app:calendar'))
 		messages.success(request, "Event has been added!")
 	return render(request, 'training_area/app/event.html', {'form': form})
+
+
+
+
+
+
+class ChartView(View):
+	def get(self, request, *args, **kwargs):
+		print(self.request.user)
+		return render(request, 'training_area/app/chart.html', {})
+
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		# use today's date for the calendar
+		all_athletes = self.request.user
+		context['all_athletes'] = all_athletes
+		return context
+
+def get_data(request, *args, **kwargs):
+	print(request.POST.get('athlete'))
+	data = {
+		"sales":100,
+		"customers":10,
+	}
+	return JsonResponse(data)
+
+class ChartData(APIView):
+	authentication_classes = []
+	permission_classes = []
+
+	def get(self,request,format=None):
+		qs_count = User.objects.all().count()
+		labels = ['Users', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange']
+		default_items = [qs_count, 1234, 12, 10, 111, 999]
+		data = {
+			"labels":labels,
+			"default":default_items,
+		}
+		return Response(data)
+
+	def post(self, request, format=None):
+		req = request.POST.get('athlete')
+		data = {
+			"request": req,
+		}
+		return Response(data)

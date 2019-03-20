@@ -1,0 +1,74 @@
+{% extends 'navbar.html' %}
+
+<script>
+{% block jquery %}
+var endpoint = 'api/chartdata'
+var defaultData = []
+var labels = []
+$.ajax({
+	method:"GET",
+	url: endpoint,
+	success: function(data){
+		labels = data.labels
+		defaultData = data.default
+		setChart()
+	},
+	error: function(error_data){
+		console.log("error")
+		console.log(error_data)
+	}
+})
+
+function setChart(){
+	var ctx = document.getElementById('myChart');
+		var myChart = new Chart(ctx, {
+    		type: 'line',
+    		data: {
+        		labels: labels,
+        		datasets: [{
+            		label: '# votes',
+            		data: defaultData,
+				},{
+					label: "title2",
+        backgroundColor: "transparent",
+        borderColor: "#000",
+        data: [50, 50, 50, 50, 50]
+				}]
+			}
+		})
+
+}
+
+
+{% endblock %}
+</script>
+
+{% block content %}
+
+<div class = 'row'>
+	<div class = 'col-sm-12'>
+		<h1>Hello</h1>
+		<canvas id="myChart" width="400" height="400"></canvas>
+	</div>
+	{{request.user.coach.coach.all}}
+	<form action="{% url 'app:testdata' %}" method="post">
+		{% csrf_token %}
+		<div class="control">
+  		<div class="select">
+
+		    <select name = "athlete">
+		      <option>Select dropdown</option>
+		      {% for athlete in request.user.coach.coach.all%}
+		      	<option>{{athlete.user.username}}</option>
+		      {% endfor %}
+		    </select>
+		  </div>
+		</div>
+		  <button class = 'button is-small is-link' type="submit">
+            <i class="fas fa-divide" type="submit"></i>
+           </button>
+      </form>
+</div>
+
+
+{% endblock content %}

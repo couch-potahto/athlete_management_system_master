@@ -4,6 +4,7 @@
 {% block js %}
   <script src="{% static 'js/app.js' %}"></script>
   <script src="{% static 'js/jquery-3.3.1.js' %}"></script>
+  <script src='https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js'></script>
 {% endblock %}
 <script>
     $(document).ready(function() {
@@ -151,6 +152,11 @@
         {% block content %}
             if you see this, something is wrong!
         {% endblock content %}
+        <script>
+          $(document).ready(function(){
+            {% block jquery %}{% endblock %}
+          })
+        </script>
     </div>
 </html>
 
