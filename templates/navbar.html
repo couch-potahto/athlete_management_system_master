@@ -36,7 +36,7 @@
  </head>
 
 
-<nav class="navbar has-background-dark" role="navigation" aria-label="main navigation">
+<nav class="navbar is-dark" role="navigation" aria-label="main navigation">
   <div class="navbar-brand">
 
     {% if request.user.is_authenticated and request.user.is_coach %}
@@ -48,23 +48,25 @@
 
 
 
-    <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample" onclick="document.querySelector('.navbar-menu').classList.toggle('is-active');">
+    <div role="button " class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample" onclick="document.querySelector('.navbar-menu').classList.toggle('is-active');">
       <span aria-hidden="true"></span>
       <span aria-hidden="true"></span>
       <span aria-hidden="true"></span>
-    </a>
+
+    </div>
   </div>
+
 
   <div id="navbarBasicExample" class="navbar-menu">
     <div class="navbar-start">
 
 
-      <a href="{% url 'app:view_rpe' pk=request.user.id chart_type='RTS' %}" class="navbar-item has-text-white">
+      <a href="{% url 'app:view_rpe' pk=request.user.id chart_type='RTS' %}" class="navbar-item">
         RPE Chart
       </a>
 
       <div class="navbar-item has-dropdown is-hoverable " >
-        <a class="navbar-link has-text-white">
+        <a class="navbar-link">
           More
         </a>
 

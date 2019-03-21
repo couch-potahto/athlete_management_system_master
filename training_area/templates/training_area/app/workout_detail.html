@@ -35,11 +35,20 @@
       {%endif%}
     </p>
     {% if request.user.is_authenticated and request.user.is_coach %}
-    <a href="{% url 'coach:delete_workout' athlete_id=workout.athlete.pk workout_id=workout.pk %}" class="buttons is-danger float-right">
+    <!--<a href="{% url 'coach:delete_workout' athlete_id=workout.athlete.pk workout_id=workout.pk %}" class="buttons is-danger float-right">
       <span class="icon has-text-danger is-large">
         <i class="fas fa-dumpster-fire fa-1.5x"></i>
       </span>
-    </a>
+    </a>-->
+    <form action="{% url 'coach:delete_workout' athlete_id=workout.athlete.pk workout_id=workout.pk %}"
+                    method="post" style="display: inline;" onsubmit="window.mytest()">
+                    {% csrf_token %}
+                    <button type="submit" class="button is-white" id="BtnDeleteYesNo">
+                    <span class="icon has-text-danger">
+                    <i class="far fa-trash-alt"></i>
+                    </span>
+                    </button>
+                </form>
     {% endif %}
   </header>
   <div class = "card-content">

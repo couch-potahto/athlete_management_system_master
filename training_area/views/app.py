@@ -42,7 +42,7 @@ class LogView(ListView):
 		#p = Paginator(Microcycle.objects.filter(athlete__user__id=self.kwargs['pk']).order_by('-id'), self.paginate_by)
 		#context['lolol'] = p.page(context['page_obj'].number)
 		context['all_microcycles'] = Microcycle.objects.filter(athlete__user__id=self.kwargs['pk']).order_by('-id')
-		context['all_macrocycles'] = Macrocycle.objects.filter(athlete__user__id=self.kwargs['pk'])
+		context['all_mesocycles'] = Mesocycle.objects.filter(athlete__user__id=self.kwargs['pk'])
 
 		return context
 

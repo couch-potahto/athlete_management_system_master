@@ -42,7 +42,12 @@ class RepMax(models.Model):
 	rep_max_name = models.CharField(max_length=255, blank = False, verbose_name= _('RM Name'))
 	athlete = models.ForeignKey(Athlete, related_name = 'athlete_rm',
 		on_delete = models.CASCADE, null=True)
-	rep_max = models.SmallIntegerField(null = True, verbose_name= _('1-RM'))
+	rep_max = models.DecimalField(
+		null = True,
+		max_digits=6,
+		decimal_places=2,
+		verbose_name= _('1-RM'),
+	)
 
 	def __str__(self):
 		presented = self.rep_max_name + ': ' + str(self.rep_max)
@@ -72,7 +77,7 @@ class Mesocycle(models.Model):
 class Microcycle(models.Model):
 	microcycle_name = models.CharField(max_length = 255, blank = False, verbose_name= _('Microcycle Name'))
 	mesocycle = models.ForeignKey(Mesocycle, related_name = 'meso',
-		on_delete = models.CASCADE, null = True)
+		on_delete = models.SET_NULL, null = True)
 	completed = models.BooleanField(default = False)
 	athlete = models.ForeignKey(Athlete, related_name = 'micro_athlete',
 		on_delete = models.CASCADE, null=True)

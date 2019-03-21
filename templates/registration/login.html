@@ -1,5 +1,6 @@
 {% load static %}
 {% load bulma_tags %}
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -13,14 +14,17 @@
 
 {% block content %}
   {% if form.non_field_errors %}
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    
       {% for error in form.non_field_errors %}
-        <p{% if forloop.last %} class="mb-0"{% endif %}>{{ error }}</p>
+        <div class="container">
+          <div class="notification">
+            {{ error }}
+            <a href="#" class="del-msg">&times;</a>
+          </div>
+        </div>
       {% endfor %}
-      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
+   
+    
   {% endif %}
 
 

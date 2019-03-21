@@ -48,7 +48,10 @@ class DashboardView(ListView):
 		in_thirty_days = today + timedelta(days=30)
 		events = Event.objects.filter(end_time__lte=in_thirty_days)
 		if events:
-			events=events.filter(Q(user=self.request.user) | Q(user=self.request.user.athlete.coach.user))
+			if self.request.user.athlete.coach:
+				events=events.filter(Q(user=self.request.user) | Q(user=self.request.user.athlete.coach.user))
+			else:
+				events=events.filter(Q(user=self.request.user))
 			for item in events:
 				calendar[item.title]=[item.start_time, item.end_time]
 			context['calendar'] = calendar

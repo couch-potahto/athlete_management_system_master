@@ -16,7 +16,7 @@ from datetime import datetime, timedelta
 from django.db.models import Q
 
 from ..decorators import coach_required
-from ..forms import CoachSignUpForm, AddWoToMicroForm, WorkoutForm, EditMovementFormCoach, AddRepMaxForm, AddMovementFormCoach, AddMicroToMacroForm, MicroForm
+from ..forms import CoachSignUpForm, AddWoToMicroForm, WorkoutForm, EditMovementFormCoach, AddRepMaxForm, AddMovementFormCoach, AddMicroToMesoForm, MicroForm, EditRepMaxForm
 from ..models import User, Coach, Athlete, Macrocycle, Mesocycle, Microcycle, Workout, Movement, ExertionPerceived, RepMax, Event, Notifications
 
 
@@ -53,8 +53,11 @@ class DashboardView(ListView):
         events = Event.objects.filter(end_time__lte=in_thirty_days)
         all_athletes = self.request.user.coach.coach.all()
         if events:
-            for athlete in all_athletes:
-                events=events.filter(Q(user=self.request.user) | Q(user=athlete.user))
+            if all_athletes:
+                for athlete in all_athletes:
+                    events=events.filter(Q(user=self.request.user) | Q(user=athlete.user))
+            else:
+                events=events.filter(Q(user=self.request.user))
             for item in events:
                 calendar[item.title]=[item.start_time, item.end_time, item.user]
             context['calendar'] = calendar
@@ -244,6 +247,24 @@ class MicrocycleDeleteView(DeleteView):
                        kwargs = {'pk': athlete})
 
 @method_decorator([login_required, coach_required], name='dispatch')
+class MesocycleDeleteView(DeleteView):
+    model = Mesocycle
+    context_object_name = 'mesocycle'
+    template_name = 'training_area/coach/mesocycle_confirm_delete.html'
+    pk_url_kwarg = 'mesocycle_id'
+    #success_url = reverse_lazy('coach:dashboard')
+
+    def delete(self, request, *args, **kwargs):
+        mesocycle = self.get_object()
+        messages.success(request, 'The mesocycle %s was deleted with success!' % mesocycle.mesocycle_name)
+        return super().delete(request, *args, **kwargs)
+
+    def get_success_url(self):
+        athlete= self.kwargs.get('athlete_id')
+        return reverse('app:log_view',
+                       kwargs = {'pk': athlete})
+
+@method_decorator([login_required, coach_required], name='dispatch')
 class CreateMicrocycleView(CreateView):
     model=Microcycle
     fields = ('microcycle_name', )
@@ -268,23 +289,23 @@ class CreateMicrocycleView(CreateView):
 
 
 @method_decorator([login_required, coach_required], name='dispatch')
-class CreateMacrocycleView(CreateView):
-    model=Macrocycle
-    fields = ('macrocycle_name', )
-    template_name = 'training_area/coach/create_macro_form.html'
+class CreateMesocycleView(CreateView):
+    model=Mesocycle
+    fields = ('mesocycle_name', )
+    template_name = 'training_area/coach/create_meso_form.html'
 
     def get_context_data(self, **kwargs):
-        context = super(CreateMacrocycleView,self).get_context_data(**kwargs)
+        context = super(CreateMesocycleView,self).get_context_data(**kwargs)
         context['pk']=self.kwargs['pk']
         return context
 
     def form_valid(self, form):
-        macrocycle = form.save()
-        macrocycle.athlete = Athlete.objects.filter(user__id=self.get_context_data()['pk'])[0]
-        macrocycle.coach = macrocycle.athlete.coach
-        macrocycle.save()
-        messages.success(self.request, 'Macro Created!')
-        return redirect('coach:add_micro_to_macro', macrocycle.athlete.pk, macrocycle.pk)
+        mesocycle = form.save()
+        mesocycle.athlete = Athlete.objects.filter(user__id=self.get_context_data()['pk'])[0]
+        mesocycle.coach = mesocycle.athlete.coach
+        mesocycle.save()
+        messages.success(self.request, 'Meso Created!')
+        return redirect('coach:add_micro_to_meso', mesocycle.athlete.pk, mesocycle.pk)
 
 @login_required
 @coach_required
@@ -360,27 +381,28 @@ def add_wo_to_micro(request, athlete_id, pk_2):
 
 @login_required
 @coach_required
-def add_micro_to_macro(request, athlete_id, pk_2):
+def add_micro_to_meso(request, athlete_id, pk_2):
     print(athlete_id)
-    template = 'training_area/coach/add_wo_to_micro.html'
-    microcycle = Microcycle.objects.get(pk=pk_2)
+    template = 'training_area/coach/add_micro_to_meso.html'
+    mesocycle = Mesocycle.objects.get(pk=pk_2)
     if request.method == "POST":
 
-        form = AddWoToMicroForm(request.POST, athlete_id=athlete_id)
+        form = AddMicroToMesoForm(request.POST, athlete_id=athlete_id)
 
 
         workouts = []
-        print(request.POST.getlist("workouts"))
-        for pk in request.POST.getlist("workouts"):
-            workout = get_object_or_404(Workout, pk=pk)
-            print(workout.athlete)
-            workout.microcycle = microcycle
-            workout.save()
-            microcycle.save()
+        print(request.POST.getlist("microcycles"))
+        for pk in request.POST.getlist("microcycles"):
+            micro = get_object_or_404(Microcycle, pk=pk)
+            micro.mesocycle = mesocycle
+            micro.save()
+            mesocycle.athlete = micro.athlete
+            mesocycle.coach = micro.coach
+            mesocycle.save()
         return redirect('app:log_view', athlete_id)
     else:
-        form = AddWoToMicroForm(athlete_id=athlete_id)
-        return render(request, template, {"form" : form, "microcycle" : microcycle})
+        form = AddMicroToMesoForm(athlete_id=athlete_id)
+        return render(request, template, {"form" : form, "mesocycle" : mesocycle})
 
 
 
@@ -431,3 +453,26 @@ def add_rep_max(request, athlete_id):
     else:
         form = AddRepMaxForm()
         return render(request, template, {"form" : form, "athlete" : athlete})
+
+def edit_rep_max(request, rep_max_id):
+    template = 'training_area/coach/edit_rep_max.html'
+    rep_max = get_object_or_404(RepMax, pk=rep_max_id)
+    if request.POST:
+        form = EditRepMaxForm(request.POST, instance=rep_max)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Rep Max Edited")
+            return redirect('app:profile_view', rep_max.athlete.user)
+        else:
+            messages.warning(request, "Something Went Wrong!")
+            return redirect('app:profile_view', rep_max.athlete.user)
+    else:
+        form = EditRepMaxForm()
+        return render(request, template, {"form": form, "rep_max": rep_max})
+
+def delete_rep_max(request, rep_max_id):
+    rep_max = get_object_or_404(RepMax, pk=rep_max_id)
+    athlete = rep_max.athlete
+    rep_max.delete()
+    messages.success(request, "Rep Max Deleted!")
+    return redirect('app:profile_view', athlete.user)

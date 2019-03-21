@@ -67,11 +67,11 @@ class AddWoToMicroForm(forms.Form):
             widget=forms.CheckboxSelectMultiple()
             )
 
-class AddMicroToMacroForm(forms.Form):
+class AddMicroToMesoForm(forms.Form):
     def __init__(self, *args, **kwargs):
         athlete_id = kwargs.pop('athlete_id', None)
         print(athlete_id)
-        super(AddMicroToMacroForm, self).__init__(*args, **kwargs)
+        super(AddMicroToMesoForm, self).__init__(*args, **kwargs)
         self.fields["microcycles"]=forms.ModelMultipleChoiceField(
             queryset=Microcycle.objects.filter(athlete__user__id = athlete_id),
             widget=forms.CheckboxSelectMultiple()
@@ -90,6 +90,11 @@ class EditMovementFormCoach(forms.ModelForm):
         fields = ('movement_name', 'percentage', 'kg', 'num_reps', 'rpe', 'is_backoff')
 
 class AddRepMaxForm(forms.ModelForm):
+    class Meta:
+        model = RepMax
+        fields = ('rep_max_name', 'rep_max')
+        
+class EditRepMaxForm(forms.ModelForm):
     class Meta:
         model = RepMax
         fields = ('rep_max_name', 'rep_max')
