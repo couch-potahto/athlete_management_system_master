@@ -316,7 +316,16 @@ class ChartData(APIView):
 	def post(self, request, format=None):
 		req = request.POST.get('athlete')
 		
-		athlete = Athlete.objects.filter(user__username=req)
+		athlete = Athlete.objects.filter(user__username=req)[0]
+		mesocycle_of_interest = Mesocycle.objects.filter(athlete__user__id=athlete.pk)[0]
+		labels = []
+		e1rm = []
+		for microcycle in mesocycle_of_interest.meso.all():
+			labels.append(microcycle.microcycle_name)
+			for workout in microcycle.micro.all():
+				
+				print(workout.workout_name)
+			print(microcycle.microcycle_name)
 		#labels = num microcycles
 		#items = highest e1rm of each lift
 		#need to get all movement name as a set
