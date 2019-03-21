@@ -16,7 +16,7 @@
           <ul>
             <li class="tab is-active" onclick="openTab(event,'WebDev')"><a >Workouts</a></li>
             <li class="tab" onclick="openTab(event,'WebAud')"><a >Microcycles</a></li>
-            <li class="tab" onclick="openTab(event,'Support')"><a >Macrocycles</a></li>
+            <li class="tab" onclick="openTab(event,'Support')"><a >Blocks</a></li>
           </ul>
         </div>
       </nav>
@@ -167,19 +167,20 @@
           </div>
 
         {% endfor %}
+      </div>
         
 
-<!--    <div id="Support" class="content-tab" style="display:none">
-       <div class="field is-grouped is-grouped-centered">
+   <div id="Support" class="content-tab" style="display:none">
+    <div class="field is-grouped is-grouped-centered">
       {% if user.is_authenticated and user.is_coach %}
       <p class="control">
-        <a class="button is-primary" href="{% url 'coach:add_workout' pk=pk %}">Add Macrocycle</a>
+        <a class="button is-primary" href="{% url 'coach:create_meso' pk=pk %}">Add Mesocycle</a>
       </p>
       {% endif %}
 
         <div class="field has-addons">
           <p class="control">
-            <input id="search_box" class="input" type="text" name="search_box" placeholder="Search Microcycles">
+            <input id="search_box" class="input" type="text" name="search_box" placeholder="Search Mesocycles">
           </p>
           <div class="control">
             <form method = "GET" action="{% url 'app:search_coach' %}">
@@ -189,18 +190,58 @@
         </div>
 
       </div>
-      {% for macrocycle in all_macrocycles %}
+
+      {% for mesocycle in all_mesocycles %}
       <div class="column is-half is-offset-one-quarter">
+            <div class="card">
+              <header class="card-header">
+                <p class="card-header-title is-size-4">{{mesocycle.mesocycle_name}}</p>
+                <a class="card-header-icon card-toggle">
+                  <i class="fa fa-angle-down"></i>
+                </a>
+                <a class="card-header-icon">
+                  {% if request.user.is_authenticated and request.user.is_coach %}
+                  <form action="{% url 'coach:delete_meso' athlete_id=mesocycle.athlete.pk mesocycle_id=mesocycle.pk %}"
+                    method="post" style="display: inline;" onsubmit="window.mytest()">
+                    {% csrf_token %}
+                    <button type="submit" class="button is-white" id="BtnDeleteYesNo">
+                    <span class="icon has-text-danger">
+                    <i class="far fa-trash-alt"></i>
+                    </span>
+                    </button>
+                </form>
+                {% endif %}
+                </a>
+              </header>
+              <div class="card-content is-hidden">
+                <div class="content">
+                  {% if mesocycle.meso.all %}
+                  <a>{{microcycle.micro.workout_name}}</a>
 
-        <div class="box content">
-          for will link to macrocycle review
-              <h4><a href="{% url 'app:workout_detail' pk=workout.athlete.pk pk_2=workout.pk %}">{{workout.workout_name}}</a></h4><span class="tag">In Progress</span> &nbsp;
-              <span class="has-text-grey-light"><i class="fa fa-comments"></i> 1</span>
+                  <table>
+                    {% for microcycle in mesocycle.meso.all %}
 
+                    <tr><td>
+                      <a href="{% url 'app:micro_detail' pk=mesocycle.athlete.pk pk_2=microcycle.pk %}">{{microcycle.microcycle_name}}</a>
+                    </tr></td>
 
+                    {% endfor %}
+                  </table>
+                  {% else %}
+                    Microcycle is empty!
+                  {% endif %}
+                </div>
+                    {% if request.user.is_authenticated and request.user.is_coach %}
+                    <footer class="card-footer">    
+                      <a href="{% url 'coach:add_micro_to_meso' athlete_id=mesocycle.athlete.pk pk_2=mesocycle.pk %}" class="card-footer-item">Add Mirocycle?</a>
+                    </footer>
+                    {% endif %}
+
+                </div>
+            </div>
           </div>
-        </div>
+
         {% endfor %}
-</div>-->
+      </div>
 {% endblock %}
 

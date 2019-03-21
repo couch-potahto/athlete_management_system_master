@@ -67,11 +67,11 @@ class AddWoToMicroForm(forms.Form):
             widget=forms.CheckboxSelectMultiple()
             )
 
-class AddMicroToMacroForm(forms.Form):
+class AddMicroToMesoForm(forms.Form):
     def __init__(self, *args, **kwargs):
         athlete_id = kwargs.pop('athlete_id', None)
         print(athlete_id)
-        super(AddMicroToMacroForm, self).__init__(*args, **kwargs)
+        super(AddMicroToMesoForm, self).__init__(*args, **kwargs)
         self.fields["microcycles"]=forms.ModelMultipleChoiceField(
             queryset=Microcycle.objects.filter(athlete__user__id = athlete_id),
             widget=forms.CheckboxSelectMultiple()

@@ -77,7 +77,7 @@ class Mesocycle(models.Model):
 class Microcycle(models.Model):
 	microcycle_name = models.CharField(max_length = 255, blank = False, verbose_name= _('Microcycle Name'))
 	mesocycle = models.ForeignKey(Mesocycle, related_name = 'meso',
-		on_delete = models.CASCADE, null = True)
+		on_delete = models.SET_NULL, null = True)
 	completed = models.BooleanField(default = False)
 	athlete = models.ForeignKey(Athlete, related_name = 'micro_athlete',
 		on_delete = models.CASCADE, null=True)

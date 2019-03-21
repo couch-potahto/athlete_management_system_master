@@ -41,7 +41,7 @@ urlpatterns = [
     path('coach/', include(([
         path('delete_workout/<int:athlete_id>/<int:workout_id>', coach.WorkoutDeleteView.as_view(), name = 'delete_workout'),
         path('delete_micro/<int:athlete_id>/<int:microcycle_id>', coach.MicrocycleDeleteView.as_view(), name = 'delete_micro'),
-
+        path('delete_meso/<int:athlete_id>/<int:mesocycle_id>', coach.MesocycleDeleteView.as_view(), name = 'delete_meso'),
         path('dashboard/', coach.DashboardView.as_view(), name='dashboard'),
         path('<str:slug>/', coach.CoachDetailView.as_view(), name = 'coach_detail'),
         path('athlete=<int:pk>/add_workout', coach.AddWorkoutView.as_view(), name = 'add_workout'),
@@ -54,8 +54,9 @@ urlpatterns = [
         path('edit/<int:workout_id>', coach.edit_workout, name = 'edit_workout'),
         path('edit_profile/<int:pk>', coach.UpdateCoach.as_view(), name = 'edit_profile'),
         path('athlete=<int:pk>/create_micro', coach.CreateMicrocycleView.as_view(), name = 'create_micro'),
+        path('athlete=<int:pk>/create_meso', coach.CreateMesocycleView.as_view(), name = 'create_meso'),
         path('athlete=<int:athlete_id>/micro=<int:pk_2>/add', coach.add_wo_to_micro, name = 'add_wo_to_micro'),
-        path('athlete=<int:athlete_id>/macro=<int:pk_2>/add', coach.add_wo_to_micro, name = 'add_micro_to_macro'),
+        path('athlete=<int:athlete_id>/meso=<int:pk_2>/add', coach.add_micro_to_meso, name = 'add_micro_to_meso'),
         path('<int:movement_id>/quick_edit', coach.edit_movement_quick, name = 'edit_movement_quick'),
         path('<int:athlete_id>/add_rep_max', coach.add_rep_max, name = 'add_rep_max'),
         path('athlete=<int:pk>/workout=<int:pk_2>/add_movement_test', coach.AddMovementViewTest.as_view(), name = 'add_movement_test'),
