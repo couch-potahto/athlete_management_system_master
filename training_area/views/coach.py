@@ -16,7 +16,7 @@ from datetime import datetime, timedelta
 from django.db.models import Q
 
 from ..decorators import coach_required
-from ..forms import CoachSignUpForm, AddWoToMicroForm, WorkoutForm, EditMovementFormCoach, AddRepMaxForm, AddMovementFormCoach, AddMicroToMacroForm, MicroForm
+from ..forms import CoachSignUpForm, AddWoToMicroForm, WorkoutForm, EditMovementFormCoach, AddRepMaxForm, AddMovementFormCoach, AddMicroToMacroForm, MicroForm, EditRepMaxForm
 from ..models import User, Coach, Athlete, Macrocycle, Mesocycle, Microcycle, Workout, Movement, ExertionPerceived, RepMax, Event, Notifications
 
 
@@ -53,8 +53,11 @@ class DashboardView(ListView):
         events = Event.objects.filter(end_time__lte=in_thirty_days)
         all_athletes = self.request.user.coach.coach.all()
         if events:
-            for athlete in all_athletes:
-                events=events.filter(Q(user=self.request.user) | Q(user=athlete.user))
+            if all_athletes:
+                for athlete in all_athletes:
+                    events=events.filter(Q(user=self.request.user) | Q(user=athlete.user))
+            else:
+                events=events.filter(Q(user=self.request.user))
             for item in events:
                 calendar[item.title]=[item.start_time, item.end_time, item.user]
             context['calendar'] = calendar
@@ -431,3 +434,26 @@ def add_rep_max(request, athlete_id):
     else:
         form = AddRepMaxForm()
         return render(request, template, {"form" : form, "athlete" : athlete})
+
+def edit_rep_max(request, rep_max_id):
+    template = 'training_area/coach/edit_rep_max.html'
+    rep_max = get_object_or_404(RepMax, pk=rep_max_id)
+    if request.POST:
+        form = EditRepMaxForm(request.POST, instance=rep_max)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Rep Max Edited")
+            return redirect('app:profile_view', rep_max.athlete.user)
+        else:
+            messages.warning(request, "Something Went Wrong!")
+            return redirect('app:profile_view', rep_max.athlete.user)
+    else:
+        form = EditRepMaxForm()
+        return render(request, template, {"form": form, "rep_max": rep_max})
+
+def delete_rep_max(request, rep_max_id):
+    rep_max = get_object_or_404(RepMax, pk=rep_max_id)
+    athlete = rep_max.athlete
+    rep_max.delete()
+    messages.success(request, "Rep Max Deleted!")
+    return redirect('app:profile_view', athlete.user)

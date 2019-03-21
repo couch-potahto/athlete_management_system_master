@@ -93,6 +93,11 @@ class AddRepMaxForm(forms.ModelForm):
     class Meta:
         model = RepMax
         fields = ('rep_max_name', 'rep_max')
+        
+class EditRepMaxForm(forms.ModelForm):
+    class Meta:
+        model = RepMax
+        fields = ('rep_max_name', 'rep_max')
 
 class AddMovementFormCoach(forms.ModelForm):
     class Meta:

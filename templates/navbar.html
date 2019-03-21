@@ -47,14 +47,15 @@
 
 
 
-    <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample" onclick="document.querySelector('.navbar-menu').classList.toggle('is-active');">
+    <div role="button " class="navbar-burger burger has-background-info" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample" onclick="document.querySelector('.navbar-menu').classList.toggle('is-active');">
       <span aria-hidden="true"></span>
       <span aria-hidden="true"></span>
       <span aria-hidden="true"></span>
-    </a>
+    </div>
   </div>
 
-  <div id="navbarBasicExample" class="navbar-menu">
+
+  <div id="navbarBasicExample" class="navbar-menu has-background-dark">
     <div class="navbar-start">
 
 
@@ -67,11 +68,11 @@
           More
         </a>
 
-        <div class="navbar-dropdown">
-          <a href="{% url 'app:calendar' %}" class="navbar-item">
+        <div class="navbar-dropdown has-background-info">
+          <a href="{% url 'app:calendar' %}" class="navbar-item has-text-white">
             Your Calendar
           </a>
-          <a class="navbar-item">
+          <a class="navbar-item has-text-white">
             Analytics (Coming Soon)
           </a>
           <!--<a class="navbar-item">

@@ -49,7 +49,8 @@ urlpatterns = [
         path('duplicate/<int:movement_id>', coach.duplicate, name = 'duplicate'),
         path('duplicate_micro/<int:microcycle_id>', coach.duplicate_microcycle, name = 'duplicate_micro'),
         path('delete/<int:movement_id>', coach.delete_movement, name = 'delete'),
-
+        path('editrm/<int:rep_max_id>', coach.edit_rep_max, name = 'edit_rep_max'),
+        path('deleterm/<int:rep_max_id>', coach.delete_rep_max, name = 'delete_rep_max'),
         path('edit/<int:workout_id>', coach.edit_workout, name = 'edit_workout'),
         path('edit_profile/<int:pk>', coach.UpdateCoach.as_view(), name = 'edit_profile'),
         path('athlete=<int:pk>/create_micro', coach.CreateMicrocycleView.as_view(), name = 'create_micro'),

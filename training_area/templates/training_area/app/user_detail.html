@@ -43,11 +43,41 @@
                           <h2 class="subtitle is-4 has-text-white">{{object.coach.bio}} </h2>
                         </p>
                         {% elif object.is_athlete %}
-                        <p class="has-text-centered ">
-                          {% for rep_max in object.athlete.athlete_rm.all %}
-                          <h2 class="subtitle is-4 has-text-white">{{rep_max}} </h2>
-                          {% endfor %}
-                        </p>
+                        <table class="table is-centered">
+                          <thead>
+                            <tr>
+                              <th>Movement</th>
+                              <th>1 RM</th>
+                              <th></th>
+                              <th></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for rep_max in object.athlete.athlete_rm.all %}
+                            <tr>
+                              <th>{{rep_max.rep_max_name}}</th>
+                              <th>{{rep_max.rep_max}}kg</th>
+                              {% if request.user.is_coach and request.user.coach == object.athlete.coach %}
+                              <th>
+                                <form method="get" action="{% url 'coach:edit_rep_max' rep_max.pk %}" >
+                                  {% csrf_token %}
+                                <button class = 'button is-info is-small' type="submit"><i class="fas fa-edit"></i></button>
+                                </form>
+                                
+                              </th>
+                              <th>
+                                <form method="get" action="{% url 'coach:delete_rep_max' rep_max.pk %}" >
+                                  {% csrf_token %}
+                                <button class = 'button is-danger is-small' type="submit"><i class="far fa-trash-alt"></i></button>
+                                </form>
+                
+                              </th>
+                              {% endif %}
+                            </tr>
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                       
                         {% endif %}
                     </div>
                 </div>
@@ -68,6 +98,7 @@
                 <button class = 'button' type="submit"><i class="fas fa-edit">Add Rep Max</i></button>
               </form>
             </div>
+
             {% endif %}
             </div>
             </div>
