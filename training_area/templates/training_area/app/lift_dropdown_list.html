@@ -1,0 +1,4 @@
+<option value="">---------</option>
+{% for lift in all_lifts%}
+<option value="{{ lift.pk }}">{{ lift.movement_name }}</option>
+{% endfor %}

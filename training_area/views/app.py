@@ -299,6 +299,22 @@ def get_data(request, *args, **kwargs):
 	}
 	return JsonResponse(data)
 
+
+def load_lifts(request):
+	print('entered')
+	athlete_user = request.GET.get('athlete')
+	
+	athlete = Athlete.objects.filter(user__username = athlete_user)[0]
+	print(athlete)
+	all_lifts = athlete.workout_athlete.all()
+	lifts = []
+	for workout in all_lifts:
+		for lift in workout.work.all():
+			if lift.movement_name not in lifts:
+				lifts.append(lift)
+	print(lifts)
+	return render(request, 'training_area/app/lift_dropdown_list.html', {'all_lifts': lifts})
+
 class ChartData(APIView):
 	authentication_classes = []
 	permission_classes = []

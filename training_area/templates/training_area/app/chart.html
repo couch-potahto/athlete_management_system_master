@@ -36,8 +36,24 @@ function setChart(){
 				}]
 			}
 		})
-
 }
+
+$("#id_athlete").change(function(){
+	var url = $("#analyticsForm").attr("all-lifts-url");
+	var athleteId = $(this).val();
+
+	$.ajax({
+		url: url,
+		data:{
+			'athlete': athleteId
+		},
+		success: function(data){
+			console.log(data)
+			$("#id_lifts").html(data);
+		}
+	});
+
+});
 
 
 {% endblock %}
@@ -51,16 +67,22 @@ function setChart(){
 		<canvas id="myChart" width="400" height="400"></canvas>
 	</div>
 	{{request.user.coach.coach.all}}
-	<form action="{% url 'app:testdata' %}" method="post">
+	<form id = "analyticsForm" action="{% url 'app:testdata' %}" method="post" all-lifts-url="{% url 'app:ajax_load_lifts' %}">
 		{% csrf_token %}
 		<div class="control">
   		<div class="select">
 
-		    <select name = "athlete">
+		    <select name = "athlete" id="id_athlete">
 		      <option>Select dropdown</option>
 		      {% for athlete in request.user.coach.coach.all%}
 		      	<option>{{athlete.user.username}}</option>
 		      {% endfor %}
+		    </select>
+		  </div>
+		  <div class="select">
+
+		    <select name = "lifts" id="id_lifts">
+		      <option>Select dropdown</option>
 		    </select>
 		  </div>
 		</div>

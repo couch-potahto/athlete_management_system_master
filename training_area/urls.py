@@ -24,6 +24,7 @@ urlpatterns = [
         path('testviews', app.ChartView.as_view(), name='test'),
         path('api/chartdata', app.ChartData.as_view(), name ='testdata'),
         path('api/data', app.get_data, name='api-data'),
+        path('ajax/load-lifts/', app.load_lifts, name = 'ajax_load_lifts'),
     ], 'training_area'), namespace='app')),
 
     path('athlete/', include(([
