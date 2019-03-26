@@ -141,6 +141,7 @@ $("#id_lifts").change(function(){
 		success: function(data){
 			myLineChart.data.datasets[0].data = data.default;
   			myLineChart.data.labels = data.labels;
+  			myLineChart.data.datasets[0].label = data.name;
   			myLineChart.update();
 		}
 	});

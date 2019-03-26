@@ -405,6 +405,7 @@ def testpost(request):
 		data = {
 			"labels": labels,
 			"default":e1rm,
+			"name": lift,
 		}
 		return JsonResponse(data)
 
