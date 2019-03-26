@@ -65,13 +65,28 @@ function setChart(){
 }
 
 $("#id_athlete").change(function(){
-	var url = $("#analyticsForm").attr("all-lifts-url");
 	var athleteId = $(this).val();
 
 	$.ajax({
-		url: url,
+		url: '/app/ajax/load-meso/',
 		data:{
 			'athlete': athleteId
+		},
+		success: function(data){
+			console.log(data)
+			$("#id_mesocycles").html(data);
+		}
+	});
+
+});
+
+$("#id_mesocycles").change(function(){
+	var mesocycle = $('#id_mesocycles').val();
+
+	$.ajax({
+		url: '/app/ajax/load-lifts/',
+		data:{
+			'mesocycle': mesocycle
 		},
 		success: function(data){
 			console.log(data)
@@ -84,11 +99,13 @@ $("#id_athlete").change(function(){
 $("#id_lifts").change(function(){
 	var lift = $('#id_lifts').val()
 	var athlete = $('#id_athlete').val()
+	var meso = $("#id_mesocycles").val()
 	$.ajax({
 		url: '/app/ajax/testpost/',
 		data:{
 			'athlete': athlete,
-			'lift': lift
+			'lift': lift,
+			'meso': meso,
 		},
 		success: function(data){
 			labels = data.labels
@@ -123,7 +140,16 @@ $("#id_lifts").change(function(){
 		      {% endfor %}
 		    </select>
 		  </div>
-		  <div class="select">
+
+		<div class="select">
+
+		    <select name = "mesocycles" id="id_mesocycles">
+		      <option>Select dropdown</option>
+		    </select>
+		  </div>
+		</div>
+
+		<div class="select">
 
 		    <select name = "lifts" id="id_lifts">
 		      <option>Select dropdown</option>

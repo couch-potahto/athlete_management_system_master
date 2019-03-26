@@ -342,20 +342,34 @@ def get_data(request, *args, **kwargs):
 
 def load_lifts(request):
 	print('entered')
+	mesocycle_pk = request.GET.get('mesocycle')
+	
+	mesocycle = get_object_or_404(Mesocycle, pk = int(mesocycle_pk))
+	print(mesocycle)
+	microcycles = mesocycle.meso.all()
+	lifts = []
+	check = []
+	for micro in microcycles:
+		for workout in micro.micro.all():
+			for lift in workout.work.all():
+				if lift.movement_name not in check:
+					lifts.append(lift)
+					check.append(lift.movement_name)
+	print(lifts)
+	return render(request, 'training_area/app/lift_dropdown_list.html', {'all_lifts': lifts})
+
+def load_meso(request):
+	print('entered')
 	athlete_user = request.GET.get('athlete')
 	
 	athlete = Athlete.objects.filter(user__username = athlete_user)[0]
 	print(athlete)
-	all_lifts = athlete.workout_athlete.all()
-	lifts = []
+	all_meso = athlete.meso_athlete.all()
+	mesocycles = []
 	check = []
-	for workout in all_lifts:
-		for lift in workout.work.all():
-			if lift.movement_name not in check:
-				lifts.append(lift)
-				check.append(lift.movement_name)
-	print(lifts)
-	return render(request, 'training_area/app/lift_dropdown_list.html', {'all_lifts': lifts})
+	for meso in all_meso:
+		mesocycles.append(meso)
+	return render(request, 'training_area/app/mesocycle_dropdown_list.html', {'all_mesocycles': mesocycles})
 
 def testpost(request):
 		req = request.GET.get('athlete')
