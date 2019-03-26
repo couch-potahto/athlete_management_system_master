@@ -5,6 +5,31 @@
 var endpoint = 'api/chartdata'
 var defaultData = []
 var labels = []
+
+
+$.ajaxSetup({ 
+     beforeSend: function(xhr, settings) {
+         function getCookie(name) {
+             var cookieValue = null;
+             if (document.cookie && document.cookie != '') {
+                 var cookies = document.cookie.split(';');
+                 for (var i = 0; i < cookies.length; i++) {
+                     var cookie = jQuery.trim(cookies[i]);
+                     // Does this cookie string begin with the name we want?
+                     if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                         cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                         break;
+                     }
+                 }
+             }
+             return cookieValue;
+         }
+         if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+             // Only send the token to relative URLs i.e. locally.
+             xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+         }
+     } 
+});
 $.ajax({
 	method:"GET",
 	url: endpoint,
@@ -17,7 +42,8 @@ $.ajax({
 		console.log("error")
 		console.log(error_data)
 	}
-})
+}
+)
 
 function setChart(){
 	var ctx = document.getElementById('myChart');
@@ -55,6 +81,24 @@ $("#id_athlete").change(function(){
 
 });
 
+$("#id_lifts").change(function(){
+	var lift = $('#id_lifts').val()
+	var athlete = $('#id_athlete').val()
+	$.ajax({
+		url: '/app/ajax/testpost/',
+		data:{
+			'athlete': athlete,
+			'lift': lift
+		},
+		success: function(data){
+			labels = data.labels
+			defaultData = data.default
+			setChart()
+		}
+	});
+
+});
+
 
 {% endblock %}
 </script>
@@ -67,7 +111,7 @@ $("#id_athlete").change(function(){
 		<canvas id="myChart" width="400" height="400"></canvas>
 	</div>
 	{{request.user.coach.coach.all}}
-	<form id = "analyticsForm" action="{% url 'app:testdata' %}" method="post" all-lifts-url="{% url 'app:ajax_load_lifts' %}">
+	<form id = "analyticsForm" action="{% url 'app:test' %}" method="post" all-lifts-url="{% url 'app:ajax_load_lifts' %}">
 		{% csrf_token %}
 		<div class="control">
   		<div class="select">

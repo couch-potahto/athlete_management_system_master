@@ -22,9 +22,12 @@ urlpatterns = [
         path('user=<int:pk>/chart_type=<str:chart_type>', app.RPEView.as_view(), name='view_rpe'),
         #######
         path('testviews', app.ChartView.as_view(), name='test'),
+        path('testviews/', app.ChartView.as_view(), name='test'),
         path('api/chartdata', app.ChartData.as_view(), name ='testdata'),
+        path('testviews/api/chartdata', app.ChartData.as_view(), name ='testdata'),
         path('api/data', app.get_data, name='api-data'),
         path('ajax/load-lifts/', app.load_lifts, name = 'ajax_load_lifts'),
+        path('ajax/testpost/', app.testpost, name = 'ajax_test_post'),
     ], 'training_area'), namespace='app')),
 
     path('athlete/', include(([

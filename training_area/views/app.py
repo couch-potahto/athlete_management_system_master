@@ -15,6 +15,7 @@ from django.utils.safestring import mark_safe
 from django.urls import reverse
 from django import template
 from django.core.paginator import Paginator
+from decimal import Decimal
 import calendar
 
 
@@ -284,6 +285,45 @@ class ChartView(View):
 		print(self.request.user)
 		return render(request, 'training_area/app/chart.html', {})
 
+	def post(self, request, *args, **kwargs):
+
+		print(request.POST)
+		req = request.POST.get('athlete')
+		lift = request.POST.get('lifts')
+		print("<<>>")
+		print(lift)
+		athlete = Athlete.objects.filter(user__username=req)[0]
+		mesocycle_of_interest = Mesocycle.objects.filter(athlete__user__id=athlete.pk)[0]
+		labels = []
+		e1rm = []
+		for microcycle in mesocycle_of_interest.meso.all():
+			labels.append(microcycle.microcycle_name)
+			highest_rm = 0
+			for workout in microcycle.micro.all():
+				movements_of_interest = Movement.objects.filter(workout__id=workout.pk, movement_name=lift)
+				if movements_of_interest:
+					for movement in movements_of_interest:
+						repetitions = movement.num_reps_done
+						if repetitions > 10:
+							continue
+						exertion = movement.rpe
+						corresponding_percentage = ExertionPerceived.objects.filter(rep_scale=repetitions, exertion_scale=exertion)[0].percent
+						estimated_repmax = Decimal(movement.kg_done)/Decimal(corresponding_percentage)
+						print(estimated_repmax)
+						if estimated_repmax>highest_rm:
+							highest_rm = estimated_repmax
+
+				e1rm.append(highest_rm)
+				print(movements_of_interest)
+			print(labels)
+			print(e1rm)
+		print(athlete)
+		data = {
+			"labels": labels,
+			"default":e1rm,
+		}
+		return render(request, 'training_area/app/chart.html', {'data':data})
+
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
 		# use today's date for the calendar
@@ -308,12 +348,51 @@ def load_lifts(request):
 	print(athlete)
 	all_lifts = athlete.workout_athlete.all()
 	lifts = []
+	check = []
 	for workout in all_lifts:
 		for lift in workout.work.all():
-			if lift.movement_name not in lifts:
+			if lift.movement_name not in check:
 				lifts.append(lift)
+				check.append(lift.movement_name)
 	print(lifts)
 	return render(request, 'training_area/app/lift_dropdown_list.html', {'all_lifts': lifts})
+
+def testpost(request):
+		req = request.GET.get('athlete')
+		lift = request.GET.get('lift')
+		print("<<>>")
+		print(lift)
+		athlete = Athlete.objects.filter(user__username=req)[0]
+		mesocycle_of_interest = Mesocycle.objects.filter(athlete__user__id=athlete.pk)[0]
+		labels = []
+		e1rm = []
+		for microcycle in mesocycle_of_interest.meso.all():
+			labels.append(microcycle.microcycle_name)
+			highest_rm = 0
+			for workout in microcycle.micro.all():
+				movements_of_interest = Movement.objects.filter(workout__id=workout.pk, movement_name=lift)
+				if movements_of_interest:
+					for movement in movements_of_interest:
+						repetitions = movement.num_reps_done
+						if repetitions > 10:
+							continue
+						exertion = movement.rpe
+						corresponding_percentage = ExertionPerceived.objects.filter(rep_scale=repetitions, exertion_scale=exertion)[0].percent
+						estimated_repmax = Decimal(movement.kg_done)/Decimal(corresponding_percentage)
+						print(estimated_repmax)
+						if estimated_repmax>highest_rm:
+							highest_rm = estimated_repmax
+
+				e1rm.append(highest_rm)
+				print(movements_of_interest)
+			print(labels)
+			print(e1rm)
+		print(athlete)
+		data = {
+			"labels": labels,
+			"default":e1rm,
+		}
+		return JsonResponse(data)
 
 class ChartData(APIView):
 	authentication_classes = []
@@ -329,26 +408,39 @@ class ChartData(APIView):
 		}
 		return Response(data)
 
-	def post(self, request, format=None):
+	def post(self, request):
 		req = request.POST.get('athlete')
-		
+		lift = request.POST.get('lifts')
+		print("<<>>")
+		print(lift)
 		athlete = Athlete.objects.filter(user__username=req)[0]
 		mesocycle_of_interest = Mesocycle.objects.filter(athlete__user__id=athlete.pk)[0]
 		labels = []
 		e1rm = []
 		for microcycle in mesocycle_of_interest.meso.all():
 			labels.append(microcycle.microcycle_name)
+			highest_rm = 0
 			for workout in microcycle.micro.all():
-				
-				print(workout.workout_name)
-			print(microcycle.microcycle_name)
-		#labels = num microcycles
-		#items = highest e1rm of each lift
-		#need to get all movement name as a set
-		#find the highest e1rm
-		#put into list
+				movements_of_interest = Movement.objects.filter(workout__id=workout.pk, movement_name=lift)
+				if movements_of_interest:
+					for movement in movements_of_interest:
+						repetitions = movement.num_reps_done
+						if repetitions > 10:
+							continue
+						exertion = movement.rpe
+						corresponding_percentage = ExertionPerceived.objects.filter(rep_scale=repetitions, exertion_scale=exertion)[0].percent
+						estimated_repmax = Decimal(movement.kg_done)/Decimal(corresponding_percentage)
+						print(estimated_repmax)
+						if estimated_repmax>highest_rm:
+							highest_rm = estimated_repmax
+
+				e1rm.append(highest_rm)
+				print(movements_of_interest)
+			print(labels)
+			print(e1rm)
 		print(athlete)
 		data = {
-			"request": req,
+			"labels": labels,
+			"default":e1rm,
 		}
 		return Response(data)
