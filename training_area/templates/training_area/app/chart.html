@@ -65,7 +65,7 @@ var myLineChart = Chart.Line(canvas,{
 });
 var ctx = document.getElementById('myChartbar');
 		var myChartbar = new Chart(ctx, {
-    		type: 'line',
+    		type: 'pie',
     		data: {
         		labels: labels,
         		datasets: [{
@@ -254,7 +254,7 @@ $("#id_lifts").change(function(){
         </header>
         <div class="card-menu">
         <div class="content has-background-dark">
-			<canvas id="myChartbar" width="200" height="200">
+			<canvas id="myChartbar" width="200" height="150">
 		</div>
 		</div>
       </div>
