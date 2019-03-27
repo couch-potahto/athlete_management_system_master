@@ -269,3 +269,9 @@ def event(request, event_id=None):
 		return HttpResponseRedirect(reverse('app:calendar'))
 		messages.success(request, "Event has been added!")
 	return render(request, 'training_area/app/event.html', {'form': form})
+
+def delete_event(request, event_id):
+	event = get_object_or_404(Event, pk=event_id)
+	event.delete()
+	messages.success(request, "Event has been deleted!")
+	return redirect('app:calendar')

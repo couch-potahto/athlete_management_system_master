@@ -44,9 +44,11 @@ class DashboardView(ListView):
 		context = super().get_context_data(**kwargs)
 		calendar = {}
 		today = datetime.now() + timedelta(days=-1)
+		
 		x=today
 		in_thirty_days = today + timedelta(days=30)
-		events = Event.objects.filter(end_time__lte=in_thirty_days)
+		print(in_thirty_days)
+		events = Event.objects.filter(start_time__gte=today, end_time__lte=in_thirty_days)
 		if events:
 			if self.request.user.athlete.coach:
 				events=events.filter(Q(user=self.request.user) | Q(user=self.request.user.athlete.coach.user))
