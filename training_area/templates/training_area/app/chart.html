@@ -6,75 +6,64 @@ var endpoint = 'api/chartdata'
 var defaultData = []
 var labels = []
 var canvas = document.getElementById('myChart');
+canvas.height = 150;
+canvas.width = 200;
 var data = {
     labels: [],
-    datasets: [
-        {
-            label: "My First dataset",
-            fill: false,
-            lineTension: 0.1,
-            backgroundColor: "rgba(75,192,192,0.4)",
-            borderColor: "rgba(75,192,192,1)",
-            borderCapStyle: 'butt',
-            borderDash: [],
-            borderDashOffset: 0.0,
-            borderJoinStyle: 'miter',
-            pointBorderColor: "rgba(75,192,192,1)",
-            pointBackgroundColor: "#fff",
-            pointBorderWidth: 1,
-            pointHoverRadius: 5,
-            pointHoverBackgroundColor: "rgba(75,192,192,1)",
-            pointHoverBorderColor: "rgba(220,220,220,1)",
-            pointHoverBorderWidth: 2,
-            pointRadius: 5,
-            pointHitRadius: 10,
-            data: [],
-        }
-    ]
+    datasets: []
 };
+var chartColors = [
+		'rgb(255, 99, 132)',
+		'rgb(255, 159, 64)',
+		'rgb(255, 205, 86)',
+		'rgb(75, 192, 192)',
+		'rgb(54, 162, 235)',
+		'rgb(153, 102, 255)',
+		'rgb(231,233,237)'
+	];
 var option = {
 	showLines: true,
 	 scales: {
             yAxes: [{
                 ticks: {
                     beginAtZero:true,
-                    fontColor: 'white'
+                    fontColor: 'white',
                 },
+                scaleLabel:{
+                	display: true,
+                	labelString: 'E1RM',
+                	fontColor: 'white',
+                },
+                gridLines: {
+  					display: true ,
+  					color: "#FFFFFF"
+				},
             }],
           xAxes: [{
                 ticks: {
                 	beginAtZero:true,
-                    fontColor: 'white'
+                    fontColor: 'white',
+                    
                 },
+                scaleLabel:{
+                	display: true,
+                	labelString: 'Microcycles',
+                	fontColor: 'white',
+                },
+                gridLines: {
+  					display: true,
+  					color: "#FFFFFF"
+				},
             }]
         } 
 
 };
 var myLineChart = Chart.Line(canvas,{
-	data:data,
+	data: data,
 	options:option
 
 });
 
-
-function setChart(){
-	var ctx = document.getElementById('myChart');
-		var myChart = new Chart(ctx, {
-    		type: 'line',
-    		data: {
-        		labels: labels,
-        		datasets: [{
-            		label: '# votes',
-            		data: defaultData,
-				},{
-					label: "title2",
-        backgroundColor: "transparent",
-        borderColor: "#fff",
-        data: [50, 50, 50, 50, 50]
-				}]
-			}
-		})
-}
 
 function setChart(){
 	var ctx = document.getElementById('myChart');
@@ -127,10 +116,21 @@ $("#id_mesocycles").change(function(){
 
 });
 
+
+
+
 $("#id_lifts").change(function(){
-	var lift = $('#id_lifts').val()
+	var myCheckboxes = [];
+	$(".lift-box:checked").each(function() {
+   		myCheckboxes.push(this.value)
+
+	});
+	console.log(myCheckboxes)
+	//var lift = $('#id_lifts').val()
+	var lift = myCheckboxes
 	var athlete = $('#id_athlete').val()
 	var meso = $("#id_mesocycles").val()
+	
 	$.ajax({
 		url: '/app/ajax/testpost/',
 		data:{
@@ -139,9 +139,33 @@ $("#id_lifts").change(function(){
 			'meso': meso,
 		},
 		success: function(data){
-			myLineChart.data.datasets[0].data = data.default;
-  			myLineChart.data.labels = data.labels;
-  			myLineChart.data.datasets[0].label = data.name;
+			console.log(data)
+			myLineChart.data.datasets = [];
+			for(i=0; i<data.default.length; i++){
+				myLineChart.data.datasets.push({
+			label: data.name[i],
+            fill: false,
+            lineTension: 0.1,
+            backgroundColor: chartColors[i],
+            borderColor: chartColors[i],
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: chartColors[i],
+            pointBackgroundColor: chartColors[i],
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: chartColors[i],
+            pointHoverBorderColor: chartColors[i],
+            pointHoverBorderWidth: 2,
+            pointRadius: 5,
+            pointHitRadius: 10,
+            data: data.default[i],
+        })
+  				
+			}
+			myLineChart.data.labels = data.labels;
   			myLineChart.update();
 		}
 	});
@@ -154,47 +178,65 @@ $("#id_lifts").change(function(){
 
 {% block content %}
 
-<div class="isResizable">
-  <div class="chart-container">
-		<h1>Hello</h1>
-		<canvas id="myChart" width="400" height="400"></canvas>
-	</div>
-</div>
 <div class = "container">
-	{{request.user.coach.coach.all}}
-	<form id = "analyticsForm" action="{% url 'app:test' %}" method="post" all-lifts-url="{% url 'app:ajax_load_lifts' %}">
-		{% csrf_token %}
-		<div class="control">
-  		<div class="select">
+<div class="columns is-vcentered">
+    <div class="column is-6">
+    	<div class="control">
+  				<div class="select">
 
-		    <select name = "athlete" id="id_athlete">
-		      <option>Select dropdown</option>
-		      {% for athlete in request.user.coach.coach.all%}
-		      	<option>{{athlete.user.username}}</option>
-		      {% endfor %}
-		    </select>
-		  </div>
+		    		<select name = "athlete" id="id_athlete">
+		      			<option>Select dropdown</option>
+		      			{% for athlete in request.user.coach.coach.all%}
+		      			<option>{{athlete.user.username}}</option>
+		      			{% endfor %}
+		    		</select>
+		  		</div>
 
-		<div class="select">
+				<div class="select">
 
-		    <select name = "mesocycles" id="id_mesocycles">
-		      <option>Select dropdown</option>
-		    </select>
-		  </div>
+		    		<select name = "mesocycles" id="id_mesocycles">
+		      			<option>Select dropdown</option>
+		    		</select>
+		  		</div>
+			</div>
+        <div class="card events-card ">
+            <header class="card-header">
+                <p class="card-header-title has-background-dark has-text-white">
+                    Estimated One Rep Maxes
+                </p>
+            </header>
+        <div class="card-menu">
+        <div class="content has-background-dark">
+        	
+				<canvas id="myChart" width="100" height="100"/>
+			
 		</div>
-
-		<div class="select">
-
-		    <select name = "lifts" id="id_lifts">
-		      <option>Select dropdown</option>
-		    </select>
-		  </div>
 		</div>
-		<!--select microcycle-->
-		  <button class = 'button is-small is-link' type="submit">
-            <i class="fas fa-divide" type="submit"></i>
-           </button>
-      </form>
+		<footer class="card-footer has-background-dark ">
+		<div class = "column is-11 is-offset-1">
+		  
+		  		
+			<form id = "analyticsForm" action="{% url 'app:test' %}" method="post" all-lifts-url="{% url 'app:ajax_load_lifts' %}">
+				{% csrf_token %}
+			
+			
+			
+			<div class = "menu has-text-white">
+				
+				<div class="content has-text-white" id = "id_lifts">
+
+				</div>
+			</div>
+			
+			
+      		</form>
+      	</div>
+      
+      	  
+      	</footer>
+		</div>
+	</div>
+
 </div>
 
 

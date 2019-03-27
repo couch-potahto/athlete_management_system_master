@@ -373,38 +373,50 @@ def load_meso(request):
 
 def testpost(request):
 		req = request.GET.get('athlete')
-		lift = request.GET.get('lift')
-		print("<<>>")
+		lift = request.GET.getlist('lift[]')
+		meso = request.GET.get('meso')
+		print("<<<<>>>>")
 		print(lift)
+		print(meso)
 		athlete = Athlete.objects.filter(user__username=req)[0]
-		mesocycle_of_interest = Mesocycle.objects.filter(athlete__user__id=athlete.pk)[0]
+		mesocycle_of_interest = get_object_or_404(Mesocycle, pk=meso)
 		labels = []
-		e1rm = []
-		for microcycle in mesocycle_of_interest.meso.all():
-			labels.append(microcycle.microcycle_name)
-			highest_rm = 0
-			for workout in microcycle.micro.all():
-				movements_of_interest = Movement.objects.filter(workout__id=workout.pk, movement_name=lift)
-				if movements_of_interest:
-					for movement in movements_of_interest:
-						repetitions = movement.num_reps_done
-						if repetitions > 10:
-							continue
-						exertion = movement.rpe
-						corresponding_percentage = ExertionPerceived.objects.filter(rep_scale=repetitions, exertion_scale=exertion)[0].percent
-						estimated_repmax = Decimal(movement.kg_done)/Decimal(corresponding_percentage)
-						print(estimated_repmax)
-						if estimated_repmax>highest_rm:
-							highest_rm = estimated_repmax
+		
+		all_e1rm = []
+		i = 0;
+		for movement in lift:
+			movement_name = movement
+			print("----------------------" + movement + "---------------------")
+			e1rm = []
+			for microcycle in mesocycle_of_interest.meso.all():
+				if microcycle.microcycle_name not in labels:
+					labels.append(microcycle.microcycle_name)
+				highest_rm = 0
+				for workout in microcycle.micro.all():
+					movements_of_interest = Movement.objects.filter(workout__id=workout.pk, movement_name=movement_name)
+					
+					if movements_of_interest:
+						for movement in movements_of_interest:
+							repetitions = movement.num_reps_done
+							if repetitions > 10:
+								continue
+							exertion = movement.rpe
+							corresponding_percentage = ExertionPerceived.objects.filter(rep_scale=repetitions, exertion_scale=exertion)[0].percent
+							estimated_repmax = Decimal(movement.kg_done)/Decimal(corresponding_percentage)
+							if estimated_repmax>highest_rm:
+								highest_rm = estimated_repmax
 
 				e1rm.append(highest_rm)
-				print(movements_of_interest)
-			print(labels)
-			print(e1rm)
-		print(athlete)
+			i = i + 1
+			print(i)
+			
+			all_e1rm.append(e1rm)
+			print(all_e1rm)
+			print("----------------------" + movement.movement_name + "---------------------")
+			
 		data = {
 			"labels": labels,
-			"default":e1rm,
+			"default":all_e1rm,
 			"name": lift,
 		}
 		return JsonResponse(data)
