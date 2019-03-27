@@ -63,7 +63,22 @@ var myLineChart = Chart.Line(canvas,{
 	options:option
 
 });
-
+var ctx = document.getElementById('myChartbar');
+		var myChartbar = new Chart(ctx, {
+    		type: 'line',
+    		data: {
+        		labels: labels,
+        		datasets: [{
+            		label: '# votes',
+            		data: defaultData,
+				},{
+					label: "title2",
+        backgroundColor: "transparent",
+        borderColor: "#fff",
+        data: [50, 50, 50, 50, 50]
+				}]
+			}
+		})
 
 function setChart(){
 	var ctx = document.getElementById('myChart');
@@ -177,15 +192,13 @@ $("#id_lifts").change(function(){
 </script>
 
 {% block content %}
-
-<div class = "container">
-<div class="columns is-vcentered">
-    <div class="column is-6">
-    	<div class="control">
+<div class = "section has-text-centered"> 
+	<h6 class="title has-text-white is-size-2">Analytics</h6>
+<div class="control is-centered">
   				<div class="select">
 
 		    		<select name = "athlete" id="id_athlete">
-		      			<option>Select dropdown</option>
+		      			<option>Select Athlete</option>
 		      			{% for athlete in request.user.coach.coach.all%}
 		      			<option>{{athlete.user.username}}</option>
 		      			{% endfor %}
@@ -195,10 +208,14 @@ $("#id_lifts").change(function(){
 				<div class="select">
 
 		    		<select name = "mesocycles" id="id_mesocycles">
-		      			<option>Select dropdown</option>
+		      			<option>Select Mesocycle</option>
 		    		</select>
 		  		</div>
-			</div>
+			</div> </div>
+<div class = "container">
+<div class="columns is-vcentered">
+    <div class="column is-6">
+    	
         <div class="card events-card ">
             <header class="card-header">
                 <p class="card-header-title has-background-dark has-text-white">
@@ -207,24 +224,15 @@ $("#id_lifts").change(function(){
             </header>
         <div class="card-menu">
         <div class="content has-background-dark">
-        	
 				<canvas id="myChart" width="100" height="100"/>
-			
 		</div>
 		</div>
 		<footer class="card-footer has-background-dark ">
-		<div class = "column is-11 is-offset-1">
-		  
-		  		
+		<div class = "column is-11 is-offset-1">	
 			<form id = "analyticsForm" action="{% url 'app:test' %}" method="post" all-lifts-url="{% url 'app:ajax_load_lifts' %}">
 				{% csrf_token %}
-			
-			
-			
 			<div class = "menu has-text-white">
-				
 				<div class="content has-text-white" id = "id_lifts">
-
 				</div>
 			</div>
 			
@@ -236,6 +244,21 @@ $("#id_lifts").change(function(){
       	</footer>
 		</div>
 	</div>
+
+	<div class="column is-6">
+      <div class="card">
+        <header class="card-header">
+          <p class="card-header-title">
+            Movement Breakdown
+           </p>
+        </header>
+        <div class="card-menu">
+        <div class="content has-background-dark">
+			<canvas id="myChartbar" width="200" height="200">
+		</div>
+		</div>
+      </div>
+    </div>
 
 </div>
 
