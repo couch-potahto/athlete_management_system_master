@@ -65,7 +65,7 @@ var myLineChart = Chart.Line(canvas,{
 });
 var ctx = document.getElementById('myChartbar');
 		var myChartbar = new Chart(ctx, {
-    		type: 'pie',
+    		type: 'line',
     		data: {
         		labels: labels,
         		datasets: [{
@@ -129,6 +129,18 @@ $("#id_mesocycles").change(function(){
 		}
 	});
 
+	$.ajax({
+		url: '/app/ajax/display-metrics/',
+		data:{
+			'mesocycle': mesocycle
+		},
+		success: function(data){
+			console.log(data)
+			myChartbar.data.datasets = [];
+			myChartbar.update();
+		}
+	});
+
 });
 
 
@@ -156,6 +168,7 @@ $("#id_lifts").change(function(){
 		success: function(data){
 			console.log(data)
 			myLineChart.data.datasets = [];
+			
 			for(i=0; i<data.default.length; i++){
 				myLineChart.data.datasets.push({
 			label: data.name[i],
@@ -182,6 +195,7 @@ $("#id_lifts").change(function(){
 			}
 			myLineChart.data.labels = data.labels;
   			myLineChart.update();
+  
 		}
 	});
 

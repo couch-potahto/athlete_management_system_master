@@ -421,6 +421,45 @@ def testpost(request):
 		}
 		return JsonResponse(data)
 
+def display_metrics(request):
+	print('entered here trololololol')
+	mesocycle_pk = request.GET.get('mesocycle')
+	mesocycle= get_object_or_404(Mesocycle, pk=int(mesocycle_pk))
+	microcycles = mesocycle.meso.all()
+	average_weekly_squat_rpe = []
+	average_weekly_bench_rpe = []
+	average_weekly_deadlift_rpe = []
+	average_weekly_squat_volume = []
+	average_weekly_bench_volume = []
+	average_weekly_deadlift_volume = []
+	week = []
+	for micro in microcycles:
+		all_movements = Movement.objects.filter(
+			workout__microcycle=micro)
+		squats = all_movements.filter(movement_name__icontains='squat')
+		bench = all_movements.filter(movement_name__icontains='press')
+		deadlift = all_movements.filter(movement_name__icontains='deadlift')
+		#NT = NL * %1rm
+		if not squats:
+			average_weekly_squat_rpe.append(0)
+			average_weekly_squat_volume.append(0)
+		else:
+			total_NT = 0
+			for movement in squats:
+				total_NT = movement.num_reps_done
+		if not bench:
+			average_weekly_bench_rpe.append(0)
+			average_weekly_bench_volume.append(0)
+		if not deadlift:
+			average_weekly_deadlift_rpe.append(0)
+			average_weekly_deadlift_volume.append(0)
+
+		print(squats)
+	data = {
+		"test": mesocycle_pk,
+	}
+	return JsonResponse(data)
+
 class ChartData(APIView):
 	authentication_classes = []
 	permission_classes = []

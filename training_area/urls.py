@@ -27,8 +27,10 @@ urlpatterns = [
         path('testviews/api/chartdata', app.ChartData.as_view(), name ='testdata'),
         path('api/data', app.get_data, name='api-data'),
         path('ajax/load-lifts/', app.load_lifts, name = 'ajax_load_lifts'),
+        path('ajax/display-metrics/', app.display_metrics, name = 'ajax_display_metrics'),
         path('ajax/load-meso/', app.load_meso, name = 'ajax_load_meso'),
         path('ajax/testpost/', app.testpost, name = 'ajax_test_post'),
+
     ], 'training_area'), namespace='app')),
 
     path('athlete/', include(([
