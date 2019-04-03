@@ -172,7 +172,6 @@ def gen_backoff(request, movement_id):
 @athlete_required
 def submit_workout(request, workout_id):
 	workout = get_object_or_404(Workout, pk=workout_id)
-
 	if workout.completed == False:
 		workout.completed = True
 	else:

@@ -20,8 +20,17 @@ urlpatterns = [
         path('calendar/new_event', app.event, name='event_new'),
         path('calendar/event=<int:event_id>', app.event, name='event_edit'),
         path('calendar/delete/event=<int:event_id>', app.delete_event, name='event_delete'),
-        #path('testtest', app.testtest, name='testtest'),
         path('user=<int:pk>/chart_type=<str:chart_type>', app.RPEView.as_view(), name='view_rpe'),
+        #######
+        path('analytics', app.ChartView.as_view(), name='analytics'),
+        path('api/chartdata', app.ChartData.as_view(), name ='testdata'),
+        path('testviews/api/chartdata', app.ChartData.as_view(), name ='testdata'),
+        path('api/data', app.get_data, name='api-data'),
+        path('ajax/load-lifts/', app.load_lifts, name = 'ajax_load_lifts'),
+        path('ajax/display-metrics/', app.display_metrics, name = 'ajax_display_metrics'),
+        path('ajax/load-meso/', app.load_meso, name = 'ajax_load_meso'),
+        path('ajax/testpost/', app.testpost, name = 'ajax_test_post'),
+
     ], 'training_area'), namespace='app')),
 
     path('athlete/', include(([

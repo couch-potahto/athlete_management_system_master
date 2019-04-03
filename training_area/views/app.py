@@ -1,9 +1,10 @@
 from django.contrib.auth import login
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from functools import reduce
 import operator
 from django.utils.decorators import method_decorator
-from django.views.generic import CreateView, ListView, UpdateView, DetailView
+from django.views.generic import CreateView, ListView, UpdateView, DetailView, View
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -14,6 +15,7 @@ from django.utils.safestring import mark_safe
 from django.urls import reverse
 from django import template
 from django.core.paginator import Paginator
+from decimal import Decimal
 import calendar
 
 
@@ -21,6 +23,9 @@ from ..decorators import coach_required, athlete_required
 from ..forms import CoachSignUpForm, EventForm, AddCommentForm
 from ..models import User, Coach, Athlete, Macrocycle, Mesocycle, Microcycle, Workout, Movement, ExertionPerceived, RepMax, Event, Notifications, Comment
 from ..utils import Calendar
+from rest_framework.views import APIView
+from rest_framework.response import Response
+
 
 @method_decorator([login_required], name='dispatch')
 class LogView(ListView):
@@ -270,8 +275,289 @@ def event(request, event_id=None):
 		messages.success(request, "Event has been added!")
 	return render(request, 'training_area/app/event.html', {'form': form})
 
+
 def delete_event(request, event_id):
 	event = get_object_or_404(Event, pk=event_id)
 	event.delete()
 	messages.success(request, "Event has been deleted!")
 	return redirect('app:calendar')
+
+
+
+
+
+class ChartView(View):
+	def get(self, request, *args, **kwargs):
+		print(self.request.user)
+		return render(request, 'training_area/app/chart.html', {})
+
+	def post(self, request, *args, **kwargs):
+
+		print(request.POST)
+		req = request.POST.get('athlete')
+		lift = request.POST.get('lifts')
+		print("<<>>")
+		print(lift)
+		athlete = Athlete.objects.filter(user__username=req)[0]
+		mesocycle_of_interest = Mesocycle.objects.filter(athlete__user__id=athlete.pk)[0]
+		labels = []
+		e1rm = []
+		for microcycle in mesocycle_of_interest.meso.all():
+			labels.append(microcycle.microcycle_name)
+			highest_rm = 0
+			for workout in microcycle.micro.all():
+				movements_of_interest = Movement.objects.filter(workout__id=workout.pk, movement_name=lift)
+				if movements_of_interest:
+					for movement in movements_of_interest:
+						repetitions = movement.num_reps_done
+						if repetitions > 10:
+							continue
+						exertion = movement.rpe
+						corresponding_percentage = ExertionPerceived.objects.filter(rep_scale=repetitions, exertion_scale=exertion)[0].percent
+						estimated_repmax = Decimal(movement.kg_done)/Decimal(corresponding_percentage)
+						print(estimated_repmax)
+						if estimated_repmax>highest_rm:
+							highest_rm = estimated_repmax
+
+				e1rm.append(highest_rm)
+				print(movements_of_interest)
+			print(labels)
+			print(e1rm)
+		print(athlete)
+		data = {
+			"labels": labels,
+			"default":e1rm,
+		}
+		return render(request, 'training_area/app/chart.html', {'data':data})
+
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		# use today's date for the calendar
+		all_athletes = self.request.user
+		context['all_athletes'] = all_athletes
+		return context
+
+def get_data(request, *args, **kwargs):
+	print(request.POST.get('athlete'))
+	data = {
+		"sales":100,
+		"customers":10,
+	}
+	return JsonResponse(data)
+
+
+def load_lifts(request):
+	print('entered')
+	mesocycle_pk = request.GET.get('mesocycle')
+	
+	mesocycle = get_object_or_404(Mesocycle, pk = int(mesocycle_pk))
+	print(mesocycle)
+	microcycles = mesocycle.meso.all()
+	lifts = []
+	check = []
+	for micro in microcycles:
+		for workout in micro.micro.all():
+			for lift in workout.work.all():
+				if lift.movement_name not in check:
+					lifts.append(lift)
+					check.append(lift.movement_name)
+	print(lifts)
+	return render(request, 'training_area/app/lift_dropdown_list.html', {'all_lifts': lifts})
+
+def load_meso(request):
+	print('entered')
+	athlete_user = request.GET.get('athlete')
+	
+	athlete = Athlete.objects.filter(user__username = athlete_user)[0]
+	print(athlete)
+	all_meso = athlete.meso_athlete.all()
+	mesocycles = []
+	check = []
+	for meso in all_meso:
+		mesocycles.append(meso)
+	return render(request, 'training_area/app/mesocycle_dropdown_list.html', {'all_mesocycles': mesocycles})
+
+def testpost(request):
+		req = request.GET.get('athlete')
+		lift = request.GET.getlist('lift[]')
+		meso = request.GET.get('meso')
+		print("<<<<>>>>")
+		print(lift)
+		print(meso)
+		athlete = Athlete.objects.filter(user__username=req)[0]
+		mesocycle_of_interest = get_object_or_404(Mesocycle, pk=meso)
+		labels = []
+		
+		all_e1rm = []
+		i = 0;
+		for movement in lift:
+			movement_name = movement
+			print("----------------------" + movement + "---------------------")
+			e1rm = []
+			for microcycle in mesocycle_of_interest.meso.all():
+				if microcycle.microcycle_name not in labels:
+					labels.append(microcycle.microcycle_name)
+				highest_rm = 0
+				for workout in microcycle.micro.all():
+					movements_of_interest = Movement.objects.filter(workout__id=workout.pk, movement_name=movement_name)
+					
+					if movements_of_interest:
+						for movement in movements_of_interest:
+							repetitions = movement.num_reps_done
+							if repetitions > 10:
+								continue
+							exertion = movement.rpe
+							corresponding_percentage = ExertionPerceived.objects.filter(rep_scale=repetitions, exertion_scale=exertion)[0].percent
+							estimated_repmax = Decimal(movement.kg_done)/Decimal(corresponding_percentage)
+							if estimated_repmax>highest_rm:
+								highest_rm = estimated_repmax
+
+				e1rm.append(highest_rm)
+			i = i + 1
+			print(i)
+			
+			all_e1rm.append(e1rm)
+			print(all_e1rm)
+			print("----------------------" + movement.movement_name + "---------------------")
+			
+		data = {
+			"labels": labels,
+			"default":all_e1rm,
+			"name": lift,
+		}
+		return JsonResponse(data)
+
+def display_metrics(request):
+	print('entered here trololololol')
+	mesocycle_pk = request.GET.get('mesocycle')
+	mesocycle= get_object_or_404(Mesocycle, pk=int(mesocycle_pk))
+	microcycles = mesocycle.meso.all()
+	average_weekly_squat_rpe = []
+	average_weekly_bench_rpe = []
+	average_weekly_deadlift_rpe = []
+	average_weekly_squat_volume = []
+	average_weekly_bench_volume = []
+	average_weekly_deadlift_volume = []
+	week = []
+	for micro in microcycles:
+		all_movements = Movement.objects.filter(
+			workout__microcycle=micro)
+		squats = all_movements.filter(movement_name__icontains='squat')
+		bench = all_movements.filter(movement_name__icontains='press')
+		deadlift = all_movements.filter(movement_name__icontains='deadlift')
+		week.append(micro.microcycle_name)
+		#NT = NL * %1rm
+		if not squats:
+			average_weekly_squat_rpe.append(0)
+			average_weekly_squat_volume.append(0)
+		else:
+			total_NT = 0
+			total_RPE = 0
+			for movement in squats:
+				#print(movement.rpe)
+				exertion = ExertionPerceived.objects.filter(rep_scale=movement.num_reps, exertion_scale=movement.rpe)[0]
+				#print(exertion)
+				NT = movement.num_reps * exertion.percent
+				total_NT = total_NT + NT
+				total_RPE = total_RPE + movement.rpe
+			average_weekly_squat_rpe.append(float(total_RPE / len(squats)))
+			average_weekly_squat_volume.append(float(total_NT))
+			#print(average_weekly_squat_rpe)
+			#print(average_weekly_squat_volume)
+
+		if not bench:
+			average_weekly_bench_rpe.append(0)
+			average_weekly_bench_volume.append(0)
+		else:
+			total_NT = 0
+			total_RPE = 0
+			for movement in bench:
+				#print(movement.rpe)
+				exertion = ExertionPerceived.objects.filter(rep_scale=movement.num_reps, exertion_scale=movement.rpe)[0]
+				#print(exertion)
+				NT = movement.num_reps * exertion.percent
+				total_NT = total_NT + NT
+				total_RPE = total_RPE + movement.rpe
+			average_weekly_bench_rpe.append(float(total_RPE / len(bench)))
+			average_weekly_bench_volume.append(float(total_NT))
+
+		if not deadlift:
+			average_weekly_deadlift_rpe.append(0)
+			average_weekly_deadlift_volume.append(0)
+		else:
+			total_NT = 0
+			total_RPE = 0
+			for movement in deadlift:
+				#print(movement.rpe)
+				exertion = ExertionPerceived.objects.filter(rep_scale=movement.num_reps, exertion_scale=movement.rpe)[0]
+				#print(exertion)
+				NT = movement.num_reps * exertion.percent
+				total_NT = total_NT + NT
+				total_RPE = total_RPE + movement.rpe
+			average_weekly_deadlift_rpe.append(float(total_RPE / len(deadlift)))
+			average_weekly_deadlift_volume.append(float(total_NT))
+
+		
+	data = {
+		"test": mesocycle_pk,
+		"average_weekly_squat_rpe": average_weekly_squat_rpe,
+		"average_weekly_bench_rpe": average_weekly_bench_rpe,
+		"average_weekly_deadlift_rpe": average_weekly_deadlift_rpe,
+		"average_weekly_squat_volume": average_weekly_squat_volume, 
+		"average_weekly_bench_volume": average_weekly_bench_volume,
+		"average_weekly_deadlift_volume": average_weekly_deadlift_volume,
+		"week": week,
+	}
+	return JsonResponse(data)
+
+class ChartData(APIView):
+	authentication_classes = []
+	permission_classes = []
+
+	def get(self,request,format=None):
+		qs_count = User.objects.all().count()
+		labels = ['Users', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange']
+		default_items = [qs_count, 1234, 12, 10, 111, 999]
+		data = {
+			"labels":labels,
+			"default":default_items,
+		}
+		return Response(data)
+
+	def post(self, request):
+		req = request.POST.get('athlete')
+		lift = request.POST.get('lifts')
+		print("<<>>")
+		print(lift)
+		athlete = Athlete.objects.filter(user__username=req)[0]
+		mesocycle_of_interest = Mesocycle.objects.filter(athlete__user__id=athlete.pk)[0]
+		labels = []
+		e1rm = []
+		for microcycle in mesocycle_of_interest.meso.all():
+			labels.append(microcycle.microcycle_name)
+			highest_rm = 0
+			for workout in microcycle.micro.all():
+				movements_of_interest = Movement.objects.filter(workout__id=workout.pk, movement_name=lift)
+				if movements_of_interest:
+					for movement in movements_of_interest:
+						repetitions = movement.num_reps_done
+						if repetitions > 10:
+							continue
+						exertion = movement.rpe
+						corresponding_percentage = ExertionPerceived.objects.filter(rep_scale=repetitions, exertion_scale=exertion)[0].percent
+						estimated_repmax = Decimal(movement.kg_done)/Decimal(corresponding_percentage)
+						print(estimated_repmax)
+						if estimated_repmax>highest_rm:
+							highest_rm = estimated_repmax
+
+				e1rm.append(highest_rm)
+				print(movements_of_interest)
+			print(labels)
+			print(e1rm)
+		print(athlete)
+		data = {
+			"labels": labels,
+			"default":e1rm,
+		}
+		return Response(data)
+

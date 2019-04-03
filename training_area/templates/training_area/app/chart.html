@@ -1,0 +1,499 @@
+{% extends 'navbar.html' %}
+
+<script>
+{% block jquery %}
+var endpoint = 'api/chartdata'
+var defaultData = []
+var labels = []
+var canvas = document.getElementById('myChart');
+
+var data = {
+    labels: [],
+    datasets: []
+};
+var chartColors = [
+		'rgb(255, 99, 132)',
+		'rgb(255, 159, 64)',
+		'rgb(255, 205, 86)',
+		'rgb(75, 192, 192)',
+		'rgb(54, 162, 235)',
+		'rgb(153, 102, 255)',
+		'rgb(231,233,237)'
+	];
+var option = {
+	maintainAspectRatio: false,
+	showLines: true,
+	 scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true,
+                    fontColor: 'white',
+                },
+                scaleLabel:{
+                	display: true,
+                	labelString: 'E1RM',
+                	fontColor: 'white',
+                },
+                gridLines: {
+  					display: true ,
+  					
+				},
+            }],
+          xAxes: [{
+                ticks: {
+                	beginAtZero:true,
+                    fontColor: 'white',
+                    
+                },
+                scaleLabel:{
+                	display: true,
+                	labelString: 'Microcycles',
+                	fontColor: 'white',
+                },
+                gridLines: {
+  					display: true,
+  					
+				},
+            }]
+        }
+
+};
+var option_two = {
+	maintainAspectRatio: false,
+	showLines: true,
+	 scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true,
+                    fontColor: 'white',
+                },
+                scaleLabel:{
+                	display: true,
+                	fontColor: 'white',
+                },
+                gridLines: {
+  					display: true ,
+  					
+				},
+            }],
+          xAxes: [{
+                ticks: {
+                	beginAtZero:true,
+                    fontColor: 'white',
+                    
+                },
+                scaleLabel:{
+                	display: true,
+                	labelString: 'Microcycles',
+                	fontColor: 'white',
+                },
+                gridLines: {
+  					display: true,
+  					
+				},
+            }]
+        }
+
+};
+var myLineChart = Chart.Line(canvas,{
+	data: data,
+	options:option
+
+});
+var ctx = document.getElementById('myChartbar');
+		var myChartbar = new Chart(ctx, {
+    		type: 'bar',
+    		options:option_two
+		})
+var btx = document.getElementById('secondChartbar');
+		var secondChartbar = new Chart(btx, {
+    		type: 'bar',
+    		options:option_two
+		})
+var atx = document.getElementById('thirdChartbar');
+		var thirdChartbar = new Chart(atx, {
+    		type: 'bar',
+    		options:option_two
+    		
+		})
+
+function setChart(){
+	var ctx = document.getElementById('myChart');
+		var myChart = new Chart(ctx, {
+    		type: 'line',
+    		data: {
+        		labels: labels,
+        		datasets: [{
+            		label: '# votes',
+            		data: defaultData,
+				},{
+					label: "title2",
+        backgroundColor: "transparent",
+        borderColor: "#fff",
+        data: [50, 50, 50, 50, 50]
+				}]
+			}
+		})
+}
+
+$("#id_athlete").change(function(){
+	var athleteId = $(this).val();
+
+	$.ajax({
+		url: '/app/ajax/load-meso/',
+		data:{
+			'athlete': athleteId
+		},
+		success: function(data){
+			console.log(data)
+			$("#id_mesocycles").html(data);
+			myLineChart.data.datasets= [];
+			myLineChart.update();
+			myChartbar.data.datasets = [];
+			myChartbar.update();
+			secondChartbar.data.datasets = [];
+			secondChartbar.update();
+			thirdChartbar.data.datasets = [];
+			thirdChartbar.update();
+		}
+	});
+
+});
+
+$("#id_mesocycles").change(function(){
+	var mesocycle = $('#id_mesocycles').val();
+
+	$.ajax({
+		url: '/app/ajax/load-lifts/',
+		data:{
+			'mesocycle': mesocycle
+		},
+		success: function(data){
+			console.log(data)
+			$("#id_lifts").html(data);
+		}
+	});
+
+	$.ajax({
+		url: '/app/ajax/display-metrics/',
+		data:{
+			'mesocycle': mesocycle
+		},
+		success: function(data){
+			console.log(data)
+			myChartbar.data.datasets = [];
+			myChartbar.data.datasets.push({
+			label: "Squat Average Fatigue",
+            fill: false,
+            lineTension: 0.1,
+            backgroundColor: 'rgb(255, 51, 0, 0.2)',
+            borderColor: 'rgb(255, 51, 0, 0.2)',
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: chartColors[0],
+            pointBackgroundColor: chartColors[0],
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: chartColors[0],
+            pointHoverBorderColor: chartColors[0],
+            pointHoverBorderWidth: 2,
+            pointRadius: 5,
+            pointHitRadius: 10,
+            data: data.average_weekly_squat_rpe, 
+        })
+			myChartbar.data.datasets.push({
+			label: "Squat NT",
+			fill: false,
+            backgroundColor: chartColors[0],
+            borderColor: chartColors[0],
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: chartColors[0],
+            pointBackgroundColor: chartColors[0],
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: chartColors[0],
+            pointHoverBorderColor: chartColors[0],
+            pointHoverBorderWidth: 2,
+            pointRadius: 5,
+            pointHitRadius: 10,
+            data: data.average_weekly_squat_volume,
+            type: 'line',
+        })
+			myChartbar.data.labels = data.week;
+			myChartbar.update();
+			////////
+
+			secondChartbar.data.datasets = [];
+			secondChartbar.data.datasets.push({
+			label: "Bench Average Fatigue",
+            fill: false,
+            lineTension: 0.1,
+            backgroundColor: 'rgb(255, 51, 0, 0.2)',
+            borderColor: 'rgb(255, 51, 0, 0.2)',
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: chartColors[1],
+            pointBackgroundColor: chartColors[1],
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: chartColors[1],
+            pointHoverBorderColor: chartColors[1],
+            pointHoverBorderWidth: 2,
+            pointRadius: 5,
+            pointHitRadius: 10,
+            data: data.average_weekly_bench_rpe,
+        })
+			secondChartbar.data.datasets.push({
+			label: "Bench NT",
+			fill: false,
+            backgroundColor: chartColors[1],
+            borderColor: chartColors[1],
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: chartColors[1],
+            pointBackgroundColor: chartColors[1],
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: chartColors[1],
+            pointHoverBorderColor: chartColors[1],
+            pointHoverBorderWidth: 2,
+            pointRadius: 5,
+            pointHitRadius: 10,
+            data: data.average_weekly_bench_volume,
+            type: 'line',
+        })
+			secondChartbar.data.labels = data.week;
+			secondChartbar.update();
+
+
+			thirdChartbar.data.datasets = [];
+			thirdChartbar.data.datasets.push({
+			label: "Deadlift Average Fatigue",
+            fill: false,
+            lineTension: 0.1,
+            backgroundColor: 'rgb(255, 51, 0, 0.2)',
+            borderColor: 'rgb(255, 51, 0, 0.2)',
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: chartColors[3],
+            pointBackgroundColor: chartColors[3],
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: chartColors[3],
+            pointHoverBorderColor: chartColors[3],
+            pointHoverBorderWidth: 2,
+            pointRadius: 5,
+            pointHitRadius: 10,
+            data: data.average_weekly_deadlift_rpe,
+        })
+			thirdChartbar.data.datasets.push({
+			label: "Deadlift NT",
+			fill: false,
+            backgroundColor: chartColors[3],
+            borderColor: chartColors[3],
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: chartColors[3],
+            pointBackgroundColor: chartColors[3],
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: chartColors[3],
+            pointHoverBorderColor: chartColors[3],
+            pointHoverBorderWidth: 2,
+            pointRadius: 5,
+            pointHitRadius: 10,
+            data: data.average_weekly_deadlift_volume,
+            type: 'line',
+        })
+			thirdChartbar.data.labels = data.week;
+			thirdChartbar.update();
+		}
+	});
+
+});
+
+
+
+
+$("#id_lifts").change(function(){
+	var myCheckboxes = [];
+	$(".lift-box:checked").each(function() {
+   		myCheckboxes.push(this.value)
+
+	});
+	console.log(myCheckboxes)
+	//var lift = $('#id_lifts').val()
+	var lift = myCheckboxes
+	var athlete = $('#id_athlete').val()
+	var meso = $("#id_mesocycles").val()
+	
+	$.ajax({
+		url: '/app/ajax/testpost/',
+		data:{
+			'athlete': athlete,
+			'lift': lift,
+			'meso': meso,
+		},
+		success: function(data){
+			console.log(data)
+			myLineChart.data.datasets = [];
+			
+			for(i=0; i<data.default.length; i++){
+				myLineChart.data.datasets.push({
+			label: data.name[i],
+            fill: false,
+            lineTension: 0.1,
+            backgroundColor: chartColors[i],
+            borderColor: chartColors[i],
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: chartColors[i],
+            pointBackgroundColor: chartColors[i],
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: chartColors[i],
+            pointHoverBorderColor: chartColors[i],
+            pointHoverBorderWidth: 2,
+            pointRadius: 5,
+            pointHitRadius: 10,
+            data: data.default[i],
+        })
+  				
+			}
+			myLineChart.data.labels = data.labels;
+  			myLineChart.update();
+  
+		}
+	});
+
+});
+
+
+{% endblock %}
+</script>
+
+{% block content %}
+<div class = "section has-text-centered"> 
+  <h6 class="title has-text-white is-size-2">Analytics</h6>
+    <main class = "column">
+      <div class = "level">
+      	<div class="level-left">
+          <div class="level-item">
+			<div class="control is-centered">
+  				<div class="select">
+
+		    		<select name = "athlete" id="id_athlete">
+		      			<option>Select Athlete</option>
+		      			{% for athlete in request.user.coach.coach.all%}
+		      			<option>{{athlete.user.username}}</option>
+		      			{% endfor %}
+		    		</select>
+		  		</div>
+
+				<div class="select">
+
+		    		<select name = "mesocycles" id="id_mesocycles">
+		      			<option>Select Mesocycle</option>
+		    		</select>
+		  		</div>
+			</div> 
+		  </div>
+		 </div>
+		</div>
+	<div class = "columns">
+		<div class="column is-8">
+          <div class="panel">
+            <p class="panel-heading">
+              Estimated Cycle Rep Maxes
+            </p>
+            <div class="panel-block">
+              <div class="chart-container" style="position: relative; height:40vh; width:85vw">
+					<canvas id="myChart" width="300" height="200"></canvas>
+			  </div>
+			</div>
+		  </div>
+		 </div>
+		 <div class="column">
+			<div class="panel-footer">
+			<div class="column is-three-fifths">
+			  
+			  <form id = "analyticsForm" method="post" all-lifts-url="{% url 'app:ajax_load_lifts' %}">
+				{% csrf_token %}
+				
+				<div class="content has-text-white" id = "id_lifts"></div>
+				
+			  </form>
+			
+			</div>
+      		</div>
+      		
+    	  </div>
+    	  </div>
+    	
+    	
+    
+
+	
+
+  <div class = "columns">
+    <div class="column">
+      <div class = "panel">
+      	<p class = "panel-heading">
+      	  Squat NT + Average sRPE
+      	</p>
+
+        <div class="panel-block">
+          <div class="chart-container">
+			<canvas id="myChartbar" width="400" height="200"></canvas>
+		  </div>
+      	</div>
+      </div>
+    </div>
+    <div class="column">
+      <div class = "panel">
+      	<p class = "panel-heading">
+      	  Bench NT + Average sRPE
+      	</p>
+
+        <div class="panel-block">
+          <div class="chart-container">
+			<canvas id="secondChartbar" width="400" height="200"></canvas>
+		  </div>
+      	</div>
+      </div>
+    </div>
+    <div class="column">
+      <div class = "panel">
+      	<p class = "panel-heading">
+      	  Deadlift NT + Average sRPE
+      	</p>
+
+        <div class="panel-block">
+          <div class="chart-container">
+			<canvas id="thirdChartbar" width="400" height="200"></canvas>
+		  </div>
+      	</div>
+      </div>
+    </div>
+   </div>
+</main>
+
+</div>
+
+
+{% endblock content %}

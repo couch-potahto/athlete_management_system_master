@@ -1,0 +1,4 @@
+<option value="">---------</option>
+{% for meso in all_mesocycles%}
+<option value="{{ meso.pk }}">{{ meso.mesocycle_name }}</option>
+{% endfor %}
