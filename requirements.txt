@@ -11,6 +11,7 @@ django-inplaceedit==1.4.1
 django-jquery==3.1.0
 djangorestframework==3.9.1
 djangorestframework-simplejwt==4.0.0
+gunicorn==19.9.0
 idna==2.8
 itypes==1.1.0
 Jinja2==2.10
