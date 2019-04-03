@@ -21,8 +21,7 @@ urlpatterns = [
         path('calendar/event=<int:event_id>', app.event, name='event_edit'),
         path('user=<int:pk>/chart_type=<str:chart_type>', app.RPEView.as_view(), name='view_rpe'),
         #######
-        path('testviews', app.ChartView.as_view(), name='test'),
-        path('testviews/', app.ChartView.as_view(), name='test'),
+        path('analytics', app.ChartView.as_view(), name='analytics'),
         path('api/chartdata', app.ChartData.as_view(), name ='testdata'),
         path('testviews/api/chartdata', app.ChartData.as_view(), name ='testdata'),
         path('api/data', app.get_data, name='api-data'),

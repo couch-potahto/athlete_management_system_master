@@ -439,24 +439,68 @@ def display_metrics(request):
 		squats = all_movements.filter(movement_name__icontains='squat')
 		bench = all_movements.filter(movement_name__icontains='press')
 		deadlift = all_movements.filter(movement_name__icontains='deadlift')
+		week.append(micro.microcycle_name)
 		#NT = NL * %1rm
 		if not squats:
 			average_weekly_squat_rpe.append(0)
 			average_weekly_squat_volume.append(0)
 		else:
 			total_NT = 0
+			total_RPE = 0
 			for movement in squats:
-				total_NT = movement.num_reps_done
+				#print(movement.rpe)
+				exertion = ExertionPerceived.objects.filter(rep_scale=movement.num_reps, exertion_scale=movement.rpe)[0]
+				#print(exertion)
+				NT = movement.num_reps * exertion.percent
+				total_NT = total_NT + NT
+				total_RPE = total_RPE + movement.rpe
+			average_weekly_squat_rpe.append(float(total_RPE / len(squats)))
+			average_weekly_squat_volume.append(float(total_NT))
+			#print(average_weekly_squat_rpe)
+			#print(average_weekly_squat_volume)
+
 		if not bench:
 			average_weekly_bench_rpe.append(0)
 			average_weekly_bench_volume.append(0)
+		else:
+			total_NT = 0
+			total_RPE = 0
+			for movement in bench:
+				#print(movement.rpe)
+				exertion = ExertionPerceived.objects.filter(rep_scale=movement.num_reps, exertion_scale=movement.rpe)[0]
+				#print(exertion)
+				NT = movement.num_reps * exertion.percent
+				total_NT = total_NT + NT
+				total_RPE = total_RPE + movement.rpe
+			average_weekly_bench_rpe.append(float(total_RPE / len(bench)))
+			average_weekly_bench_volume.append(float(total_NT))
+
 		if not deadlift:
 			average_weekly_deadlift_rpe.append(0)
 			average_weekly_deadlift_volume.append(0)
+		else:
+			total_NT = 0
+			total_RPE = 0
+			for movement in deadlift:
+				#print(movement.rpe)
+				exertion = ExertionPerceived.objects.filter(rep_scale=movement.num_reps, exertion_scale=movement.rpe)[0]
+				#print(exertion)
+				NT = movement.num_reps * exertion.percent
+				total_NT = total_NT + NT
+				total_RPE = total_RPE + movement.rpe
+			average_weekly_deadlift_rpe.append(float(total_RPE / len(deadlift)))
+			average_weekly_deadlift_volume.append(float(total_NT))
 
-		print(squats)
+		
 	data = {
 		"test": mesocycle_pk,
+		"average_weekly_squat_rpe": average_weekly_squat_rpe,
+		"average_weekly_bench_rpe": average_weekly_bench_rpe,
+		"average_weekly_deadlift_rpe": average_weekly_deadlift_rpe,
+		"average_weekly_squat_volume": average_weekly_squat_volume, 
+		"average_weekly_bench_volume": average_weekly_bench_volume,
+		"average_weekly_deadlift_volume": average_weekly_deadlift_volume,
+		"week": week,
 	}
 	return JsonResponse(data)
 
