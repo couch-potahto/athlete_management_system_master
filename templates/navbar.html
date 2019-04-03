@@ -74,10 +74,12 @@
           <a href="{% url 'app:calendar' %}" class="navbar-item">
             Your Calendar
           </a>
+          {% if request.user.is_authenticated and request.user.is_coach %}
           <a class="navbar-item">
             <a href="{% url 'app:analytics' %}" class="navbar-item">
-            Analytics (Coming Soon)
+            Analytics
           </a>
+          {% endif %}
           <!--<a class="navbar-item">
             Contact
           </a>

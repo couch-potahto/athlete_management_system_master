@@ -381,9 +381,6 @@ def testpost(request):
 		req = request.GET.get('athlete')
 		lift = request.GET.getlist('lift[]')
 		meso = request.GET.get('meso')
-		print("<<<<>>>>")
-		print(lift)
-		print(meso)
 		athlete = Athlete.objects.filter(user__username=req)[0]
 		mesocycle_of_interest = get_object_or_404(Mesocycle, pk=meso)
 		labels = []
@@ -392,7 +389,6 @@ def testpost(request):
 		i = 0;
 		for movement in lift:
 			movement_name = movement
-			print("----------------------" + movement + "---------------------")
 			e1rm = []
 			for microcycle in mesocycle_of_interest.meso.all():
 				if microcycle.microcycle_name not in labels:
@@ -414,11 +410,8 @@ def testpost(request):
 
 				e1rm.append(highest_rm)
 			i = i + 1
-			print(i)
 			
 			all_e1rm.append(e1rm)
-			print(all_e1rm)
-			print("----------------------" + movement.movement_name + "---------------------")
 			
 		data = {
 			"labels": labels,
@@ -428,7 +421,6 @@ def testpost(request):
 		return JsonResponse(data)
 
 def display_metrics(request):
-	print('entered here trololololol')
 	mesocycle_pk = request.GET.get('mesocycle')
 	mesocycle= get_object_or_404(Mesocycle, pk=int(mesocycle_pk))
 	microcycles = mesocycle.meso.all()
@@ -510,6 +502,95 @@ def display_metrics(request):
 	}
 	return JsonResponse(data)
 
+def validate_kg(request):
+	print(request.user)
+	movement_pk = request.POST.get('pk')
+	movement_kg = request.POST.get('kg_done')
+	movement_of_interest = get_object_or_404(Movement, pk=movement_pk)
+	if request.user.is_athlete:
+		movement_of_interest.kg_done = movement_kg
+	else:
+		movement_of_interest.kg = movement_kg
+	movement_of_interest.save()
+	data = {
+		"lol": "lol"
+	}
+	return JsonResponse(data)
+
+def validate_num_reps(request):
+	movement_pk = request.POST.get('pk')
+	movement_num_reps = request.POST.get('num_reps_done')
+	movement_of_interest = get_object_or_404(Movement, pk=movement_pk)
+	if request.user.is_athlete:
+		movement_of_interest.num_reps_done = movement_num_reps
+	else:
+		movement_of_interest.num_reps = movement_num_reps
+	movement_of_interest.save()
+	data = {
+		"lol": "lol"
+	}
+	return JsonResponse(data)
+
+
+def validate_rpe(request):
+	movement_pk = request.POST.get('pk')
+	movement_rpe = request.POST.get('rpe')
+	movement_of_interest = get_object_or_404(Movement, pk=movement_pk)
+	movement_of_interest.rpe = movement_rpe
+	movement_of_interest.save()
+	data = {
+		"lol": "lol"
+	}
+	return JsonResponse(data)
+
+def validate_movement_name(request):
+	movement_pk = request.POST.get('pk')
+	movement_name = request.POST.get('movement_name')
+	movement_of_interest = get_object_or_404(Movement, pk=movement_pk)
+	movement_of_interest.movement_name = movement_name
+	movement_of_interest.save()
+	data = {
+		"lol": "lol"
+	}
+	return JsonResponse(data)
+
+def validate_percentage(request):
+	movement_pk = request.POST.get('pk')
+	percentage = request.POST.get('percentage')
+	movement_of_interest = get_object_or_404(Movement, pk=movement_pk)
+	movement_of_interest.percentage = percentage
+	movement_of_interest.save()
+	data = {
+		"lol": "lol"
+	}
+	return JsonResponse(data)
+
+def validate_rm(request):
+	movement_pk = request.POST.get('pk')
+	rm = request.POST.get('rm')
+	movement_of_interest = get_object_or_404(Movement, pk=movement_pk)
+	if movement_of_interest.percentage:
+		movement_of_interest.kg = round((Decimal(rm) * (Decimal(movement_of_interest.percentage)/Decimal(100)))/Decimal(2.5)) * Decimal(2.5)
+		movement_of_interest.save()
+	else:
+		messages.warning(request, 'No Percentage Given')
+	movement_of_interest.save()
+	data = {
+		"lol": "lol"
+	}
+	return JsonResponse(data)
+
+def validate_checked(request):
+	movement_pk = request.POST.get('pk')
+	checked = request.POST.get('checked')
+	movement_of_interest = get_object_or_404(Movement, pk=movement_pk)
+	movement_of_interest.is_backoff = not movement_of_interest.is_backoff
+	movement_of_interest.save()
+	data = {
+		"lol": "lol"
+	}
+	return JsonResponse(data)
+
 class ChartData(APIView):
 	authentication_classes = []
 	permission_classes = []
@@ -527,8 +608,7 @@ class ChartData(APIView):
 	def post(self, request):
 		req = request.POST.get('athlete')
 		lift = request.POST.get('lifts')
-		print("<<>>")
-		print(lift)
+		
 		athlete = Athlete.objects.filter(user__username=req)[0]
 		mesocycle_of_interest = Mesocycle.objects.filter(athlete__user__id=athlete.pk)[0]
 		labels = []
@@ -546,18 +626,18 @@ class ChartData(APIView):
 						exertion = movement.rpe
 						corresponding_percentage = ExertionPerceived.objects.filter(rep_scale=repetitions, exertion_scale=exertion)[0].percent
 						estimated_repmax = Decimal(movement.kg_done)/Decimal(corresponding_percentage)
-						print(estimated_repmax)
+						
 						if estimated_repmax>highest_rm:
 							highest_rm = estimated_repmax
 
 				e1rm.append(highest_rm)
 				print(movements_of_interest)
-			print(labels)
-			print(e1rm)
-		print(athlete)
+			
 		data = {
 			"labels": labels,
 			"default":e1rm,
 		}
 		return Response(data)
+
+
 

@@ -172,6 +172,12 @@ def gen_backoff(request, movement_id):
 @athlete_required
 def submit_workout(request, workout_id):
 	workout = get_object_or_404(Workout, pk=workout_id)
+	for movement in workout.work.all():
+		if not movement.num_reps_done:
+			movement.num_reps_done = movement.num_reps
+		if not movement.rpe:
+			messages.warning(request, "Fill in all your RPEs")
+			return redirect('app:workout_detail', workout.athlete.pk, workout.pk)
 	if workout.completed == False:
 		workout.completed = True
 	else:

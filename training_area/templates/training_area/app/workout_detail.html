@@ -1,5 +1,154 @@
 {% extends 'navbar.html' %}
 
+
+<script>
+  {% block jquery %}
+
+    $(".input-kg_done").change(function () {
+      var kg_done = $(this).val();
+      var pk = $(this).attr('key');
+      console.log( $(this).attr('key') );
+      
+      $.ajax({
+        url: "/app/ajax/validate_kg/",
+        type: "POST",
+        data: {
+          csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+          'pk': pk,
+          'kg_done': kg_done
+        },
+        success: function (data) {
+          console.log(data)
+        }
+      });
+
+    });
+
+    $(".num_reps_done").change(function () {
+      var num_reps_done = $(this).val();
+      var pk = $(this).attr('key');
+      console.log( $(this).attr('key') );
+      
+      $.ajax({
+        url: "/app/ajax/validate_num_reps/",
+        type: "POST",
+        data: {
+          csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+          'pk': pk,
+          'num_reps_done': num_reps_done
+        },
+        success: function (data) {
+          console.log(data)
+        }
+      });
+
+    });
+
+    $(".rpe").change(function () {
+      var rpe = $(this).val();
+      var pk = $(this).attr('key');
+      console.log( $(this).attr('key') );
+      
+      $.ajax({
+        url: "/app/ajax/validate_rpe/",
+        type: "POST",
+        data: {
+          csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+          'pk': pk,
+          'rpe': rpe
+        },
+        success: function (data) {
+          console.log(data)
+        }
+      });
+
+    });
+
+    $(".movement_name").change(function () {
+      var movement_name = $(this).val();
+      var pk = $(this).attr('key');
+      console.log( $(this).attr('key') );
+      
+      $.ajax({
+        url: "/app/ajax/validate_movement_name/",
+        type: "POST",
+        data: {
+          csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+          'pk': pk,
+          'movement_name': movement_name
+        },
+        success: function (data) {
+          console.log(data)
+        }
+      });
+
+    });
+
+    $(".percentage").change(function () {
+      var percentage = $(this).val();
+      var pk = $(this).attr('key');
+      console.log( $(this).attr('key') );
+      
+      $.ajax({
+        url: "/app/ajax/validate_percentage/",
+        type: "POST",
+        data: {
+          csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+          'pk': pk,
+          'percentage': percentage
+        },
+        success: function (data) {
+          console.log(data)
+        }
+      });
+
+    });
+
+    $(".rm").change(function () {
+      var rm = $(this).val();
+      var pk = $(this).attr('key');
+      console.log( $(this).attr('key') );
+      
+      $.ajax({
+        url: "/app/ajax/validate_rm/",
+        type: "POST",
+        data: {
+          csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+          'pk': pk,
+          'rm': rm
+        },
+        success: function (data) {
+          console.log(data)
+          location.reload(); 
+        }
+      });
+
+    });
+
+    $(".checked").change(function () {
+      var checked = $(this).val();
+      var pk = $(this).attr('key');
+      console.log( checked );
+      
+      $.ajax({
+        url: "/app/ajax/validate_checked/",
+        type: "POST",
+        data: {
+          csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+          'pk': pk,
+          'checked': checked
+
+        },
+        success: function (data) {
+          console.log(data)
+        }
+      });
+
+    });
+  {% endblock %}
+</script>
+
+
 {% block content %}
 <div class="column is-half is-offset-one-quarter">
             <div class="card">
@@ -35,11 +184,6 @@
       {%endif%}
     </p>
     {% if request.user.is_authenticated and request.user.is_coach %}
-    <!--<a href="{% url 'coach:delete_workout' athlete_id=workout.athlete.pk workout_id=workout.pk %}" class="buttons is-danger float-right">
-      <span class="icon has-text-danger is-large">
-        <i class="fas fa-dumpster-fire fa-1.5x"></i>
-      </span>
-    </a>-->
     <form action="{% url 'coach:delete_workout' athlete_id=workout.athlete.pk workout_id=workout.pk %}"
                     method="post" style="display: inline;" onsubmit="window.mytest()">
                     {% csrf_token %}
@@ -59,10 +203,10 @@
   <thead class="has-text-centered">
     <th>Movement</th>
     {% if user.is_authenticated and user.is_coach %}
-    <th>Percentage</th>
+    <th>Percentage (%)</th>
     {% endif %}
-    <th>Load</th>
-    <th>Load Done</th>
+    <th>Load (kg)</th>
+    <th>Load Done (kg)</th>
     <th>Reps</th>
     <th>Reps Done</th>
     <th>RPE</th>
@@ -78,42 +222,27 @@
   {% for movement in movements %}
 
     {% if user.is_authenticated and user.is_athlete %}
-    <form action="{% url 'athlete:edit_movement' movement.pk %}" method="post">
+    <form id = "id_movement" action="{% url 'athlete:edit_movement' movement.pk %}" method="post">
       {% csrf_token %}
       <td>{{movement.movement_name}}</td>
-      <!--{% if movement.percentage == None %}
-      <td></td>
-      {%else%}
-      <td>{{movement.percentage}}%</td>
-      {%endif%}-->
       {% if movement.kg == None or movement.kg == 0%}
       <td></td>
       {% else %}
       <td>{{movement.kg}}kg</td>
       {%endif%}
-      {% if movement.kg_done %}
       <td>
           <div class="field has-addons is-small">
           <div class="control">
-            <input name="kg_done" class="input is-small" type="number" step="0.01" min=0 value="{{movement.kg_done}}">
+            <input id = "kg_done" class = "input-kg_done is-primary" style="width:70px; text-align: center;" key = "{{movement.pk}}" name="kg_done" class="input is-small" type="number" step="0.01" min=0 value="{{movement.kg_done}}">
           </div>
           </div>
       </td>
-      {% else %}
-      <td>
-          <div class="field has-addons is-small">
-          <div class="control">
-            <input name="kg_done" class="input is-small" type="number" step="0.01" min=0 value="{{movement.kg}}">
-          </div>
-          </div>
-      </td>
-      {%endif%}
       <td>{{movement.num_reps}}</td>
       {% if movement.num_reps_done %}
       <td>
           <div class="field has-addons is-one-fifth">
           <p class="control">
-            <input name="num_reps_done" class="input is-small" type="number" value="{{movement.num_reps_done}}">
+            <input id = "num_reps_done" class = "num_reps_done is-primary" style="width:50px; text-align: center;" key = "{{movement.pk}}" name="num_reps_done" class="input is-small" type="number" value="{{movement.num_reps_done}}">
           </p>
           </div>
 
@@ -122,7 +251,7 @@
       <td>
           <div class="field has-addons is-small">
           <div class="control">
-            <input name="num_reps_done" class="input is-small" type="number" step="0.01" min=0 value="{{movement.num_reps}}">
+            <input id = "num_reps_done" class = "num_reps_done is-primary" style="width:50px; text-align: center;" key = "{{movement.pk}}" name="num_reps_done" class="input is-small" type="number" step="0.01" min=0 value="{{movement.num_reps}}">
           </div>
           </div>
       </td>
@@ -130,20 +259,13 @@
       <td>
           <div class="field has-addons is-one-fifth">
           <div class="control">
-            <input name="rpe" class="input is-small" type="number" step="0.5" min=2 value="{{movement.rpe}}">
+            <input id = "rpe" class = "rpe is-primary" style="width:50px; text-align: center;" key = "{{movement.pk}}" name="rpe" class="input is-small" type="number" step="0.5" min=2 value="{{movement.rpe}}">
           </div>
           </div>
       </td>
 
-      <td>
-        <button class = 'button is-small is-success' type="submit" value="Save">
-          <span class="icon is-small">
-            <i class="fas fa-check"></i>
-          </span>
-          <span>Save</span>
-        </button>
       </form>
-    </td>
+    
     <td>
       <!----add generate backoff-->
 
@@ -156,6 +278,8 @@
       </form>
     {% endif %}
     </td>
+    <td></td>
+    <td></td>
 
 
 
@@ -167,66 +291,57 @@
       <td>
           <div class="field is-small">
           <div class="control">
-            <input name="movement_name" class="input is-small" type="text" value="{{movement.movement_name}}">
+            <input id = "movement_name" class = "input_movement_name is-primary" style="width:200px; text-align: center;" key = "{{movement.pk}}" name="movement_name" class="input is-small" type="text" value="{{movement.movement_name}}">
           </div>
           </div>
       </td>
       <td>
           <div class="field is-small">
           <div class="control">
-            <input name="percentage" class="input is-small" type="number" step="0.01" min=0 value="{{movement.percentage}}">
+            <input id = "percentage" class = "percentage is-primary" style="width:70px; text-align: center;" key = "{{movement.pk}}" name="percentage" class="input is-small" type="number" step="0.01" min=0 value="{{movement.percentage}}">
           </div>
           </div>
       </td>
       <td>
           <div class="field is-small">
           <div class="control">
-            <input name="kg" class="input is-small" type="number" step="0.01" min=0 value="{{movement.kg}}">
+            <input id = "kg_done" class = "kg_done is-primary" style="width:70px; text-align: center;" key = "{{movement.pk}}"  name="kg" class="input is-small" type="number" step="0.01" min=0 value="{{movement.kg}}">
           </div>
-          </div>
+          </div> 
       </td>
-      <td>{{movement.kg_done}}</td>
+      <td style="width:50px; text-align: center;">{{movement.kg_done}}kg</td>
       <td>
           <div class="field is-small">
           <div class="control">
-            <input name="num_reps" class="input is-small" type="number" value="{{movement.num_reps}}">
+            <input id = "num_reps_done" class = "num_reps_done is-primary" style="width:50px; text-align: center;" key = "{{movement.pk}}" name="num_reps" class="input is-small" type="number" value="{{movement.num_reps}}">
           </div>
           </div>
       </td>
-      <td>{{movement.num_reps_done}}</td>
+      <td style="width:50px; text-align: center;">{{movement.num_reps_done}}</td>
       <td>
           <div class="field is-one-fifth">
           <div class="control">
-            <input name="rpe" class="input is-small" type="number" step="0.1" min=2 value="{{movement.rpe}}">
+            <input id = "rpe" class = "rpe is-primary" style="width:50px; text-align: center;" key = "{{movement.pk}}" name="rpe" class="input is-small" type="number" step="0.1" min=2 value="{{movement.rpe}}">
           </div>
           </div>
       </td>
       <td>
           <div class="custom-control custom-checkbox">
-            <input type="checkbox" class="custom-control-input" name="is_backoff"{% if movement.is_backoff %} checked {% endif %}>
+            <input id = "checked" class = "checked is-primary" key = "{{movement.pk}}" type="checkbox" class="custom-control-input" name="is_backoff"{% if movement.is_backoff %} checked {% endif %}>
             <label class="custom-control-label" for="customCheck1">Back-off Set</label>
           </div>
       </td>
       <td>
 
-        <select name = 'rm'>
+        <select id = 'rm' class = 'rm is-primary' key = "{{movement.pk}}" name = 'rm'>
             <option value="None">Rep Max</option>
             {% for max in rm %}
               <option value = "{{max.rep_max}}">{{max.rep_max_name}}: {{max.rep_max}}</option>
             {% endfor %}
         </select>
       </td>
-      <td>
-
-
-        <button class = 'button is-small is-success' type="submit" value="Save">
-          <span class="icon is-small">
-            <i class="fas fa-check"></i>
-          </span>
-          <span>Quick Save</span>
-        </button>
         </form>
-      </td>
+      
       <td>
           <table class = "table is-responsive">
 

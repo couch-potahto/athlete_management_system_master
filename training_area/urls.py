@@ -30,6 +30,14 @@ urlpatterns = [
         path('ajax/display-metrics/', app.display_metrics, name = 'ajax_display_metrics'),
         path('ajax/load-meso/', app.load_meso, name = 'ajax_load_meso'),
         path('ajax/testpost/', app.testpost, name = 'ajax_test_post'),
+        #####
+        path('ajax/validate_kg/', app.validate_kg, name = 'ajax_validate_kg'),
+        path('ajax/validate_num_reps/', app.validate_num_reps, name = 'ajax_validate_num_reps'),
+        path('ajax/validate_rpe/', app.validate_rpe, name = 'ajax_validate_rpe'),
+        path('ajax/validate_movement_name/', app.validate_movement_name, name = 'ajax_validate_movement_name'),
+        path('ajax/validate_percentage/', app.validate_percentage, name = 'ajax_validate_percentage'),
+        path('ajax/validate_rm/', app.validate_rm, name = 'ajax_validate_rm'),
+        path('ajax/validate_checked/', app.validate_checked, name = 'ajax_validate_checked'),
 
     ], 'training_area'), namespace='app')),
 
