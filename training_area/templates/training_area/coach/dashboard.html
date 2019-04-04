@@ -2,10 +2,11 @@
 <script>
 {% block jquery %}
 
+var pk = 0;
 
 $(".showModal").click(function() {
   event.preventDefault();
-  var pk = $(this).attr('key');
+  pk = $(this).attr('key');
   console.log(pk);
 
   $(".modal").addClass("is-active");
@@ -20,7 +21,6 @@ $(".no").click(function() {
 });
 
 $(".yes").click(function() {
-  var pk = $(this).attr('key');
   console.log(pk);
    $.ajax({
         url: "/coach/ajax/remove_athlete/",
@@ -31,6 +31,7 @@ $(".yes").click(function() {
         },
         success: function (data) {
           console.log(data)
+          location.reload();
         }
       });
    $(".modal").removeClass("is-active");
