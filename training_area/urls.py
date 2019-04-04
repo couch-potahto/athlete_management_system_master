@@ -54,6 +54,7 @@ urlpatterns = [
         path('<int:movement_id>/edit', athlete.edit_movement, name = 'edit_movement'),
         path('<int:movement_id>/gen_backoff', athlete.gen_backoff, name = 'generate_backoff'),
         path('submit/<int:workout_id>', athlete.submit_workout, name = 'submit'),
+        path('ajax/submit_fatigue/', athlete.submit_fatigue, name = 'ajax_submit_fatigue'),
 
     ], 'training_area'), namespace='athlete')),
 

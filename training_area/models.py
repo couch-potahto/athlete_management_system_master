@@ -95,6 +95,9 @@ class Microcycle(models.Model):
 class Workout(models.Model):
 	workout_name = models.CharField(max_length = 255, blank = False, verbose_name= _('Workout Name'))
 	alert = models.BooleanField(default = False, null = True)
+	fatigue_rating = models.SmallIntegerField(default = 5,
+		validators=[MaxValueValidator(10), MinValueValidator(0)],
+		verbose_name= _('Fatigue Rating'))
 	feedback = models.TextField(max_length = 500, blank = True)
 	microcycle = models.ForeignKey(Microcycle, related_name = 'micro',
 		on_delete = models.SET_NULL, null = True)

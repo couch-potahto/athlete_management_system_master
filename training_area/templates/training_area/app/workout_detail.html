@@ -192,6 +192,28 @@
       });
 
     });
+
+    $("#fatigue-rating").change(function () {
+      var fatigue = $(this).val();
+      var pk = $(this).attr('key');
+      console.log( fatigue );
+      
+      $.ajax({
+        url: "/athlete/ajax/submit_fatigue/",
+        type: "POST",
+        data: {
+          csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+          'pk': pk,
+          'fatigue': fatigue
+
+        },
+        success: function (data) {
+          console.log(data)
+          location.reload(); 
+        }
+      });
+
+    });
   {% endblock %}
 </script>
 
@@ -234,11 +256,14 @@
 
 {% endif %}
 
+  
+
 
 
 <div class="container section">
 <div class = "card is-fluid">
   <header class = "card-header-title">
+    
     {% if request.user.is_authenticated and request.user.is_coach %}
     <label class="pull-left">{{ workout.workout_name }}</label>
     <input class="clickedit" key = "{{workout.pk}}" key_two = "{{ workout.workout_name }}" type="text" />
@@ -255,6 +280,10 @@
       &nbsp;<span class="tag is-success">Completed!</span>
       {%endif%}
     </p>
+
+  
+
+
     {% if request.user.is_authenticated and request.user.is_coach %}
     <form action="{% url 'coach:delete_workout' athlete_id=workout.athlete.pk workout_id=workout.pk %}"
                     method="post" style="display: inline;" onsubmit="window.mytest()">
@@ -268,6 +297,40 @@
     {% endif %}
 
   </header>
+
+ {% if request.user.is_authenticated and request.user.is_athlete %}
+ {% csrf_token %}
+
+<div class = "column">
+  <label class="subtitle is-size-6 has-text-danger">
+  Fatigue Selector
+</label>
+    <div class="select is-danger is-size-7">
+      <select id = 'fatigue-rating' class = 'fatigue-rating is-disabled' key = "{{workout.pk}}">
+        <option>{{workout.fatigue_rating}}</option>
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+      </select>
+    </div>
+  </div>
+
+  {% else %}
+  <div class = "column">
+  <label class="subtitle is-size-6 has-text-danger">
+  Fatigue Selector: {{workout.fatigue_rating}}
+</label>
+</div>
+{% endif %}
+
   <div class = "card-content">
     <div class="content">
       <div class="table-container">

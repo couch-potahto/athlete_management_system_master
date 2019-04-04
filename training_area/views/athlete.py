@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.contrib.auth import login
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.decorators import method_decorator
@@ -192,3 +192,35 @@ def submit_workout(request, workout_id):
 			notification = Notifications(title=message, sender=workout.athlete.user, reciever=workout.athlete.coach.user)
 			notification.save()
 	return redirect('app:workout_detail', workout.athlete.pk, workout.pk)
+
+def submit_fatigue(request):
+	multiplier = {
+		0: 1.12,
+		1: 1.1,
+		2: 1.07,
+		3: 1.05,
+		4: 1.02,
+		5: 1,
+		6: 0.97,
+		7: 0.95,
+		8: 0.92,
+		9: 0.9,
+		10: 0.88
+	}
+	workout_pk = request.POST.get('pk')
+	fatigue_rating = request.POST.get('fatigue')
+
+	workout_of_interest = get_object_or_404(Workout, pk=workout_pk)
+	old_rating = workout_of_interest.fatigue_rating
+	workout_of_interest.fatigue_rating = fatigue_rating
+	for movement in workout_of_interest.work.all():
+		if movement.kg:
+			movement.kg = round(movement.kg / Decimal(multiplier[int(old_rating)]) * Decimal(multiplier[int(fatigue_rating)])/Decimal(2.5))* Decimal(2.5)
+		elif movement.percentage:
+			movement.percentage = Decimal(movement.percentage) / Decimal(multiplier[int(old_rating)]) * Decimal(multiplier[int(fatigue_rating)])
+		movement.save()
+	workout_of_interest.save()
+	data = {
+		"lol": "lol"
+	}
+	return JsonResponse(data)

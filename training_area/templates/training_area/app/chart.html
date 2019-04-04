@@ -83,6 +83,8 @@ var option_two = {
                 id: "y-axis-1",
                 type: 'linear',
                 ticks: {
+                    callback: function(value, index, values) {
+                        return value*100 + '%'},
                     beginAtZero:true,
                     fontColor: 'white',
                 },
