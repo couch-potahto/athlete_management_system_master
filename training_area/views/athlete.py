@@ -175,6 +175,7 @@ def submit_workout(request, workout_id):
 	for movement in workout.work.all():
 		if not movement.num_reps_done:
 			movement.num_reps_done = movement.num_reps
+			movement.save()
 		if not movement.rpe:
 			messages.warning(request, "Fill in all your RPEs")
 			return redirect('app:workout_detail', workout.athlete.pk, workout.pk)

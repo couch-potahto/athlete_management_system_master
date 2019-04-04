@@ -63,6 +63,9 @@ var option_two = {
 	showLines: true,
 	 scales: {
             yAxes: [{
+                position: 'left',
+                id: "y-axis-0",
+                type: 'linear',
                 ticks: {
                     beginAtZero:true,
                     fontColor: 'white',
@@ -74,8 +77,26 @@ var option_two = {
                 gridLines: {
   					display: true ,
   					
-				},
+				}
+            },{
+                position: 'right',
+                id: "y-axis-1",
+                type: 'linear',
+                ticks: {
+                    beginAtZero:true,
+                    fontColor: 'white',
+                },
+                scaleLabel:{
+                    display: true,
+                    fontColor: 'white',
+                },
+                gridLines: {
+                    display: true ,
+                    
+                }
             }],
+
+            
           xAxes: [{
                 ticks: {
                 	beginAtZero:true,
@@ -223,8 +244,31 @@ $("#id_mesocycles").change(function(){
             pointHitRadius: 10,
             data: data.average_weekly_squat_volume,
             type: 'line',
+            yAxisID: "y-axis-0",
         })
-			myChartbar.data.labels = data.week;
+            myChartbar.data.datasets.push({
+            label: "Squat A. Intensity",
+            fill: false,
+            backgroundColor: chartColors[1],
+            borderColor: chartColors[1],
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: chartColors[1],
+            pointBackgroundColor: chartColors[1],
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: chartColors[1],
+            pointHoverBorderColor: chartColors[1],
+            pointHoverBorderWidth: 2,
+            pointRadius: 5,
+            pointHitRadius: 10,
+            data: data.average_weekly_squat_intensity,
+            type: 'line',
+            yAxisID: "y-axis-1",
+        })
+			myChartbar.data.labels = data.squat_workouts;
 			myChartbar.update();
 			////////
 
@@ -271,7 +315,29 @@ $("#id_mesocycles").change(function(){
             data: data.average_weekly_bench_volume,
             type: 'line',
         })
-			secondChartbar.data.labels = data.week;
+            secondChartbar.data.datasets.push({
+            label: "Bench A. Intensity",
+            fill: false,
+            backgroundColor: chartColors[3],
+            borderColor: chartColors[3],
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: chartColors[3],
+            pointBackgroundColor: chartColors[3],
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: chartColors[3],
+            pointHoverBorderColor: chartColors[3],
+            pointHoverBorderWidth: 2,
+            pointRadius: 5,
+            pointHitRadius: 10,
+            data: data.average_weekly_bench_intensity,
+            type: 'line',
+            yAxisID: "y-axis-1",
+        })
+			secondChartbar.data.labels = data.bench_workouts;
 			secondChartbar.update();
 
 
@@ -318,7 +384,29 @@ $("#id_mesocycles").change(function(){
             data: data.average_weekly_deadlift_volume,
             type: 'line',
         })
-			thirdChartbar.data.labels = data.week;
+            thirdChartbar.data.datasets.push({
+            label: "Deadlift A. Intensity",
+            fill: false,
+            backgroundColor: chartColors[5],
+            borderColor: chartColors[5],
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: chartColors[5],
+            pointBackgroundColor: chartColors[5],
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: chartColors[5],
+            pointHoverBorderColor: chartColors[5],
+            pointHoverBorderWidth: 2,
+            pointRadius: 5,
+            pointHitRadius: 10,
+            data: data.average_weekly_deadlift_intensity,
+            type: 'line',
+            yAxisID: "y-axis-1",
+        })
+			thirdChartbar.data.labels = data.deadlift_workouts;
 			thirdChartbar.update();
 		}
 	});

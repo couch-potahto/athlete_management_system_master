@@ -197,6 +197,7 @@
 
 
 {% block content %}
+{% if request.user.is_authenticated and request.user.is_athlete %}
 <div class="column is-half is-offset-one-quarter">
             <div class="card">
               <header class="card-header">
@@ -213,9 +214,25 @@
               </div>
             </div>
           </div>
+{% else %}
+<div class="column is-half is-offset-one-quarter">
+            <div class="card">
+              <header class="card-header">
+                <p class="card-header-title is-size-4">Tips</p>
+                <a class="card-header-icon card-toggle">
+                  <i class="fa fa-angle-down"></i>
+                </a>
+              </header>
+            <div class="card-content is-hidden">
+                <div class="content">
+                  <p><strong>1)</strong>Keep naming conventions across movements the same. i.e. bench press, not bench press followed by bench. This will help in Analytics.</p>
+                  <p><strong>2)</strong>Name all relevant squat movements with 'Squat' in the name, bench press movements with 'Press' in the name, and deadlift movements with 'Deadlift' in the name if you want to track if in Analytics</p>
+                </div>
+              </div>
+            </div>
+          </div>
 
-
-
+{% endif %}
 
 
 
@@ -347,7 +364,7 @@
       <td>
           <div class="field is-small">
           <div class="control">
-            <input id = "movement_name" class = "input_movement_name is-primary" style="width:200px; text-align: center;" key = "{{movement.pk}}" name="movement_name" class="input is-small" type="text" value="{{movement.movement_name}}">
+            <input id = "movement_name" class = "movement_name is-primary" style="width:200px; text-align: center;" key = "{{movement.pk}}" name="movement_name" class="input is-small" type="text" value="{{movement.movement_name}}">
           </div>
           </div>
       </td>

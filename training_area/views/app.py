@@ -400,6 +400,7 @@ def testpost(request):
 					if movements_of_interest:
 						for movement in movements_of_interest:
 							repetitions = movement.num_reps_done
+							print(movement.pk)
 							if repetitions > 10:
 								continue
 							exertion = movement.rpe
@@ -430,65 +431,89 @@ def display_metrics(request):
 	average_weekly_squat_volume = []
 	average_weekly_bench_volume = []
 	average_weekly_deadlift_volume = []
+	average_weekly_squat_intensity = []
+	average_weekly_bench_intensity = []
+	average_weekly_deadlift_intensity = []
+	squat_workouts = []
+	squat_day = 1
+	bench_workouts = []
+	bench_day = 1
+	deadlift_workouts = []
+	deadlift_day = 1
 	week = []
 	for micro in microcycles:
-		all_movements = Movement.objects.filter(
-			workout__microcycle=micro)
-		squats = all_movements.filter(movement_name__icontains='squat')
-		bench = all_movements.filter(movement_name__icontains='press')
-		deadlift = all_movements.filter(movement_name__icontains='deadlift')
-		week.append(micro.microcycle_name)
+		for workout in micro.micro.all().order_by('id'):
+			print(workout)
+			all_movements = Movement.objects.filter(
+				workout=workout)
+			squats = all_movements.filter(movement_name__icontains='squat')
+			bench = all_movements.filter(movement_name__icontains='press')
+			deadlift = all_movements.filter(movement_name__icontains='deadlift')
+			week.append(micro.microcycle_name)
 		#NT = NL * %1rm
-		if not squats:
-			average_weekly_squat_rpe.append(0)
-			average_weekly_squat_volume.append(0)
-		else:
-			total_NT = 0
-			total_RPE = 0
-			for movement in squats:
+			if squats:
+				#average_weekly_squat_rpe.append(0)
+				#average_weekly_squat_volume.append(0)
+			#else:
+				total_NT = 0
+				total_RPE = 0
+				total_reps = 0
+				for movement in squats:
 				#print(movement.rpe)
-				exertion = ExertionPerceived.objects.filter(rep_scale=movement.num_reps, exertion_scale=movement.rpe)[0]
+					exertion = ExertionPerceived.objects.filter(rep_scale=movement.num_reps, exertion_scale=movement.rpe)[0]
 				#print(exertion)
-				NT = movement.num_reps * exertion.percent
-				total_NT = total_NT + NT
-				total_RPE = total_RPE + movement.rpe
-			average_weekly_squat_rpe.append(float(total_RPE / len(squats)))
-			average_weekly_squat_volume.append(float(total_NT))
+					NT = movement.num_reps * exertion.percent
+					total_NT = total_NT + NT
+					total_RPE = total_RPE + movement.rpe
+					total_reps += movement.num_reps
+				average_weekly_squat_rpe.append(float(total_RPE / len(squats)))
+				average_weekly_squat_volume.append(float(total_NT))
+				average_weekly_squat_intensity.append(float(total_NT/total_reps))
+				squat_workouts.append(micro.microcycle_name+' S' + str(squat_day))
+				squat_day+=1
 			#print(average_weekly_squat_rpe)
 			#print(average_weekly_squat_volume)
 
-		if not bench:
-			average_weekly_bench_rpe.append(0)
-			average_weekly_bench_volume.append(0)
-		else:
-			total_NT = 0
-			total_RPE = 0
-			for movement in bench:
+			if bench:
+			#	average_weekly_bench_rpe.append(0)
+			#	average_weekly_bench_volume.append(0)
+			#else:
+				total_NT = 0
+				total_RPE = 0
+				total_reps = 0
+				for movement in bench:
 				#print(movement.rpe)
-				exertion = ExertionPerceived.objects.filter(rep_scale=movement.num_reps, exertion_scale=movement.rpe)[0]
+					exertion = ExertionPerceived.objects.filter(rep_scale=movement.num_reps, exertion_scale=movement.rpe)[0]
 				#print(exertion)
-				NT = movement.num_reps * exertion.percent
-				total_NT = total_NT + NT
-				total_RPE = total_RPE + movement.rpe
-			average_weekly_bench_rpe.append(float(total_RPE / len(bench)))
-			average_weekly_bench_volume.append(float(total_NT))
-
-		if not deadlift:
-			average_weekly_deadlift_rpe.append(0)
-			average_weekly_deadlift_volume.append(0)
-		else:
-			total_NT = 0
-			total_RPE = 0
-			for movement in deadlift:
+					NT = movement.num_reps * exertion.percent
+					total_NT = total_NT + NT
+					total_RPE = total_RPE + movement.rpe
+					total_reps += movement.num_reps
+				average_weekly_bench_rpe.append(float(total_RPE / len(bench)))
+				average_weekly_bench_volume.append(float(total_NT))
+				average_weekly_bench_intensity.append(float(total_NT/total_reps))
+				bench_workouts.append(micro.microcycle_name+' B' + str(bench_day))
+				bench_day+=1
+			if deadlift:
+				#average_weekly_deadlift_rpe.append(0)
+				#average_weekly_deadlift_volume.append(0)
+			#else:
+				total_NT = 0
+				total_RPE = 0
+				total_reps = 0
+				for movement in deadlift:
 				#print(movement.rpe)
-				exertion = ExertionPerceived.objects.filter(rep_scale=movement.num_reps, exertion_scale=movement.rpe)[0]
+					exertion = ExertionPerceived.objects.filter(rep_scale=movement.num_reps, exertion_scale=movement.rpe)[0]
 				#print(exertion)
-				NT = movement.num_reps * exertion.percent
-				total_NT = total_NT + NT
-				total_RPE = total_RPE + movement.rpe
-			average_weekly_deadlift_rpe.append(float(total_RPE / len(deadlift)))
-			average_weekly_deadlift_volume.append(float(total_NT))
-
+					NT = movement.num_reps * exertion.percent
+					total_NT = total_NT + NT
+					total_RPE = total_RPE + movement.rpe
+					total_reps += movement.num_reps
+				average_weekly_deadlift_rpe.append(float(total_RPE / len(deadlift)))
+				average_weekly_deadlift_volume.append(float(total_NT))
+				average_weekly_deadlift_intensity.append(float(total_NT/total_reps))
+				deadlift_workouts.append(micro.microcycle_name+' D' + str(deadlift_day))
+				deadlift_day+=1
 		
 	data = {
 		"test": mesocycle_pk,
@@ -498,6 +523,12 @@ def display_metrics(request):
 		"average_weekly_squat_volume": average_weekly_squat_volume, 
 		"average_weekly_bench_volume": average_weekly_bench_volume,
 		"average_weekly_deadlift_volume": average_weekly_deadlift_volume,
+		"average_weekly_squat_intensity": average_weekly_squat_intensity, 
+		"average_weekly_bench_intensity": average_weekly_bench_intensity,
+		"average_weekly_deadlift_intensity": average_weekly_deadlift_intensity,
+		"squat_workouts": squat_workouts,
+		"bench_workouts": bench_workouts,
+		"deadlift_workouts": deadlift_workouts,
 		"week": week,
 	}
 	return JsonResponse(data)
