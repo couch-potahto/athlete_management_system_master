@@ -48,14 +48,14 @@
     });
 
 
-    
 
 
-    $(".input-kg_done").change(function () {
+
+    $(".kg_done").change(function () {
       var kg_done = $(this).val();
       var pk = $(this).attr('key');
       console.log( $(this).attr('key') );
-      
+
       $.ajax({
         url: "/app/ajax/validate_kg/",
         type: "POST",
@@ -75,7 +75,7 @@
       var num_reps_done = $(this).val();
       var pk = $(this).attr('key');
       console.log( $(this).attr('key') );
-      
+
       $.ajax({
         url: "/app/ajax/validate_num_reps/",
         type: "POST",
@@ -95,7 +95,7 @@
       var rpe = $(this).val();
       var pk = $(this).attr('key');
       console.log( $(this).attr('key') );
-      
+
       $.ajax({
         url: "/app/ajax/validate_rpe/",
         type: "POST",
@@ -115,7 +115,7 @@
       var movement_name = $(this).val();
       var pk = $(this).attr('key');
       console.log( $(this).attr('key') );
-      
+
       $.ajax({
         url: "/app/ajax/validate_movement_name/",
         type: "POST",
@@ -135,7 +135,7 @@
       var percentage = $(this).val();
       var pk = $(this).attr('key');
       console.log( $(this).attr('key') );
-      
+
       $.ajax({
         url: "/app/ajax/validate_percentage/",
         type: "POST",
@@ -155,7 +155,7 @@
       var rm = $(this).val();
       var pk = $(this).attr('key');
       console.log( $(this).attr('key') );
-      
+
       $.ajax({
         url: "/app/ajax/validate_rm/",
         type: "POST",
@@ -166,7 +166,7 @@
         },
         success: function (data) {
           console.log(data)
-          location.reload(); 
+          location.reload();
         }
       });
 
@@ -176,7 +176,7 @@
       var checked = $(this).val();
       var pk = $(this).attr('key');
       console.log( checked );
-      
+
       $.ajax({
         url: "/app/ajax/validate_checked/",
         type: "POST",
@@ -197,7 +197,7 @@
       var fatigue = $(this).val();
       var pk = $(this).attr('key');
       console.log( fatigue );
-      
+
       $.ajax({
         url: "/athlete/ajax/submit_fatigue/",
         type: "POST",
@@ -209,7 +209,7 @@
         },
         success: function (data) {
           console.log(data)
-          location.reload(); 
+          location.reload();
         }
       });
 
@@ -256,14 +256,14 @@
 
 {% endif %}
 
-  
+
 
 
 
 <div class="container section">
 <div class = "card is-fluid">
   <header class = "card-header-title">
-    
+
     {% if request.user.is_authenticated and request.user.is_coach %}
     <label class="pull-left">{{ workout.workout_name }}</label>
     <input class="clickedit" key = "{{workout.pk}}" key_two = "{{ workout.workout_name }}" type="text" />
@@ -281,7 +281,7 @@
       {%endif%}
     </p>
 
-  
+
 
 
     {% if request.user.is_authenticated and request.user.is_coach %}
@@ -369,7 +369,7 @@
       <td>
           <div class="field has-addons is-small">
           <div class="control">
-            <input id = "kg_done" class = "input-kg_done is-primary" style="width:70px; text-align: center;" key = "{{movement.pk}}" name="kg_done" class="input is-small" type="number" step="0.01" min=0 value="{{movement.kg_done}}">
+            <input id = "kg_done" class = "kg_done is-primary" style="width:70px; text-align: center;" key = "{{movement.pk}}" name="kg_done" class="input is-small" type="number" step="0.01" min=0 value="{{movement.kg_done}}">
           </div>
           </div>
       </td>
@@ -401,7 +401,7 @@
       </td>
 
       </form>
-    
+
     <td>
       <!----add generate backoff-->
 
@@ -443,7 +443,7 @@
           <div class="control">
             <input id = "kg_done" class = "kg_done is-primary" style="width:70px; text-align: center;" key = "{{movement.pk}}"  name="kg" class="input is-small" type="number" step="0.01" min=0 value="{{movement.kg}}">
           </div>
-          </div> 
+          </div>
       </td>
       <td style="width:50px; text-align: center;">{{movement.kg_done}}kg</td>
       <td>
@@ -477,7 +477,7 @@
         </select>
       </td>
         </form>
-      
+
       <td>
           <table class = "table is-responsive">
 
@@ -536,7 +536,7 @@
   <div class = "title is-4 has-text-white">Comments:</div>
   <form action="{% url 'app:add_comment' workout.pk %}" method="post">
       {% csrf_token %}
-      
+
           <div class="field is-small">
           <div class="control">
             <input name="content" class="textarea" type="text">
@@ -569,9 +569,9 @@
   </div>
   <div class="media-right">
     <a href="{% url 'app:delete_comment' comment_id=comment.pk %}" class="buttons is-danger float-right">
-      
+
         <i class="fas fa-eraser"></i>
-      
+
     </a>
   </div>
   </article>

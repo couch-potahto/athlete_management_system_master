@@ -44,7 +44,7 @@ class DashboardView(ListView):
 		context = super().get_context_data(**kwargs)
 		calendar = {}
 		today = datetime.now() + timedelta(days=-1)
-		
+
 		x=today
 		in_thirty_days = today + timedelta(days=30)
 		print(in_thirty_days)
@@ -159,7 +159,7 @@ def gen_backoff(request, movement_id):
 		load_percent = exertion.percent
 		daily_rm = movement.kg_done / load_percent
 		backoff_movements = Movement.objects.filter(workout=workout, is_backoff=True, movement_name=movement.movement_name) #queryset
-	
+
 		for backoff in backoff_movements: #update all objects
 			backoff.kg = round((daily_rm * (backoff.percentage/Decimal(100)))/Decimal(2.5)) * Decimal(2.5)
 			backoff.save()
@@ -175,6 +175,9 @@ def submit_workout(request, workout_id):
 	for movement in workout.work.all():
 		if not movement.num_reps_done:
 			movement.num_reps_done = movement.num_reps
+			movement.save()
+		if not movement.kg_done:
+			movement.kg_done = movement.kg
 			movement.save()
 		if not movement.rpe:
 			messages.warning(request, "Fill in all your RPEs")

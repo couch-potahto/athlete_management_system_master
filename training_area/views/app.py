@@ -269,7 +269,7 @@ def event(request, event_id=None):
 				notification.save()
 		else:
 			notification = Notifications(title=message, sender=event.user, reciever=event.user.athlete.coach.user)
-			
+
 		notification.save()
 		return HttpResponseRedirect(reverse('app:calendar'))
 		messages.success(request, "Event has been added!")
@@ -349,7 +349,7 @@ def get_data(request, *args, **kwargs):
 def load_lifts(request):
 	print('entered')
 	mesocycle_pk = request.GET.get('mesocycle')
-	
+
 	mesocycle = get_object_or_404(Mesocycle, pk = int(mesocycle_pk))
 	print(mesocycle)
 	microcycles = mesocycle.meso.all()
@@ -367,7 +367,7 @@ def load_lifts(request):
 def load_meso(request):
 	print('entered')
 	athlete_user = request.GET.get('athlete')
-	
+
 	athlete = Athlete.objects.filter(user__username = athlete_user)[0]
 	print(athlete)
 	all_meso = athlete.meso_athlete.all()
@@ -384,7 +384,7 @@ def testpost(request):
 		athlete = Athlete.objects.filter(user__username=req)[0]
 		mesocycle_of_interest = get_object_or_404(Mesocycle, pk=meso)
 		labels = []
-		
+
 		all_e1rm = []
 		i = 0;
 		for movement in lift:
@@ -396,13 +396,14 @@ def testpost(request):
 				highest_rm = 0
 				for workout in microcycle.micro.all():
 					movements_of_interest = Movement.objects.filter(workout__id=workout.pk, movement_name=movement_name)
-					
+
 					if movements_of_interest:
 						for movement in movements_of_interest:
 							repetitions = movement.num_reps_done
 							print(movement.pk)
 							if repetitions > 10:
 								continue
+
 							exertion = movement.rpe
 							corresponding_percentage = ExertionPerceived.objects.filter(rep_scale=repetitions, exertion_scale=exertion)[0].percent
 							estimated_repmax = Decimal(movement.kg_done)/Decimal(corresponding_percentage)
@@ -411,9 +412,9 @@ def testpost(request):
 
 				e1rm.append(highest_rm)
 			i = i + 1
-			
+
 			all_e1rm.append(e1rm)
-			
+
 		data = {
 			"labels": labels,
 			"default":all_e1rm,
@@ -517,16 +518,16 @@ def display_metrics(request):
 				average_weekly_deadlift_intensity.append(float(total_NT/total_reps))
 				deadlift_workouts.append(micro.microcycle_name+' D' + str(deadlift_day))
 				deadlift_day+=1
-		
+
 	data = {
 		"test": mesocycle_pk,
 		"average_weekly_squat_rpe": average_weekly_squat_rpe,
 		"average_weekly_bench_rpe": average_weekly_bench_rpe,
 		"average_weekly_deadlift_rpe": average_weekly_deadlift_rpe,
-		"average_weekly_squat_volume": average_weekly_squat_volume, 
+		"average_weekly_squat_volume": average_weekly_squat_volume,
 		"average_weekly_bench_volume": average_weekly_bench_volume,
 		"average_weekly_deadlift_volume": average_weekly_deadlift_volume,
-		"average_weekly_squat_intensity": average_weekly_squat_intensity, 
+		"average_weekly_squat_intensity": average_weekly_squat_intensity,
 		"average_weekly_bench_intensity": average_weekly_bench_intensity,
 		"average_weekly_deadlift_intensity": average_weekly_deadlift_intensity,
 		"squat_workouts": squat_workouts,
@@ -666,7 +667,7 @@ class ChartData(APIView):
 	def post(self, request):
 		req = request.POST.get('athlete')
 		lift = request.POST.get('lifts')
-		
+
 		athlete = Athlete.objects.filter(user__username=req)[0]
 		mesocycle_of_interest = Mesocycle.objects.filter(athlete__user__id=athlete.pk)[0]
 		labels = []
@@ -684,13 +685,13 @@ class ChartData(APIView):
 						exertion = movement.rpe
 						corresponding_percentage = ExertionPerceived.objects.filter(rep_scale=repetitions, exertion_scale=exertion)[0].percent
 						estimated_repmax = Decimal(movement.kg_done)/Decimal(corresponding_percentage)
-						
+
 						if estimated_repmax>highest_rm:
 							highest_rm = estimated_repmax
 
 				e1rm.append(highest_rm)
 				print(movements_of_interest)
-			
+
 		data = {
 			"labels": labels,
 			"default":e1rm,
