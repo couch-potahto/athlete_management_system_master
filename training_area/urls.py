@@ -38,6 +38,8 @@ urlpatterns = [
         path('ajax/validate_percentage/', app.validate_percentage, name = 'ajax_validate_percentage'),
         path('ajax/validate_rm/', app.validate_rm, name = 'ajax_validate_rm'),
         path('ajax/validate_checked/', app.validate_checked, name = 'ajax_validate_checked'),
+        path('ajax/validate_workout_name/', app.validate_workout_name, name = 'ajax_validate_workout_name'),
+        path('ajax/validate_mesocycle_name/', app.validate_mesocycle_name, name = 'ajax_validate_mesocycle_name'),
 
     ], 'training_area'), namespace='app')),
 
@@ -60,6 +62,7 @@ urlpatterns = [
         path('delete_micro/<int:athlete_id>/<int:microcycle_id>', coach.MicrocycleDeleteView.as_view(), name = 'delete_micro'),
         path('delete_meso/<int:athlete_id>/<int:mesocycle_id>', coach.MesocycleDeleteView.as_view(), name = 'delete_meso'),
         path('dashboard/', coach.DashboardView.as_view(), name='dashboard'),
+        path('ajax/remove_athlete/', coach.remove_athlete, name = 'ajax_remove_athlete'),
         path('<str:slug>/', coach.CoachDetailView.as_view(), name = 'coach_detail'),
         path('athlete=<int:pk>/add_workout', coach.AddWorkoutView.as_view(), name = 'add_workout'),
         path('<int:microcycle_id>/edit_micro_name', coach.edit_micro_name, name = 'edit_micro_name'),

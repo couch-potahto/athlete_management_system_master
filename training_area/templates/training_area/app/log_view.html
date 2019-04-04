@@ -1,5 +1,51 @@
 {% extends 'navbar.html' %}
 
+<script>
+{% block jquery %}
+  function endEdit(e) {
+    var input = $(e.target),
+        label = input && input.prev();
+
+    label.text(input.val() === '' ? defaultText : input.val());
+    input.hide();
+    label.show();
+  }
+
+    $('.clickedit').hide()
+    .change(function(){
+      var mesocycle_name = $(this).val();
+      var pk = $(this).attr('key');
+      console.log($(this).val());
+
+      $.ajax({
+         url: "/app/ajax/validate_mesocycle_name/",
+        type: "POST",
+        data: {
+          csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+          'pk': pk,
+          'mesocycle_name': mesocycle_name
+        },
+        success: function (data) {
+          console.log(data)
+        }
+      });
+    })
+    .focusout(endEdit)
+    .keyup(function (e) {
+        if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
+            endEdit(e);
+            return false;
+        } else {
+            return true;
+        }
+    })
+      .prev().click(function () {
+      $(this).hide();
+      $(this).next().show().focus();
+    });
+{% endblock %}
+</script>
+
 {% block content %}
 <section class="hero is-dark">
 <div class="hero-body">
@@ -194,8 +240,14 @@
       {% for mesocycle in all_mesocycles %}
       <div class="column is-half is-offset-one-quarter">
             <div class="card">
-              <header class="card-header">
-                <p class="card-header-title is-size-4">{{mesocycle.mesocycle_name}}</p>
+              <header class="card-header-title">
+                {% if request.user.is_authenticated and request.user.is_coach %}
+                <label class="pull-left is-size-4">{{mesocycle.mesocycle_name}}</label>
+                <input class="clickedit" key = "{{mesocycle.pk}}" key_two = "{{mesocycle.mesocycle_name}}" type="text" />
+                <p class="card-header-title"><i class="fas fa-pen"></i></p>
+                {% else %}
+                <p class="card-header-title">{{mesocycle.mesocycle_name}}</p>
+                {% endif %}
                 <a class="card-header-icon card-toggle">
                   <i class="fa fa-angle-down"></i>
                 </a>

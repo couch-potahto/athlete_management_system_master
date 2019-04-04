@@ -591,6 +591,28 @@ def validate_checked(request):
 	}
 	return JsonResponse(data)
 
+def validate_workout_name(request):
+	workout_pk = request.POST.get('pk')
+	workout_name = request.POST.get('workout_name')
+	workout_of_interest = get_object_or_404(Workout, pk=workout_pk)
+	workout_of_interest.workout_name = workout_name
+	workout_of_interest.save()
+	data = {
+		"lol": "lol"
+	}
+	return JsonResponse(data)
+
+def validate_mesocycle_name(request):
+	mesocycle_pk = request.POST.get('pk')
+	mesocycle_name = request.POST.get('mesocycle_name')
+	mesocycle_of_interest = get_object_or_404(Mesocycle, pk=mesocycle_pk)
+	mesocycle_of_interest.mesocycle_name = mesocycle_name
+	mesocycle_of_interest.save()
+	data = {
+		"lol": "lol"
+	}
+	return JsonResponse(data)
+
 class ChartData(APIView):
 	authentication_classes = []
 	permission_classes = []

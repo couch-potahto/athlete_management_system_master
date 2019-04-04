@@ -2,7 +2,54 @@
 
 
 <script>
+
+
   {% block jquery %}
+  function endEdit(e) {
+    var input = $(e.target),
+        label = input && input.prev();
+
+    label.text(input.val() === '' ? defaultText : input.val());
+    input.hide();
+    label.show();
+  }
+
+    $('.clickedit').hide()
+    .change(function(){
+      var workout_name = $(this).val();
+      var pk = $(this).attr('key');
+      console.log($(this).val());
+
+      $.ajax({
+         url: "/app/ajax/validate_workout_name/",
+        type: "POST",
+        data: {
+          csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+          'pk': pk,
+          'workout_name': workout_name
+        },
+        success: function (data) {
+          console.log(data)
+        }
+      });
+    })
+    .focusout(endEdit)
+    .keyup(function (e) {
+        if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
+            endEdit(e);
+            return false;
+        } else {
+            return true;
+        }
+    })
+      .prev().click(function () {
+      $(this).hide();
+      $(this).next().show().focus();
+    });
+
+
+    
+
 
     $(".input-kg_done").change(function () {
       var kg_done = $(this).val();
@@ -175,8 +222,16 @@
 <div class="container section">
 <div class = "card is-fluid">
   <header class = "card-header-title">
-    <p class = "card-header-title">
+    {% if request.user.is_authenticated and request.user.is_coach %}
+    <label class="pull-left">{{ workout.workout_name }}</label>
+    <input class="clickedit" key = "{{workout.pk}}" key_two = "{{ workout.workout_name }}" type="text" />
+
+    <p id = "card-header-title" class = "card-header-title">
+      <i class="fas fa-pen"></i>
+    {% else %}
+    <p id = "card-header-title" class = "card-header-title">
       {{ workout.workout_name }}
+    {% endif %}
       {% if not workout.completed %}
       &nbsp;<span class="tag">In Progress</span>
       {%else%}
@@ -194,6 +249,7 @@
                     </button>
                 </form>
     {% endif %}
+
   </header>
   <div class = "card-content">
     <div class="content">
@@ -380,9 +436,6 @@
  {% if user.is_authenticated and user.is_coach %}
 
  	<a href="{% url 'coach:add_movement_test' pk=workout.athlete.pk pk_2=workout.pk %}" class="card-footer-item" role="button">Add Movement</a>
-
-
-  <a href="{% url 'coach:edit_workout' workout_id=workout.pk%}" class="card-footer-item" role="button">Edit Workout Name</a>
 
 
 

@@ -1,4 +1,5 @@
 from django.contrib.auth import login
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
@@ -476,3 +477,16 @@ def delete_rep_max(request, rep_max_id):
     rep_max.delete()
     messages.success(request, "Rep Max Deleted!")
     return redirect('app:profile_view', athlete.user)
+
+@coach_required
+def remove_athlete(request):
+    pk = request.POST.get('pk')
+    print(pk)
+    athlete = get_object_or_404(Athlete, pk=pk)
+    athlete.coach = None
+    athlete.save()
+    messages.success(request, "Athlete Removed!")
+    data = {
+        "lol": "lol"
+    }
+    return JsonResponse(data)
