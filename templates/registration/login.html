@@ -52,7 +52,10 @@
                     <input type="hidden" name="next" value="{{ next }}">
                     {{ form.username|bulma }}
                     {{ form.password|bulma }}
-                   <button type="submit" class="button is-dark">Log in</button>
+                    <a class="btn" name="button is-size-7" href="{% url 'password_reset' %}">Forgot Password?</a>
+                    <div class="buttons has-addons is-right">
+                   <button type="submit" class="button is-dark has-align-right">Log in</button>
+                 </div>
                    </form>
                   </div>
                 </div>
