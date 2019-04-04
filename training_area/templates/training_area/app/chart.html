@@ -137,8 +137,12 @@ var atx = document.getElementById('thirdChartbar');
 		var thirdChartbar = new Chart(atx, {
     		type: 'bar',
     		options:option_two
-    		
 		})
+var dtx = document.getElementById('fatigueChartbar');
+        var fatigueChartbar = new Chart(dtx, {
+            type: 'line',
+            options:option
+        })
 
 function setChart(){
 	var ctx = document.getElementById('myChart');
@@ -410,6 +414,30 @@ $("#id_mesocycles").change(function(){
         })
 			thirdChartbar.data.labels = data.deadlift_workouts;
 			thirdChartbar.update();
+
+
+
+            fatigueChartbar.data.datasets.push({
+            label: "Fatigue over Block",
+            backgroundColor: chartColors[5],
+            borderColor: chartColors[5],
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: chartColors[5],
+            pointBackgroundColor: chartColors[5],
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: chartColors[5],
+            pointHoverBorderColor: chartColors[5],
+            pointHoverBorderWidth: 2,
+            pointRadius: 5,
+            pointHitRadius: 10,
+            data: data.workoutly_fatigue,
+        })
+            fatigueChartbar.data.labels = data.all_workouts;
+            fatigueChartbar.update();
 		}
 	});
 
@@ -583,7 +611,19 @@ $("#id_lifts").change(function(){
    </div>
 </main>
 
-</div>
+      <div class = "panel">
+        <p class = "panel-heading">
+          Fatigue over Workouts
+        </p>
+
+        <div class="panel-block">
+          <div class="chart-container">
+            <canvas id="fatigueChartbar" style="position: relative; height:60vh; width:85vw"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
 
 
 {% endblock content %}

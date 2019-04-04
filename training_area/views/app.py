@@ -440,10 +440,13 @@ def display_metrics(request):
 	bench_day = 1
 	deadlift_workouts = []
 	deadlift_day = 1
+	workoutly_fatigue = []
+	all_workouts = []
 	week = []
 	for micro in microcycles:
 		for workout in micro.micro.all().order_by('id'):
-			print(workout)
+			workoutly_fatigue.append(workout.fatigue_rating)
+			all_workouts.append(micro.microcycle_name+' '+workout.workout_name)
 			all_movements = Movement.objects.filter(
 				workout=workout)
 			squats = all_movements.filter(movement_name__icontains='squat')
@@ -529,6 +532,8 @@ def display_metrics(request):
 		"squat_workouts": squat_workouts,
 		"bench_workouts": bench_workouts,
 		"deadlift_workouts": deadlift_workouts,
+		"workoutly_fatigue": workoutly_fatigue,
+		"all_workouts": all_workouts,
 		"week": week,
 	}
 	return JsonResponse(data)
