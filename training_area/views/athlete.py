@@ -155,7 +155,12 @@ def gen_backoff(request, movement_id):
 	movement = get_object_or_404(Movement, pk=movement_id)
 	workout = movement.workout
 	if request.POST:
-		exertion = ExertionPerceived.objects.filter(rep_scale=movement.num_reps, exertion_scale=movement.rpe)[0] #gives the object
+		exertion = ExertionPerceived.objects.filter(rep_scale=movement.num_reps, exertion_scale=movement.rpe) #gives the object
+		if not exertion:
+			messages.warning(request, "RPE invalid!")
+			return redirect('app:workout_detail', movement.workout.athlete.pk, movement.workout.pk)
+		else:
+			exertion = exertion[0]
 		load_percent = exertion.percent
 		daily_rm = movement.kg_done / load_percent
 		backoff_movements = Movement.objects.filter(workout=workout, is_backoff=True, movement_name=movement.movement_name) #queryset
