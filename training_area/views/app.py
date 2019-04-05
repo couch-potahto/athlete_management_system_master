@@ -99,9 +99,9 @@ class SearchCoachView(ListView):
 
 	def get_queryset(self):
 		result = Coach.objects.all()
-		print(result)
+		#print(result)
 		query = self.request.GET.get('search_box')
-		print(self.request.GET.get('search_box'))
+		#print(self.request.GET.get('search_box'))
 		if query:
 			query_list = query.split()
 			result = result.filter(
@@ -136,7 +136,7 @@ class SearchAthleteView(ListView):
 		query = self.request.GET.get('search_box')
 		if query:
 			query_list = query.split()
-			print(query_list)
+			#print(query_list)
 			result = result.filter(
 				reduce(operator.and_,
 						(Q(user__username__icontains=q) for q in query_list))
@@ -200,7 +200,7 @@ def add_comment(request, workout_id):
 		return redirect('app:workout_detail', comment.workout.athlete.pk, comment.workout.pk)
 
 def delete_comment(request, comment_id):
-	print(comment_id)
+	#print(comment_id)
 	comment = get_object_or_404(Comment, pk=comment_id)
 	workout = comment.workout
 	comment.delete()
@@ -288,16 +288,16 @@ def delete_event(request, event_id):
 
 class ChartView(View):
 	def get(self, request, *args, **kwargs):
-		print(self.request.user)
+		#print(self.request.user)
 		return render(request, 'training_area/app/chart.html', {})
 
 	def post(self, request, *args, **kwargs):
 
-		print(request.POST)
+		#print(request.POST)
 		req = request.POST.get('athlete')
 		lift = request.POST.get('lifts')
-		print("<<>>")
-		print(lift)
+		#print("<<>>")
+		#print(lift)
 		athlete = Athlete.objects.filter(user__username=req)[0]
 		mesocycle_of_interest = Mesocycle.objects.filter(athlete__user__id=athlete.pk)[0]
 		labels = []
@@ -315,15 +315,15 @@ class ChartView(View):
 						exertion = movement.rpe
 						corresponding_percentage = ExertionPerceived.objects.filter(rep_scale=repetitions, exertion_scale=exertion)[0].percent
 						estimated_repmax = Decimal(movement.kg_done)/Decimal(corresponding_percentage)
-						print(estimated_repmax)
+						#print(estimated_repmax)
 						if estimated_repmax>highest_rm:
 							highest_rm = estimated_repmax
 
 				e1rm.append(highest_rm)
-				print(movements_of_interest)
-			print(labels)
-			print(e1rm)
-		print(athlete)
+				#print(movements_of_interest)
+			#print(labels)
+			#print(e1rm)
+		#print(athlete)
 		data = {
 			"labels": labels,
 			"default":e1rm,
@@ -338,7 +338,7 @@ class ChartView(View):
 		return context
 
 def get_data(request, *args, **kwargs):
-	print(request.POST.get('athlete'))
+	#print(request.POST.get('athlete'))
 	data = {
 		"sales":100,
 		"customers":10,
@@ -347,11 +347,11 @@ def get_data(request, *args, **kwargs):
 
 
 def load_lifts(request):
-	print('entered')
+	#print('entered')
 	mesocycle_pk = request.GET.get('mesocycle')
 
 	mesocycle = get_object_or_404(Mesocycle, pk = int(mesocycle_pk))
-	print(mesocycle)
+	#print(mesocycle)
 	microcycles = mesocycle.meso.all()
 	lifts = []
 	check = []
@@ -365,11 +365,11 @@ def load_lifts(request):
 	return render(request, 'training_area/app/lift_dropdown_list.html', {'all_lifts': lifts})
 
 def load_meso(request):
-	print('entered')
+	#print('entered')
 	athlete_user = request.GET.get('athlete')
 
 	athlete = Athlete.objects.filter(user__username = athlete_user)[0]
-	print(athlete)
+	#print(athlete)
 	all_meso = athlete.meso_athlete.all()
 	mesocycles = []
 	check = []
@@ -400,7 +400,7 @@ def testpost(request):
 					if movements_of_interest:
 						for movement in movements_of_interest:
 							repetitions = movement.num_reps_done
-							print(movement.pk)
+							#print(movement.pk)
 							if repetitions > 10:
 								continue
 
@@ -446,6 +446,8 @@ def display_metrics(request):
 	week = []
 	for micro in microcycles:
 		for workout in micro.micro.all().order_by('id'):
+			if not workout.completed:
+				continue
 			workoutly_fatigue.append(workout.fatigue_rating)
 			all_workouts.append(micro.microcycle_name+' '+workout.workout_name)
 			all_movements = Movement.objects.filter(
@@ -540,7 +542,7 @@ def display_metrics(request):
 	return JsonResponse(data)
 
 def validate_kg(request):
-	print(request.user)
+	#print(request.user)
 	movement_pk = request.POST.get('pk')
 	movement_kg = request.POST.get('kg_done')
 	movement_of_interest = get_object_or_404(Movement, pk=movement_pk)
@@ -690,7 +692,7 @@ class ChartData(APIView):
 							highest_rm = estimated_repmax
 
 				e1rm.append(highest_rm)
-				print(movements_of_interest)
+				#print(movements_of_interest)
 
 		data = {
 			"labels": labels,

@@ -64,7 +64,7 @@ class Macrocycle(models.Model):
 	completed = models.BooleanField(default = False)
 
 class Mesocycle(models.Model):
-	mesocycle_name = models.CharField(max_length = 255, blank = False, verbose_name= _('Mesocycle Name'))
+	mesocycle_name = models.CharField(max_length = 255, blank = False, verbose_name= _('Block Name'))
 	descripton = models.TextField(max_length = 500, null = True)
 	macrocycle = models.ForeignKey(Macrocycle, related_name = 'mac_cycle',
 		on_delete = models.CASCADE, null = True)

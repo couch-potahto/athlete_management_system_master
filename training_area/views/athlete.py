@@ -47,7 +47,7 @@ class DashboardView(ListView):
 
 		x=today
 		in_thirty_days = today + timedelta(days=30)
-		print(in_thirty_days)
+		#print(in_thirty_days)
 		events = Event.objects.filter(start_time__gte=today, end_time__lte=in_thirty_days)
 		if events:
 			if self.request.user.athlete.coach:
@@ -115,7 +115,7 @@ def edit_workout(request, workout_id):
 
         form = WorkoutForm(request.POST, instance=workout)
         formset=MovementFormSet(request.POST, request.FILES, instance=workout)
-        print(form.errors)
+        #print(form.errors)
         if formset.is_valid() and form.is_valid():
             form.save()
             formset.save()
@@ -142,7 +142,7 @@ def edit_movement(request, movement_id):
 			return redirect('app:workout_detail', movement.workout.athlete.pk, movement.workout.pk)
 		else:
 			for field in form:
-				print(field.errors)
+				#print(field.errors)
 				for error in field.errors:
 					if 'equal to 10' in error:
 						error += " RPE"
@@ -189,7 +189,7 @@ def submit_workout(request, workout_id):
 	workout.save()
 	if workout.microcycle:
 		uncompleted = workout.microcycle.micro.all().filter(completed=False)
-		print(uncompleted)
+		#print(uncompleted)
 		if not uncompleted:
 			message = workout.athlete.user.username + " has completed " + workout.microcycle.get_html_url
 			notification = Notifications(title=message, sender=workout.athlete.user, reciever=workout.athlete.coach.user)

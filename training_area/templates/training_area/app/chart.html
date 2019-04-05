@@ -26,7 +26,7 @@ var option = {
 	 scales: {
             yAxes: [{
                 ticks: {
-                    beginAtZero:true,
+
                     fontColor: 'white',
                 },
                 scaleLabel:{
@@ -58,6 +58,49 @@ var option = {
         }
 
 };
+
+var option_fatigue = {
+    maintainAspectRatio: false,
+    showLines: true,
+     scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true,
+                    max: 10,
+                    min: 0,
+                    stepSize: 1,
+                    fontColor: 'white',
+                },
+                scaleLabel:{
+                    display: true,
+                    labelString: 'RPE',
+                    fontColor: 'white',
+                },
+                gridLines: {
+                    display: true ,
+                    
+                },
+            }],
+          xAxes: [{
+                ticks: {
+                    beginAtZero:true,
+                    fontColor: 'white',
+                    
+                },
+                scaleLabel:{
+                    display: true,
+                    labelString: 'Workouts',
+                    fontColor: 'white',
+                },
+                gridLines: {
+                    display: true,
+                    
+                },
+            }]
+        }
+
+};
+
 var option_two = {
 	maintainAspectRatio: false,
 	showLines: true,
@@ -141,7 +184,7 @@ var atx = document.getElementById('thirdChartbar');
 var dtx = document.getElementById('fatigueChartbar');
         var fatigueChartbar = new Chart(dtx, {
             type: 'line',
-            options:option
+            options:option_fatigue
         })
 
 function setChart(){
@@ -210,7 +253,7 @@ $("#id_mesocycles").change(function(){
 			console.log(data)
 			myChartbar.data.datasets = [];
 			myChartbar.data.datasets.push({
-			label: "Squat Average Fatigue",
+			label: "Squat Average sRPE",
             fill: false,
             lineTension: 0.1,
             backgroundColor: 'rgb(255, 51, 0, 0.2)',
@@ -280,7 +323,7 @@ $("#id_mesocycles").change(function(){
 
 			secondChartbar.data.datasets = [];
 			secondChartbar.data.datasets.push({
-			label: "Bench Average Fatigue",
+			label: "Bench Average sRPE",
             fill: false,
             lineTension: 0.1,
             backgroundColor: 'rgb(255, 51, 0, 0.2)',
@@ -303,6 +346,27 @@ $("#id_mesocycles").change(function(){
 			secondChartbar.data.datasets.push({
 			label: "Bench NT",
 			fill: false,
+            backgroundColor: chartColors[0],
+            borderColor: chartColors[0],
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: chartColors[0],
+            pointBackgroundColor: chartColors[0],
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: chartColors[0],
+            pointHoverBorderColor: chartColors[0],
+            pointHoverBorderWidth: 2,
+            pointRadius: 5,
+            pointHitRadius: 10,
+            data: data.average_weekly_bench_volume,
+            type: 'line',
+        })
+            secondChartbar.data.datasets.push({
+            label: "Bench A. Intensity",
+            fill: false,
             backgroundColor: chartColors[1],
             borderColor: chartColors[1],
             borderCapStyle: 'butt',
@@ -318,27 +382,6 @@ $("#id_mesocycles").change(function(){
             pointHoverBorderWidth: 2,
             pointRadius: 5,
             pointHitRadius: 10,
-            data: data.average_weekly_bench_volume,
-            type: 'line',
-        })
-            secondChartbar.data.datasets.push({
-            label: "Bench A. Intensity",
-            fill: false,
-            backgroundColor: chartColors[3],
-            borderColor: chartColors[3],
-            borderCapStyle: 'butt',
-            borderDash: [],
-            borderDashOffset: 0.0,
-            borderJoinStyle: 'miter',
-            pointBorderColor: chartColors[3],
-            pointBackgroundColor: chartColors[3],
-            pointBorderWidth: 1,
-            pointHoverRadius: 5,
-            pointHoverBackgroundColor: chartColors[3],
-            pointHoverBorderColor: chartColors[3],
-            pointHoverBorderWidth: 2,
-            pointRadius: 5,
-            pointHitRadius: 10,
             data: data.average_weekly_bench_intensity,
             type: 'line',
             yAxisID: "y-axis-1",
@@ -349,7 +392,7 @@ $("#id_mesocycles").change(function(){
 
 			thirdChartbar.data.datasets = [];
 			thirdChartbar.data.datasets.push({
-			label: "Deadlift Average Fatigue",
+			label: "Deadlift Average sRPE",
             fill: false,
             lineTension: 0.1,
             backgroundColor: 'rgb(255, 51, 0, 0.2)',
@@ -372,18 +415,18 @@ $("#id_mesocycles").change(function(){
 			thirdChartbar.data.datasets.push({
 			label: "Deadlift NT",
 			fill: false,
-            backgroundColor: chartColors[3],
-            borderColor: chartColors[3],
+            backgroundColor: chartColors[0],
+            borderColor: chartColors[0],
             borderCapStyle: 'butt',
             borderDash: [],
             borderDashOffset: 0.0,
             borderJoinStyle: 'miter',
-            pointBorderColor: chartColors[3],
-            pointBackgroundColor: chartColors[3],
+            pointBorderColor: chartColors[0],
+            pointBackgroundColor: chartColors[0],
             pointBorderWidth: 1,
             pointHoverRadius: 5,
-            pointHoverBackgroundColor: chartColors[3],
-            pointHoverBorderColor: chartColors[3],
+            pointHoverBackgroundColor: chartColors[0],
+            pointHoverBorderColor: chartColors[0],
             pointHoverBorderWidth: 2,
             pointRadius: 5,
             pointHitRadius: 10,
@@ -393,18 +436,18 @@ $("#id_mesocycles").change(function(){
             thirdChartbar.data.datasets.push({
             label: "Deadlift A. Intensity",
             fill: false,
-            backgroundColor: chartColors[5],
-            borderColor: chartColors[5],
+            backgroundColor: chartColors[1],
+            borderColor: chartColors[1],
             borderCapStyle: 'butt',
             borderDash: [],
             borderDashOffset: 0.0,
             borderJoinStyle: 'miter',
-            pointBorderColor: chartColors[5],
-            pointBackgroundColor: chartColors[5],
+            pointBorderColor: chartColors[1],
+            pointBackgroundColor: chartColors[1],
             pointBorderWidth: 1,
             pointHoverRadius: 5,
-            pointHoverBackgroundColor: chartColors[5],
-            pointHoverBorderColor: chartColors[5],
+            pointHoverBackgroundColor: chartColors[1],
+            pointHoverBorderColor: chartColors[1],
             pointHoverBorderWidth: 2,
             pointRadius: 5,
             pointHitRadius: 10,
@@ -419,18 +462,18 @@ $("#id_mesocycles").change(function(){
 
             fatigueChartbar.data.datasets.push({
             label: "Fatigue over Block",
-            backgroundColor: chartColors[5],
-            borderColor: chartColors[5],
+            backgroundColor: 'rgb(255, 51, 0, 0.2)',
+            borderColor: 'rgb(255, 51, 0, 0.2)',
             borderCapStyle: 'butt',
             borderDash: [],
             borderDashOffset: 0.0,
             borderJoinStyle: 'miter',
-            pointBorderColor: chartColors[5],
-            pointBackgroundColor: chartColors[5],
+            pointBorderColor: 'rgb(255, 51, 0)',
+            pointBackgroundColor: 'rgb(255, 51, 0, 0.5)',
             pointBorderWidth: 1,
             pointHoverRadius: 5,
-            pointHoverBackgroundColor: chartColors[5],
-            pointHoverBorderColor: chartColors[5],
+            pointHoverBackgroundColor: 'rgb(255, 51, 0)',
+            pointHoverBorderColor: 'rgb(255, 51, 0)',
             pointHoverBorderWidth: 2,
             pointRadius: 5,
             pointHitRadius: 10,

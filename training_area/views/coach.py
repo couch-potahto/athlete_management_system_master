@@ -110,7 +110,7 @@ class AddMovementViewTest(CreateView):
     def form_valid(self, form):
         if form.errors:
             for field in form:
-                print(field.errors)
+                #print(field.errors)
                 for error in field.errors:
                     messages.warning(self.request, error)
 
@@ -181,7 +181,7 @@ def duplicate_microcycle(request, microcycle_id):
     copy_micro.pk = None
     copy_micro.save()
     
-    print(all_workouts)
+    #print(all_workouts)
     for workout in all_workouts:
         movements = workout.work.all().order_by('id')
         copy_workout = get_object_or_404(Workout, pk=workout.pk)
@@ -283,7 +283,7 @@ class CreateMicrocycleView(CreateView):
         microcycle.save()
         message = microcycle.coach.user.username + " has updated " + microcycle.get_html_url
         notification = Notifications(title=message, sender=microcycle.coach.user, reciever=microcycle.athlete.user)
-        print(notification)
+        #print(notification)
         notification.save()
         messages.success(self.request, 'Micro Created!')
         return redirect('coach:add_wo_to_micro', microcycle.athlete.pk, microcycle.pk)
@@ -313,7 +313,7 @@ class CreateMesocycleView(CreateView):
 def edit_micro_name(request, microcycle_id):
     micro = get_object_or_404(Microcycle, pk=microcycle_id)
     if request.method == 'POST':
-        print(request)
+        #print(request)
         form = MicroForm(request.POST, instance=micro)
         form.save()
     return redirect('app:micro_detail', micro.athlete.pk, micro.pk)
@@ -326,15 +326,16 @@ def edit_workout(request, workout_id):
 
         form = WorkoutForm(request.POST, instance=workout)
         if form.is_valid():
-            print('<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+            #print('<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
             #form.save()
             form.save()
             
             messages.success(request, 'Workout changed!')
             return redirect('app:workout_detail', workout.athlete.pk, workout.pk)
         else:
-            print(formset.errors)
-
+            #print(formset.errors)
+            messages.success(request, 'formset invalid!')
+            return redirect('app:workout_detail', workout.athlete.pk, workout.pk)
     else:
 
         form = WorkoutForm(instance=workout)
@@ -383,7 +384,7 @@ def add_wo_to_micro(request, athlete_id, pk_2):
 @login_required
 @coach_required
 def add_micro_to_meso(request, athlete_id, pk_2):
-    print(athlete_id)
+    #print(athlete_id)
     template = 'training_area/coach/add_micro_to_meso.html'
     mesocycle = Mesocycle.objects.get(pk=pk_2)
     if request.method == "POST":
@@ -392,7 +393,7 @@ def add_micro_to_meso(request, athlete_id, pk_2):
 
 
         workouts = []
-        print(request.POST.getlist("microcycles"))
+       #print(request.POST.getlist("microcycles"))
         for pk in request.POST.getlist("microcycles"):
             micro = get_object_or_404(Microcycle, pk=pk)
             micro.mesocycle = mesocycle
@@ -413,7 +414,7 @@ def edit_movement_quick(request, movement_id):
     movement = get_object_or_404(Movement, pk=movement_id)
     if request.POST:
         form = EditMovementFormCoach(request.POST, instance=movement)
-        print(request.POST['rm'])
+        #print(request.POST['rm'])
         if form.is_valid():
             form.save()
 
@@ -430,7 +431,7 @@ def edit_movement_quick(request, movement_id):
             return redirect('app:workout_detail', movement.workout.athlete.pk, movement.workout.pk)
         else:
             for field in form:
-                print(field.errors)
+                #print(field.errors)
                 for error in field.errors:
                     if 'equal to 10' in error:
                         error += " RPE"
@@ -481,7 +482,7 @@ def delete_rep_max(request, rep_max_id):
 @coach_required
 def remove_athlete(request):
     pk = request.POST.get('pk')
-    print(pk)
+    #print(pk)
     athlete = get_object_or_404(Athlete, pk=pk)
     athlete.coach = None
     athlete.save()

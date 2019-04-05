@@ -2,9 +2,9 @@
 
 
 <script>
-
-
   {% block jquery %}
+
+
   function endEdit(e) {
     var input = $(e.target),
         label = input && input.prev();
@@ -30,6 +30,10 @@
         },
         success: function (data) {
           console.log(data)
+          $('.animated-success').css("visibility","visible").fadeIn(500);
+          setTimeout(function(){
+              $('.animated-success').fadeOut(500);
+            },1500); 
         }
       });
     })
@@ -66,7 +70,12 @@
         },
         success: function (data) {
           console.log(data)
+          $('.animated-success').css("visibility","visible").fadeIn(500);
+          setTimeout(function(){
+              $('.animated-success').fadeOut(500);
+            },1500); 
         }
+        
       });
 
     });
@@ -86,6 +95,10 @@
         },
         success: function (data) {
           console.log(data)
+          $('.animated-success').css("visibility","visible").fadeIn(500);
+          setTimeout(function(){
+              $('.animated-success').fadeOut(500);
+            },1500); 
         }
       });
 
@@ -106,6 +119,10 @@
         },
         success: function (data) {
           console.log(data)
+          $('.animated-success').css("visibility","visible").fadeIn(500);
+          setTimeout(function(){
+              $('.animated-success').fadeOut(500);
+            },1500); 
         }
       });
 
@@ -126,6 +143,11 @@
         },
         success: function (data) {
           console.log(data)
+          $('.animated-success').css("visibility","visible").fadeIn(500);
+          setTimeout(function(){
+              $('.animated-success').fadeOut(500);
+            },1500); 
+          
         }
       });
 
@@ -146,6 +168,10 @@
         },
         success: function (data) {
           console.log(data)
+          $('.animated-success').css("visibility","visible").fadeIn(500);
+          setTimeout(function(){
+              $('.animated-success').fadeOut(500);
+            },1500); 
         }
       });
 
@@ -188,6 +214,10 @@
         },
         success: function (data) {
           console.log(data)
+          $('.animated-success').css("visibility","visible").fadeIn(500);
+          setTimeout(function(){
+              $('.animated-success').fadeOut(500);
+            },1500); 
         }
       });
 
@@ -214,11 +244,14 @@
       });
 
     });
+
+
   {% endblock %}
 </script>
 
 
 {% block content %}
+
 {% if request.user.is_authenticated and request.user.is_athlete %}
 <div class="column is-half is-offset-one-quarter">
             <div class="card">
@@ -255,6 +288,8 @@
           </div>
 
 {% endif %}
+
+
 
 
 
@@ -578,8 +613,12 @@
 </div>
 </div>
   {%endfor%}
-{% endif %}
+{% endif %} 
 
 </div>
+
+<div style="width:100%;z-index:99999;position:fixed;pointer-events:none;display:flex;flex-direction:column;padding:15px;bottom:0;left:0;right:0;text-align:center;align-items:center;"><div class="tag is-success animated-success is-large" style="width:auto; pointer-events:auto;display:inline-flex;opacity:1; visibility: hidden;"><i class="far fa-check-circle"></div></div>
+
+  <div style="width:100%;z-index:99999;position:fixed;pointer-events:none;display:flex;flex-direction:column;padding:15px;bottom:0;left:0;right:0;text-align:center;align-items:center;"><div class="tag is-warning animated-warning is-large" style="width:auto; pointer-events:auto;display:inline-flex;opacity:1; visibility: hidden;"><i class="far fa-check-circle"></div></div>
 
 {% endblock %}
