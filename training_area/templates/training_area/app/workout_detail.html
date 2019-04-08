@@ -153,7 +153,9 @@
 
     });
 
+
     $(".percentage").change(function () {
+
       var percentage = $(this).val();
       var pk = $(this).attr('key');
       console.log( $(this).attr('key') );
@@ -301,7 +303,7 @@
 
     {% if request.user.is_authenticated and request.user.is_coach %}
     <label class="pull-left">{{ workout.workout_name }}</label>
-    <input class="clickedit" key = "{{workout.pk}}" key_two = "{{ workout.workout_name }}" type="text" />
+    <input class="clickedit" key = "{{workout.pk}}" key_two = "{{ workout.workout_name }}" value = "{{ workout.workout_name }}"type="text" />
 
     <p id = "card-header-title" class = "card-header-title">
       <i class="fas fa-pen"></i>
@@ -434,6 +436,97 @@
 {% endif %}
 
 
+
+
+
+<!--{% regroup movements by movement_name as movement_list %}
+  {% for movement in movement_list %}
+
+
+  
+    <div class="card is-fullwidth">
+      <header class="card-header">
+        <p class="card-header-title is-centered" >{{ movement.grouper }}</p>
+      
+      </header>
+      <div class="card-content">
+            <div class="table-container">
+    <table class = "table is-responsive is-striped is-fullwidth">
+      <thead class="has-text-centered">
+    
+    
+    <th style="width:40%; text-align: center;">Protocol</th>
+    <th>Intensity</th>
+    <th>Actions</th>
+    <th style="width:30%; text-align: center;">Completed</th>
+    
+
+
+  </thead>
+
+  <tbody>
+
+    {% for indiv in movement.list %}
+    <tr>
+      <td style="width:30%; text-align: center;">
+        <input id = "kg_done{{indiv.pk}}" class = "kg_done input is-primary is-small" style="width:70px; text-align: center;" key = "{{indiv.pk}}" name="kg_done" class="input is-small" type="number" step="0.01" min=0 value="{{indiv.kg}}">
+         kg x 
+        <input id = "num_reps_done" class = "num_reps_done input is-primary is-small" style="width:50px; text-align: center;" key = "{{indiv.pk}}" name="num_reps_done" class="input is-small" type="number" value="{{indiv.num_reps}}"> reps
+        @ RPE 
+        <input id = "rpe" class = "rpe input is-primary is-small" style="width:50px; text-align: center;" key = "{{indiv.pk}}" name="rpe" class="input is-small" type="number" step="0.5" min=2 value="{{indiv.rpe}}">
+
+          
+      </td>
+      <td>
+        <input id = "percentage{{indiv.pk}}" class = "percentage input is-primary is-small" style="width:70px; text-align: center;" key = "{{indiv.pk}}" name="percentage" class="input is-small" type="number" step="0.01" min=0 value="{{indiv.percentage}}"> % 
+      </td>
+       <td>
+
+        <select id = 'rm' class = 'rm is-primary' key = "{{indiv.pk}}" name = 'rm'>
+            <option value="None">Rep Max</option>
+            {% for max in rm %}
+              <option value = "{{max.rep_max}}">{{max.rep_max_name}}: {{max.rep_max}}</option>
+            {% endfor %}
+        </select>
+      
+      
+          <table class = "table is-responsive">
+
+          <form method="post" action="{% url 'coach:duplicate' indiv.pk %}" >
+           {% csrf_token %}
+           <button class = 'button is-small' type="submit">
+            <i class="fas fa-clone" type="submit"></i>
+           </button>
+           </form>
+
+        <form method="post" action="{% url 'coach:delete' indiv.pk %}" >
+          {% csrf_token %}
+          <button class = 'button is-small' type="submit">
+            <i class="fas fa-eraser" type="submit"></i>
+           </button>
+        </form>
+
+        </table>
+       </td>
+       <td style="text-align: center;">
+        {{indiv.kg_done}} x {{indiv.num_reps_done}} @ {{indiv.rpe}}
+      </td>
+    </tr>
+    {% endfor %}
+</table>
+</div>
+      </div>
+  </div>
+
+
+
+{% endfor %}!-->
+
+
+
+
+
+
 {% if user.is_authenticated and user.is_coach %}
   <div class = "card-content">
     <div class="content">
@@ -441,7 +534,7 @@
 {% if movements %}
 <table class = "table is-responsive is-striped is-fullwidth">
   <thead class="has-text-centered">
-    <th>Movement</th>
+    <th style="text-align: center;" >Movement</th>
     
     <th>Percentage (%)</th>
 
@@ -451,10 +544,8 @@
     <th>Reps Done</th>
     <th>RPE</th>
 
-      <th>Actions</th>
-      <th></th>
-      <th></th>
-      <th></th>
+      <th style="text-align: center;">Actions</th>
+      
 
   </thead>
 
@@ -506,40 +597,41 @@
           </div>
       </td>
       <td>
+        <div class = "columns is-mobile">
+          <div class = "column is-4">
           <div class="custom-control custom-checkbox">
             <input id = "checked" class = "checked is-primary is-small" key = "{{movement.pk}}" type="checkbox" class="custom-control-input" name="is_backoff"{% if movement.is_backoff %} checked {% endif %}>
-            <label class="custom-control-label" for="customCheck1">Back-off Set</label>
+            <label class="custom-control-label" for="customCheck1">Back-off</label>
           </div>
-      </td>
-      <td>
-
+          </div>
+        <div class = "column is-5">
         <select id = 'rm' class = 'rm is-primary' key = "{{movement.pk}}" name = 'rm'>
             <option value="None">Rep Max</option>
             {% for max in rm %}
               <option value = "{{max.rep_max}}">{{max.rep_max_name}}: {{max.rep_max}}</option>
             {% endfor %}
         </select>
-      </td>
+      
         </form>
-
-      <td>
-          <table class = "table is-responsive">
-
+        </div>
+        <div class = "column is-1">
           <form method="post" action="{% url 'coach:duplicate' movement.pk %}" >
            {% csrf_token %}
            <button class = 'button is-small' type="submit">
             <i class="fas fa-clone" type="submit"></i>
            </button>
            </form>
-
+        </div>
+        <div class = "column is-1">
         <form method="post" action="{% url 'coach:delete' movement.pk %}" >
           {% csrf_token %}
           <button class = 'button is-small' type="submit">
             <i class="fas fa-eraser" type="submit"></i>
            </button>
         </form>
-
-        </table>
+      </div>
+        
+      </div>
        </td>
     {% endif %}
 
