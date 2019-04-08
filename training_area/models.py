@@ -195,7 +195,7 @@ class Event(models.Model):
 	@property
 	def get_html_url(self):
 		url = reverse('app:event_edit', args=(self.id,))
-		return f'<a href="{url}"> {self.user}: {self.title} </a>'
+		return f'<a href="{url}"> {self.title} </a>'
 
 class Notifications(models.Model):
 	created_at = models.DateTimeField(auto_now_add=True, null=True)
