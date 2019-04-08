@@ -16,7 +16,12 @@
 
     $('.clickedit').hide()
     .change(function(){
+      var type = $(this).attr('key_two');
+      if(type == 'workout'){
       var workout_name = $(this).val();
+      if(workout_name == ""){
+        e.preventDefault();
+      }
       var pk = $(this).attr('key');
       console.log($(this).val());
 
@@ -36,6 +41,32 @@
             },1500); 
         }
       });
+    }else{
+      var movement_name = $(this).val();
+      var pk = $(this).attr('key');
+      var old_name = $(this).attr('old_name');
+      console.log($(this).val());
+      if(movement_name == ""){
+        e.preventDefault();
+      }
+      $.ajax({
+         url: "/app/ajax/validate_movement_group_name/",
+        type: "POST",
+        data: {
+          csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+          'pk': pk,
+          'movement_name': movement_name,
+          'old_name': old_name
+        },
+        success: function (data) {
+          console.log(data)
+          $('.animated-success').css("visibility","visible").fadeIn(500);
+          setTimeout(function(){
+              $('.animated-success').fadeOut(500);
+            },1500); 
+        }
+      });
+    }
     })
     .focusout(endEdit)
     .keyup(function (e) {
@@ -305,7 +336,7 @@
 
     {% if request.user.is_authenticated and request.user.is_coach %}
     <label class="pull-left">{{ workout.workout_name }}</label>
-    <input class="clickedit" key = "{{workout.pk}}" key_two = "{{ workout.workout_name }}" value = "{{ workout.workout_name }}"type="text" />
+    <input class="clickedit" key = "{{workout.pk}}" key_two = "workout" value = "{{ workout.workout_name }}"type="text" />
 
     <p id = "card-header-title" class = "card-header-title">
       <i class="fas fa-pen"></i>
@@ -448,9 +479,12 @@
 
   
     <div class="card is-fullwidth">
-      <header class="card-header">
-        <p class="card-header-title is-size-4">{{ movement.grouper }}</p>
-      
+      <header class="card-header-title">
+        <label class="is-size-4 pull-left">{{ movement.grouper }}</label>
+        <input class="clickedit" key = "{{workout.pk}}" key_two = "movement_group" old_name ="{{ movement.grouper }}" value = "{{ movement.grouper }}"type="text" />
+        <p id = "card-header-title" class = "card-header-title">
+          <i class="fas fa-pen is-info"></i>
+        </p>
       </header>
       <div class="card-content">
         <div class="table-container">

@@ -651,6 +651,21 @@ def validate_workout_name(request):
 	}
 	return JsonResponse(data)
 
+def validate_movement_group_name(request):
+	workout_pk = request.POST.get('pk')
+	movement_name = request.POST.get('movement_name')
+	old_name = request.POST.get('old_name')
+	
+	workout_of_interest = get_object_or_404(Workout, pk=workout_pk)
+	movements_of_interest = workout_of_interest.work.all().filter(movement_name=old_name)
+	for item in movements_of_interest:
+		item.movement_name = movement_name
+		item.save()
+	data = {
+		"lol": "lol"
+	}
+	return JsonResponse(data)
+
 def validate_mesocycle_name(request):
 	mesocycle_pk = request.POST.get('pk')
 	mesocycle_name = request.POST.get('mesocycle_name')
