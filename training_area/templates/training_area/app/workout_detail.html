@@ -284,6 +284,8 @@
                 <div class="content">
                   <p><strong>1)</strong>Keep naming conventions across movements the same. i.e. bench press, not bench press followed by bench. This will help in Analytics.</p>
                   <p><strong>2)</strong>Name all relevant squat movements with 'Squat' in the name, bench press movements with 'Press' in the name, and deadlift movements with 'Deadlift' in the name if you want to track if in Analytics</p>
+                  <p><strong>3)</strong>To make use of load drops, go to the movement you wish to load drop from, select the appropriate load drop, and click the 'duplicate' button. The subsequent rep will reflect the dropped percentage</p>
+                  <p><strong>4)</strong>Dont forget to enter a % when you want to base a rep off an established 1rm!</p>
                 </div>
               </div>
             </div>
@@ -598,13 +600,13 @@
       </td>
       <td>
         <div class = "columns is-mobile">
-          <div class = "column is-4">
+          <div class = "column is-3">
           <div class="custom-control custom-checkbox">
             <input id = "checked" class = "checked is-primary is-small" key = "{{movement.pk}}" type="checkbox" class="custom-control-input" name="is_backoff"{% if movement.is_backoff %} checked {% endif %}>
             <label class="custom-control-label" for="customCheck1">Back-off</label>
           </div>
           </div>
-        <div class = "column is-5">
+        <div class = "column is-4">
         <select id = 'rm' class = 'rm is-primary' key = "{{movement.pk}}" name = 'rm'>
             <option value="None">Rep Max</option>
             {% for max in rm %}
@@ -614,9 +616,23 @@
       
         </form>
         </div>
+        <div class = "column is-3">
+        <select id = 'load_drop' class = 'load_drop' key = "{{movement.pk}}" name = 'load_drop' form="duplicate{{movement.pk}}">
+            <option value="0">Load Drop</option>
+              <option value = "0.025">2.5%</option>
+              <option value = "0.05">5%</option>
+              <option value = "0.075">7.5%</option>
+              <option value = "0.1">10%</option>
+              <option value = "0.125">12.5%</option>
+              <option value = "0.15">15%</option>
+              <option value = "0.175">17.5%</option>
+              <option value = "0.2">20%</option>
+          </select>
+        </div>
         <div class = "column is-1">
-          <form method="post" action="{% url 'coach:duplicate' movement.pk %}" >
+          <form method="post" id="duplicate{{movement.pk}}" action="{% url 'coach:duplicate' movement.pk %}" >
            {% csrf_token %}
+           
            <button class = 'button is-small' type="submit">
             <i class="fas fa-clone" type="submit"></i>
            </button>
