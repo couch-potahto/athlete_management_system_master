@@ -13,7 +13,7 @@ var data = {
 };
 var chartColors = [
 		'rgb(255, 99, 132)',
-		'rgb(255, 159, 64)',
+		'rgb(255,215,0)',
 		'rgb(255, 205, 86)',
 		'rgb(75, 192, 192)',
 		'rgb(54, 162, 235)',
@@ -23,6 +23,11 @@ var chartColors = [
 var option = {
 	maintainAspectRatio: false,
 	showLines: true,
+    legend: {
+            labels: {
+                fontColor: "white",
+            }
+        },
 	 scales: {
             yAxes: [{
                 ticks: {
@@ -36,14 +41,14 @@ var option = {
                 },
                 gridLines: {
   					display: true ,
-  					
+
 				},
             }],
           xAxes: [{
                 ticks: {
                 	beginAtZero:true,
                     fontColor: 'white',
-                    
+
                 },
                 scaleLabel:{
                 	display: true,
@@ -52,7 +57,7 @@ var option = {
                 },
                 gridLines: {
   					display: true,
-  					
+
 				},
             }]
         }
@@ -62,6 +67,11 @@ var option = {
 var option_fatigue = {
     maintainAspectRatio: false,
     showLines: true,
+    legend: {
+            labels: {
+                fontColor: "white",
+            }
+        },
      scales: {
             yAxes: [{
                 ticks: {
@@ -78,14 +88,14 @@ var option_fatigue = {
                 },
                 gridLines: {
                     display: true ,
-                    
+
                 },
             }],
           xAxes: [{
                 ticks: {
                     beginAtZero:true,
                     fontColor: 'white',
-                    
+
                 },
                 scaleLabel:{
                     display: true,
@@ -94,7 +104,7 @@ var option_fatigue = {
                 },
                 gridLines: {
                     display: true,
-                    
+
                 },
             }]
         }
@@ -104,6 +114,11 @@ var option_fatigue = {
 var option_two = {
 	maintainAspectRatio: false,
 	showLines: true,
+    legend: {
+            labels: {
+                fontColor: "white",
+            }
+        },
 	 scales: {
             yAxes: [{
                 position: 'left',
@@ -119,7 +134,7 @@ var option_two = {
                 },
                 gridLines: {
   					display: true ,
-  					
+
 				}
             },{
                 position: 'right',
@@ -137,16 +152,16 @@ var option_two = {
                 },
                 gridLines: {
                     display: true ,
-                    
+
                 }
             }],
 
-            
+
           xAxes: [{
                 ticks: {
                 	beginAtZero:true,
                     fontColor: 'white',
-                    
+
                 },
                 scaleLabel:{
                 	display: true,
@@ -155,7 +170,7 @@ var option_two = {
                 },
                 gridLines: {
   					display: true,
-  					
+
 				},
             }]
         }
@@ -254,9 +269,10 @@ $("#id_mesocycles").change(function(){
 			myChartbar.data.datasets = [];
 			myChartbar.data.datasets.push({
 			label: "Squat Average sRPE",
+            fontColor: "white",
             fill: false,
             lineTension: 0.1,
-            backgroundColor: 'rgb(255, 51, 0, 0.2)',
+            backgroundColor: 'rgb(181, 5, 5, 0.5)',
             borderColor: 'rgb(255, 51, 0, 0.2)',
             borderCapStyle: 'butt',
             borderDash: [],
@@ -271,7 +287,7 @@ $("#id_mesocycles").change(function(){
             pointHoverBorderWidth: 2,
             pointRadius: 5,
             pointHitRadius: 10,
-            data: data.average_weekly_squat_rpe, 
+            data: data.average_weekly_squat_rpe,
         })
 			myChartbar.data.datasets.push({
 			label: "Squat NT",
@@ -326,7 +342,7 @@ $("#id_mesocycles").change(function(){
 			label: "Bench Average sRPE",
             fill: false,
             lineTension: 0.1,
-            backgroundColor: 'rgb(255, 51, 0, 0.2)',
+            backgroundColor: 'rgb(181, 5, 5, 0.5)',
             borderColor: 'rgb(255, 51, 0, 0.2)',
             borderCapStyle: 'butt',
             borderDash: [],
@@ -395,7 +411,7 @@ $("#id_mesocycles").change(function(){
 			label: "Deadlift Average sRPE",
             fill: false,
             lineTension: 0.1,
-            backgroundColor: 'rgb(255, 51, 0, 0.2)',
+            backgroundColor: 'rgb(181, 5, 5, 0.5)',
             borderColor: 'rgb(255, 51, 0, 0.2)',
             borderCapStyle: 'butt',
             borderDash: [],
@@ -462,8 +478,8 @@ $("#id_mesocycles").change(function(){
 
             fatigueChartbar.data.datasets.push({
             label: "Fatigue over Block",
-            backgroundColor: 'rgb(255, 51, 0, 0.2)',
-            borderColor: 'rgb(255, 51, 0, 0.2)',
+            backgroundColor: 'rgb(181, 5, 5, 0.5)',
+            borderColor: 'rgb(122, 5, 5, 0.5)',
             borderCapStyle: 'butt',
             borderDash: [],
             borderDashOffset: 0.0,
@@ -500,7 +516,7 @@ $("#id_lifts").change(function(){
 	var lift = myCheckboxes
 	var athlete = $('#id_athlete').val()
 	var meso = $("#id_mesocycles").val()
-	
+
 	$.ajax({
 		url: '/app/ajax/testpost/',
 		data:{
@@ -511,7 +527,7 @@ $("#id_lifts").change(function(){
 		success: function(data){
 			console.log(data)
 			myLineChart.data.datasets = [];
-			
+
 			for(i=0; i<data.default.length; i++){
 				myLineChart.data.datasets.push({
 			label: data.name[i],
@@ -534,11 +550,11 @@ $("#id_lifts").change(function(){
             pointHitRadius: 10,
             data: data.default[i],
         })
-  				
+
 			}
 			myLineChart.data.labels = data.labels;
   			myLineChart.update();
-  
+
 		}
 	});
 
@@ -549,7 +565,7 @@ $("#id_lifts").change(function(){
 </script>
 
 {% block content %}
-<div class = "section has-text-centered"> 
+<div class = "section has-text-centered">
   <h6 class="title has-text-white is-size-2">Analytics</h6>
     <main class = "column">
       <div class = "level">
@@ -572,7 +588,7 @@ $("#id_lifts").change(function(){
 		      			<option>Select Mesocycle</option>
 		    		</select>
 		  		</div>
-			</div> 
+			</div>
 		  </div>
 		 </div>
 		</div>
@@ -580,7 +596,7 @@ $("#id_lifts").change(function(){
 		<div class="column is-8">
           <div class="panel">
             <p class="panel-heading">
-              Estimated Cycle Rep Maxes
+              <strong>Estimated Cycle Rep Maxes</strong>
             </p>
             <div class="panel-block">
               <div class="chart-container" style="position: relative; height:40vh; width:85vw">
@@ -592,30 +608,30 @@ $("#id_lifts").change(function(){
 		 <div class="column">
 			<div class="panel-footer">
 			<div class="column is-three-fifths">
-			  
+
 			  <form id = "analyticsForm" method="post" all-lifts-url="{% url 'app:ajax_load_lifts' %}">
 				{% csrf_token %}
-				
+
 				<div class="content has-text-white" id = "id_lifts"></div>
-				
+
 			  </form>
-			
+
 			</div>
       		</div>
-      		
-    	  </div>
-    	  </div>
-    	
-    	
-    
 
-	
+    	  </div>
+    	  </div>
+
+
+
+
+
 
   <div class = "columns">
     <div class="column">
       <div class = "panel">
       	<p class = "panel-heading">
-      	  Squat NT + Average sRPE
+      	  <strong>Squat NT + Average sRPE</strong>
       	</p>
 
         <div class="panel-block">
@@ -628,7 +644,7 @@ $("#id_lifts").change(function(){
     <div class="column">
       <div class = "panel">
       	<p class = "panel-heading">
-      	  Bench NT + Average sRPE
+      	  <strong>Bench NT + Average sRPE</strong>
       	</p>
 
         <div class="panel-block">
@@ -641,7 +657,7 @@ $("#id_lifts").change(function(){
     <div class="column">
       <div class = "panel">
       	<p class = "panel-heading">
-      	  Deadlift NT + Average sRPE
+      	  <strong>Deadlift NT + Average sRPE</strong>
       	</p>
 
         <div class="panel-block">
@@ -656,7 +672,7 @@ $("#id_lifts").change(function(){
 
       <div class = "panel">
         <p class = "panel-heading">
-          Fatigue over Workouts
+          <strong>Fatigue over Workouts</strong>
         </p>
 
         <div class="panel-block">
