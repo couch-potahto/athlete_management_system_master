@@ -26,7 +26,7 @@ class Calendar(HTMLCalendar):
 			if event.user == self.person:
 				d += f'<li> {event.get_html_url} </li>'
 			else:
-				d += f'<li> {event.title} </li>'
+				d += f'<li> {event.user}: {event.title} </li>'
 
 		if day != 0:
 			return f"<td><span class='date'>{day}</span><ul> {d} </ul></td>"

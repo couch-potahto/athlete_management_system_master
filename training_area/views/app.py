@@ -79,7 +79,17 @@ class WorkoutDetail(DetailView):
 	def get_context_data(self, **kwargs):
 		 # xxx will be available in the template as the related objects
 		context = super(WorkoutDetail, self).get_context_data(**kwargs)
-		context['movements'] = Movement.objects.filter(workout=self.get_object()).order_by('id')
+		all_movements = Movement.objects.filter(workout=self.get_object()).order_by('id')
+		unique_names = []
+		for item in all_movements:
+			if item.movement_name not in unique_names:
+				unique_names.append(item.movement_name)
+		total = []
+		for name in unique_names:
+			movement = list(Movement.objects.filter(workout=self.get_object(), movement_name=name).order_by('id'))
+			total.extend(movement)
+		context['movements'] = total
+		#context['movements'] = Movement.objects.filter(workout=self.get_object()).order_by('movement_name').order_by('id')
 		context['rm'] = RepMax.objects.filter(athlete__user_id=self.kwargs['pk'])
 		context['comments'] = Comment.objects.filter(workout__id=self.kwargs['pk_2']).order_by('-created_at')
 		return context
@@ -636,6 +646,21 @@ def validate_workout_name(request):
 	workout_of_interest = get_object_or_404(Workout, pk=workout_pk)
 	workout_of_interest.workout_name = workout_name
 	workout_of_interest.save()
+	data = {
+		"lol": "lol"
+	}
+	return JsonResponse(data)
+
+def validate_movement_group_name(request):
+	workout_pk = request.POST.get('pk')
+	movement_name = request.POST.get('movement_name')
+	old_name = request.POST.get('old_name')
+	
+	workout_of_interest = get_object_or_404(Workout, pk=workout_pk)
+	movements_of_interest = workout_of_interest.work.all().filter(movement_name=old_name)
+	for item in movements_of_interest:
+		item.movement_name = movement_name
+		item.save()
 	data = {
 		"lol": "lol"
 	}

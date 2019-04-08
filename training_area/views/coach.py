@@ -127,9 +127,9 @@ class AddMovementViewTest(CreateView):
         if form.cleaned_data['rep_max']: #using a rep_max
 
             if not form.cleaned_data['percentage']:
-                messages.warning(self.request, 'Please Put a %')
-                form = AddWMovementFormCoach()
-                return render(self.request, template, {"form" : form, "movement" : movement})
+                messages.warning(self.request, 'Please Put a % for your movement')
+                workout = Workout.objects.filter(id=self.get_context_data()['pk_2'])[0]
+                return redirect('app:workout_detail', workout.athlete.pk, workout.pk)
             rm = form.cleaned_data['rep_max'].rep_max
             movement.kg = round((rm * (form.cleaned_data['percentage']/Decimal(100)))/Decimal(2.5)) * Decimal(2.5)
 
@@ -167,7 +167,12 @@ class CreateMovementView(CreateView):
 @login_required
 @coach_required
 def duplicate(request, movement_id):
+    load_drop = float(request.POST.get('load_drop'))
     copy_movement = get_object_or_404(Movement, pk=movement_id)
+    if copy_movement.percentage:
+        copy_movement.percentage = copy_movement.percentage * (Decimal(1)-Decimal(load_drop))
+    elif copy_movement.kg:
+        copy_movement.kg = round(copy_movement.kg * (Decimal(1)-Decimal(load_drop)))/Decimal(2.5) * Decimal(2.5)
     copy_movement.pk = None
     copy_movement.save()
     messages.success(request, "Duplicated!")
