@@ -380,6 +380,7 @@
     <div class="card is-fullwidth">
       <header class="card-header">
         <p class="card-header-title">{{ movement.grouper }}</p>
+        
         <a class="card-header-icon card-toggle">
           <i class="fa fa-angle-down"></i>
         </a>
@@ -416,7 +417,7 @@
       <td><input id = "num_reps_done" class = "num_reps_done input is-primary is-small" style="width:50px; text-align: center;" key = "{{indiv.pk}}" name="num_reps_done" class="input is-small" type="number" value="{{indiv.num_reps_done}}"></td>
       <td><input id = "rpe" class = "rpe input is-primary is-small" style="width:50px; text-align: center;" key = "{{indiv.pk}}" name="rpe" class="input is-small" type="number" step="0.5" min=2 value="{{indiv.rpe}}"></td>
       <td>
-        {%if indiv.is_backoff == False and indiv.percentage == None %}
+        {%if indiv.is_backoff == False %}
           <form method="post" action="{% url 'athlete:generate_backoff' indiv.pk %}" >
            {% csrf_token %}
            <button class = 'button is-small is-link' type="submit">
@@ -438,52 +439,59 @@
 {% endif %}
 
 
+<!------------------------------------COACH!------------------------------------------>
 
 
-
-<!--{% regroup movements by movement_name as movement_list %}
+{% regroup movements by movement_name as movement_list %}
   {% for movement in movement_list %}
 
 
   
     <div class="card is-fullwidth">
       <header class="card-header">
-        <p class="card-header-title is-centered" >{{ movement.grouper }}</p>
+        <p class="card-header-title is-size-4">{{ movement.grouper }}</p>
       
       </header>
       <div class="card-content">
-            <div class="table-container">
-    <table class = "table is-responsive is-striped is-fullwidth">
-      <thead class="has-text-centered">
-    
-    
-    <th style="width:40%; text-align: center;">Protocol</th>
-    <th>Intensity</th>
-    <th>Actions</th>
-    <th style="width:30%; text-align: center;">Completed</th>
-    
+        <div class="table-container">
+        <table class = "table is-responsive is-striped is-fullwidth">
+         <thead class="has-text-centered">
+           <th style="text-align: center;">Percentage (%)</th>
 
-
-  </thead>
+            <th style="text-align: center;">Load (kg)</th>
+            <th style="text-align: center;">Load Done (kg)</th>
+            <th style="text-align: center;">Reps</th>
+            <th style="text-align: center;">Reps Done</th>
+            <th style="text-align: center;">RPE</th>
+            <th style="width: 17%; text-align: center;">Actions</th>
+    
+        </thead>
 
   <tbody>
 
     {% for indiv in movement.list %}
     <tr>
-      <td style="width:30%; text-align: center;">
-        <input id = "kg_done{{indiv.pk}}" class = "kg_done input is-primary is-small" style="width:70px; text-align: center;" key = "{{indiv.pk}}" name="kg_done" class="input is-small" type="number" step="0.01" min=0 value="{{indiv.kg}}">
-         kg x 
-        <input id = "num_reps_done" class = "num_reps_done input is-primary is-small" style="width:50px; text-align: center;" key = "{{indiv.pk}}" name="num_reps_done" class="input is-small" type="number" value="{{indiv.num_reps}}"> reps
-        @ RPE 
-        <input id = "rpe" class = "rpe input is-primary is-small" style="width:50px; text-align: center;" key = "{{indiv.pk}}" name="rpe" class="input is-small" type="number" step="0.5" min=2 value="{{indiv.rpe}}">
-
-          
+      <td style="text-align: center;">
+        <input id = "percentage{{indiv.pk}}" class = "percentage input is-primary is-small" style="width:70px; text-align: center;" key = "{{indiv.pk}}" name="percentage" class="input is-small" type="number" step="0.01" min=0 value="{{indiv.percentage}}">
       </td>
-      <td>
-        <input id = "percentage{{indiv.pk}}" class = "percentage input is-primary is-small" style="width:70px; text-align: center;" key = "{{indiv.pk}}" name="percentage" class="input is-small" type="number" step="0.01" min=0 value="{{indiv.percentage}}"> % 
+      <td style="text-align: center;">
+        <input id = "kg_done" class = "kg_done input is-primary is-small" style="width:70px; text-align: center;" key = "{{indiv.pk}}"  name="kg" class="input is-small" type="number" step="0.01" min=0 value="{{indiv.kg}}">
       </td>
-       <td>
-
+      <td style="text-align: center;">{{indiv.kg_done}}</td>
+      <td style="text-align: center;"><input id = "num_reps_done" class = "num_reps_done input is-primary is-small" style="width:50px; text-align: center;" key = "{{indiv.pk}}" name="num_reps" class="input is-small" type="number" value="{{indiv.num_reps}}"></td>
+      <td style="text-align: center;">{{indiv.num_reps_done}}</td>
+      <td style="text-align: center;">
+        <input id = "rpe" class = "rpe input is-primary is-small" style="width:50px; text-align: center;" key = "{{indiv.pk}}" name="rpe" class="input is-small" type="number" step="0.1" min=2 value="{{indiv.rpe}}">
+      </td style="text-align: center;">
+        <td>
+        <div class = "columns is-mobile">
+          <div class = "column is-3">
+          <div class="custom-control custom-checkbox">
+            <input id = "checked" class = "checked is-primary is-small" style="text-align: center;" key = "{{indiv.pk}}" type="checkbox" class="custom-control-input" name="is_backoff"{% if indiv.is_backoff %} checked {% endif %}>
+            <label class="custom-control-label" for="customCheck1">Back-off</label>
+          </div>
+          </div>
+        <div class = "column is-4">
         <select id = 'rm' class = 'rm is-primary' key = "{{indiv.pk}}" name = 'rm'>
             <option value="None">Rep Max</option>
             {% for max in rm %}
@@ -491,28 +499,41 @@
             {% endfor %}
         </select>
       
-      
-          <table class = "table is-responsive">
-
-          <form method="post" action="{% url 'coach:duplicate' indiv.pk %}" >
+        </form>
+        </div>
+        <div class = "column is-3">
+        <select id = 'load_drop' class = 'load_drop' key = "{{indiv.pk}}" name = 'load_drop' form="duplicate{{indiv.pk}}">
+            <option value="0">Load Drop</option>
+              <option value = "0.025">2.5%</option>
+              <option value = "0.05">5%</option>
+              <option value = "0.075">7.5%</option>
+              <option value = "0.1">10%</option>
+              <option value = "0.125">12.5%</option>
+              <option value = "0.15">15%</option>
+              <option value = "0.175">17.5%</option>
+              <option value = "0.2">20%</option>
+          </select>
+        </div>
+        <div class = "column is-1">
+          <form method="post" id="duplicate{{indiv.pk}}" action="{% url 'coach:duplicate' indiv.pk %}" >
            {% csrf_token %}
+           
            <button class = 'button is-small' type="submit">
             <i class="fas fa-clone" type="submit"></i>
            </button>
            </form>
-
+        </div>
+        <div class = "column is-1">
         <form method="post" action="{% url 'coach:delete' indiv.pk %}" >
           {% csrf_token %}
           <button class = 'button is-small' type="submit">
             <i class="fas fa-eraser" type="submit"></i>
            </button>
         </form>
-
-        </table>
+      </div>
+        
+      </div>
        </td>
-       <td style="text-align: center;">
-        {{indiv.kg_done}} x {{indiv.num_reps_done}} @ {{indiv.rpe}}
-      </td>
     </tr>
     {% endfor %}
 </table>
@@ -522,14 +543,14 @@
 
 
 
-{% endfor %}!-->
+{% endfor %}
 
 
 
 
 
 
-{% if user.is_authenticated and user.is_coach %}
+<!--{% if user.is_authenticated and user.is_coach %}
   <div class = "card-content">
     <div class="content">
       <div class="table-container">
@@ -659,7 +680,7 @@
 </div>
 </div>
 </div>
-    {% endif %}
+    {% endif %}-->
 <footer class="card-footer">
 
  <a href="{% url 'app:log_view' pk=workout.athlete.pk%}" class="card-footer-item" role="button">Back to Logs</a>
