@@ -39,6 +39,7 @@ urlpatterns = [
         path('ajax/validate_rm/', app.validate_rm, name = 'ajax_validate_rm'),
         path('ajax/validate_checked/', app.validate_checked, name = 'ajax_validate_checked'),
         path('ajax/validate_workout_name/', app.validate_workout_name, name = 'ajax_validate_workout_name'),
+        path('ajax/validate_description/', app.validate_description, name = 'ajax_validate_description'),
         path('ajax/validate_movement_group_name/', app.validate_movement_group_name, name = 'ajax_validate_movement_group_name'),
         path('ajax/validate_mesocycle_name/', app.validate_mesocycle_name, name = 'ajax_validate_mesocycle_name'),
 

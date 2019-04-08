@@ -93,7 +93,7 @@ class AddRepMaxForm(forms.ModelForm):
     class Meta:
         model = RepMax
         fields = ('rep_max_name', 'rep_max')
-        
+
 class EditRepMaxForm(forms.ModelForm):
     class Meta:
         model = RepMax
@@ -102,7 +102,7 @@ class EditRepMaxForm(forms.ModelForm):
 class AddMovementFormCoach(forms.ModelForm):
     class Meta:
         model = Movement
-        fields = ('movement_name', 'percentage', 'num_reps', 'kg', 'rpe', 'is_backoff', 'rep_max')
+        fields = ('movement_name', 'description', 'percentage', 'num_reps', 'kg', 'rpe', 'is_backoff', 'rep_max')
 
     rep_max = forms.ModelChoiceField(queryset = RepMax.objects.all(), required=False)
 

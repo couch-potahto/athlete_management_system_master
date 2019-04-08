@@ -118,6 +118,7 @@ class AddMovementViewTest(CreateView):
 
         movement=Movement.objects.create(
                 movement_name=form.cleaned_data['movement_name'],
+                description = form.cleaned_data['description'],
                 kg=form.cleaned_data['kg'],
                 num_reps=form.cleaned_data['num_reps'],
                 percentage=form.cleaned_data['percentage'],
@@ -148,7 +149,7 @@ class CoachDetailView(DetailView):
 @method_decorator([login_required, coach_required], name='dispatch') #contact form
 class CreateMovementView(CreateView):
     model = Movement
-    fields = ('movement_name', 'kg', 'num_reps', 'rpe', 'is_backoff' )
+    fields = ('movement_name', 'description', 'kg', 'num_reps', 'rpe', 'is_backoff' )
     template_name = 'training_area/coach/create_movement_form.html'
 
     def get_context_data(self, **kwargs):
@@ -157,7 +158,9 @@ class CreateMovementView(CreateView):
         return context
 
     def form_valid(self, form):
+        print(form)
         movement = form.save()
+
         movement.workout = Workout.objects.filter(id=self.get_context_data()['pk_5'])[0]
         movement.save()
         messages.success(self.request, 'Movement Created!')
@@ -175,6 +178,7 @@ def duplicate(request, movement_id):
         copy_movement.kg = round(copy_movement.kg * (Decimal(1)-Decimal(load_drop)))/Decimal(2.5) * Decimal(2.5)
     copy_movement.pk = None
     copy_movement.save()
+    print(copy_movement.description)
     messages.success(request, "Duplicated!")
     return redirect('app:workout_detail', copy_movement.workout.athlete.pk, copy_movement.workout.pk)
 
@@ -185,7 +189,7 @@ def duplicate_microcycle(request, microcycle_id):
     all_workouts = copy_micro.micro.all().order_by('created_at')
     copy_micro.pk = None
     copy_micro.save()
-    
+
     #print(all_workouts)
     for workout in all_workouts:
         movements = workout.work.all().order_by('id')
@@ -334,7 +338,7 @@ def edit_workout(request, workout_id):
             #print('<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
             #form.save()
             form.save()
-            
+
             messages.success(request, 'Workout changed!')
             return redirect('app:workout_detail', workout.athlete.pk, workout.pk)
         else:

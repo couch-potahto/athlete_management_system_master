@@ -38,7 +38,29 @@
           $('.animated-success').css("visibility","visible").fadeIn(500);
           setTimeout(function(){
               $('.animated-success').fadeOut(500);
-            },1500); 
+            },1500);
+        }
+      });
+    }else if(type=='description'){
+      var description= $(this).val();
+      var pk = $(this).attr('key');
+      var old_name = $(this).attr('old_name');
+      console.log(description)
+      $.ajax({
+         url: "/app/ajax/validate_description/",
+        type: "POST",
+        data: {
+          csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+          'pk': pk,
+          'description': description,
+          'old_name': old_name
+        },
+        success: function (data) {
+          console.log(data)
+          $('.animated-success').css("visibility","visible").fadeIn(500);
+          setTimeout(function(){
+              $('.animated-success').fadeOut(500);
+            },1500);
         }
       });
     }else{
@@ -63,7 +85,7 @@
           $('.animated-success').css("visibility","visible").fadeIn(500);
           setTimeout(function(){
               $('.animated-success').fadeOut(500);
-            },1500); 
+            },1500);
         }
       });
     }
@@ -104,9 +126,9 @@
           $('.animated-success').css("visibility","visible").fadeIn(500);
           setTimeout(function(){
               $('.animated-success').fadeOut(500);
-            },1500); 
+            },1500);
         }
-        
+
       });
 
     });
@@ -129,7 +151,7 @@
           $('.animated-success').css("visibility","visible").fadeIn(500);
           setTimeout(function(){
               $('.animated-success').fadeOut(500);
-            },1500); 
+            },1500);
         }
       });
 
@@ -153,7 +175,7 @@
           $('.animated-success').css("visibility","visible").fadeIn(500);
           setTimeout(function(){
               $('.animated-success').fadeOut(500);
-            },1500); 
+            },1500);
         }
       });
 
@@ -177,8 +199,8 @@
           $('.animated-success').css("visibility","visible").fadeIn(500);
           setTimeout(function(){
               $('.animated-success').fadeOut(500);
-            },1500); 
-          
+            },1500);
+
         }
       });
 
@@ -204,7 +226,7 @@
           $('.animated-success').css("visibility","visible").fadeIn(500);
           setTimeout(function(){
               $('.animated-success').fadeOut(500);
-            },1500); 
+            },1500);
         }
       });
 
@@ -250,7 +272,7 @@
           $('.animated-success').css("visibility","visible").fadeIn(500);
           setTimeout(function(){
               $('.animated-success').fadeOut(500);
-            },1500); 
+            },1500);
         }
       });
 
@@ -367,8 +389,8 @@
     {% endif %}
 
   </header>
- 
-  
+
+
  {% if request.user.is_authenticated and request.user.is_athlete %}
  {% csrf_token %}
 
@@ -407,11 +429,11 @@
   {% for movement in movement_list %}
 
 
-  
+
     <div class="card is-fullwidth">
       <header class="card-header">
         <p class="card-header-title">{{ movement.grouper }}</p>
-        
+
         <a class="card-header-icon card-toggle">
           <i class="fa fa-angle-down"></i>
         </a>
@@ -420,8 +442,8 @@
             <div class="table-container">
     <table class = "table is-responsive is-striped is-fullwidth">
       <thead class="has-text-centered">
-    
-    
+
+
     <th style="width:50%; text-align: center;">Protocol</th>
     <th>Kg Done</th>
     <th>Reps Done</th>
@@ -477,16 +499,19 @@
   {% for movement in movement_list %}
 
 
-  
+
     <div class="card is-fullwidth">
-      <header class="card-header-title">
-        <label class="is-size-4 pull-left">{{ movement.grouper }}</label>
-        <input class="clickedit" key = "{{workout.pk}}" key_two = "movement_group" old_name ="{{ movement.grouper }}" value = "{{ movement.grouper }}"type="text" />
-        <p id = "card-header-title" class = "card-header-title">
-          <i class="fas fa-pen is-info"></i>
-        </p>
-      </header>
       <div class="card-content">
+
+        <label class="is-size-5 pull-left"><strong>{{ movement.grouper }}</strong> </label>
+        <input class="clickedit" key = "{{workout.pk}}" key_two = "movement_group" old_name ="{{ movement.grouper }}" value = "{{ movement.grouper }}"type="text" />
+
+        <span id = "card-header-title" class = "card-header-title">
+          <i class="fas fa-pen is-info"></i>
+        </span>
+        <h6 class="subtitle is-6 is-italic">{{movement.list.0.description}} <span><i class="fas fa-pen is-info"></i></span></h6>
+        <input class="clickedit" key = "{{workout.pk}}" key_two = "description" old_name ="{{ movement.grouper }}" value = "{{ movement.list.0.description }}"type="text" />
+
         <div class="table-container">
         <table class = "table is-responsive is-striped is-fullwidth">
          <thead class="has-text-centered">
@@ -498,7 +523,7 @@
             <th style="text-align: center;">Reps Done</th>
             <th style="text-align: center;">RPE</th>
             <th style="width: 17%; text-align: center;">Actions</th>
-    
+
         </thead>
 
   <tbody>
@@ -525,15 +550,13 @@
             <label class="custom-control-label" for="customCheck1">Back-off</label>
           </div>
           </div>
-        <div class = "column is-4">
+        <div class = "column is-3">
         <select id = 'rm' class = 'rm is-primary' key = "{{indiv.pk}}" name = 'rm'>
             <option value="None">Rep Max</option>
             {% for max in rm %}
               <option value = "{{max.rep_max}}">{{max.rep_max_name}}: {{max.rep_max}}</option>
             {% endfor %}
         </select>
-      
-        </form>
         </div>
         <div class = "column is-3">
         <select id = 'load_drop' class = 'load_drop' key = "{{indiv.pk}}" name = 'load_drop' form="duplicate{{indiv.pk}}">
@@ -551,7 +574,7 @@
         <div class = "column is-1">
           <form method="post" id="duplicate{{indiv.pk}}" action="{% url 'coach:duplicate' indiv.pk %}" >
            {% csrf_token %}
-           
+
            <button class = 'button is-small' type="submit">
             <i class="fas fa-clone" type="submit"></i>
            </button>
@@ -565,7 +588,7 @@
            </button>
         </form>
       </div>
-        
+
       </div>
        </td>
     </tr>
@@ -592,7 +615,7 @@
 <table class = "table is-responsive is-striped is-fullwidth">
   <thead class="has-text-centered">
     <th style="text-align: center;" >Movement</th>
-    
+
     <th>Percentage (%)</th>
 
     <th>Load (kg)</th>
@@ -602,7 +625,7 @@
     <th>RPE</th>
 
       <th style="text-align: center;">Actions</th>
-      
+
 
   </thead>
 
@@ -668,7 +691,7 @@
               <option value = "{{max.rep_max}}">{{max.rep_max_name}}: {{max.rep_max}}</option>
             {% endfor %}
         </select>
-      
+
         </form>
         </div>
         <div class = "column is-3">
@@ -687,7 +710,7 @@
         <div class = "column is-1">
           <form method="post" id="duplicate{{movement.pk}}" action="{% url 'coach:duplicate' movement.pk %}" >
            {% csrf_token %}
-           
+
            <button class = 'button is-small' type="submit">
             <i class="fas fa-clone" type="submit"></i>
            </button>
@@ -701,7 +724,7 @@
            </button>
         </form>
       </div>
-        
+
       </div>
        </td>
     {% endif %}
@@ -785,7 +808,7 @@
 </div>
 </div>
   {%endfor%}
-{% endif %} 
+{% endif %}
 
 </div>
 
