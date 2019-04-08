@@ -153,6 +153,7 @@ def edit_movement(request, movement_id):
 @athlete_required
 def gen_backoff(request, movement_id):
 	movement = get_object_or_404(Movement, pk=movement_id)
+	print(movement)
 	workout = movement.workout
 	if request.POST:
 		exertion = ExertionPerceived.objects.filter(rep_scale=movement.num_reps, exertion_scale=movement.rpe) #gives the object
@@ -162,9 +163,14 @@ def gen_backoff(request, movement_id):
 		else:
 			exertion = exertion[0]
 		load_percent = exertion.percent
+		if movement.kg_done == None:
+			messages.warning(request, "No load done!")
+			return redirect('app:workout_detail', movement.workout.athlete.pk, movement.workout.pk)
 		daily_rm = movement.kg_done / load_percent
 		backoff_movements = Movement.objects.filter(workout=workout, is_backoff=True, movement_name=movement.movement_name) #queryset
-
+		if not backoff_movements:
+			messages.warning(request, "No backoffs ticked!")
+			return redirect('app:workout_detail', movement.workout.athlete.pk, movement.workout.pk)
 		for backoff in backoff_movements: #update all objects
 			backoff.kg = round((daily_rm * (backoff.percentage/Decimal(100)))/Decimal(2.5)) * Decimal(2.5)
 			backoff.save()
