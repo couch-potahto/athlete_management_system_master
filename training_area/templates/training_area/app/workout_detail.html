@@ -332,7 +332,8 @@
     {% endif %}
 
   </header>
-
+ 
+  
  {% if request.user.is_authenticated and request.user.is_athlete %}
  {% csrf_token %}
 
@@ -366,6 +367,74 @@
 </div>
 {% endif %}
 
+{% if user.is_authenticated and user.is_athlete %}
+{% regroup movements by movement_name as movement_list %}
+  {% for movement in movement_list %}
+
+
+  
+    <div class="card is-fullwidth">
+      <header class="card-header">
+        <p class="card-header-title">{{ movement.grouper }}</p>
+        <a class="card-header-icon card-toggle">
+          <i class="fa fa-angle-down"></i>
+        </a>
+      </header>
+      <div class="card-content is-hidden">
+            <div class="table-container">
+    <table class = "table is-responsive is-striped is-fullwidth">
+      <thead class="has-text-centered">
+    
+    
+    <th style="width:50%; text-align: center;">Protocol</th>
+    <th>Kg Done</th>
+    <th>Reps Done</th>
+    <th>RPE</th>
+    <th>Actions</th>
+
+
+  </thead>
+
+  <tbody>
+
+    {% for indiv in movement.list %}
+    <tr>
+      <td style="width:50%; text-align: center;">
+        {% if indiv.kg == None %}
+          {% if indiv.num_reps == 1 %}
+            x{{indiv.num_reps}} @ {{indiv.rpe}}
+          {% endif %}
+        {% else %}
+        {{indiv.kg}}kg x {{indiv.num_reps}}
+        {% endif %}
+      </td>
+      <td><input id = "kg_done" class = "kg_done input is-primary is-small" style="width:70px; text-align: center;" key = "{{indiv.pk}}" name="kg_done" class="input is-small" type="number" step="0.01" min=0 value="{{indiv.kg_done}}"></td>
+      <td><input id = "num_reps_done" class = "num_reps_done input is-primary is-small" style="width:50px; text-align: center;" key = "{{indiv.pk}}" name="num_reps_done" class="input is-small" type="number" value="{{indiv.num_reps_done}}"></td>
+      <td><input id = "rpe" class = "rpe input is-primary is-small" style="width:50px; text-align: center;" key = "{{indiv.pk}}" name="rpe" class="input is-small" type="number" step="0.5" min=2 value="{{indiv.rpe}}"></td>
+      <td>
+        {%if indiv.is_backoff == False and indiv.percentage == None %}
+          <form method="post" action="{% url 'athlete:generate_backoff' indiv.pk %}" >
+           {% csrf_token %}
+           <button class = 'button is-small is-link' type="submit">
+            <i class="fas fa-divide" type="submit"></i>
+           </button>
+          </form>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+</table>
+</div>
+      </div>
+  </div>
+
+
+
+{% endfor %}
+{% endif %}
+
+
+{% if user.is_authenticated and user.is_coach %}
   <div class = "card-content">
     <div class="content">
       <div class="table-container">
@@ -373,9 +442,9 @@
 <table class = "table is-responsive is-striped is-fullwidth">
   <thead class="has-text-centered">
     <th>Movement</th>
-    {% if user.is_authenticated and user.is_coach %}
+    
     <th>Percentage (%)</th>
-    {% endif %}
+
     <th>Load (kg)</th>
     <th>Load Done (kg)</th>
     <th>Reps</th>
@@ -390,93 +459,33 @@
   </thead>
 
   <tbody>
+
+
+
   {% for movement in movements %}
 
-    {% if user.is_authenticated and user.is_athlete %}
-    <form id = "id_movement" action="{% url 'athlete:edit_movement' movement.pk %}" method="post">
-      {% csrf_token %}
-      <td>{{movement.movement_name}}</td>
-      {% if movement.kg == None or movement.kg == 0%}
-      <td></td>
-      {% else %}
-      <td>{{movement.kg}}kg</td>
-      {%endif%}
-      <td>
-          <div class="field has-addons is-small">
-          <div class="control">
-            <input id = "kg_done" class = "kg_done is-primary" style="width:70px; text-align: center;" key = "{{movement.pk}}" name="kg_done" class="input is-small" type="number" step="0.01" min=0 value="{{movement.kg_done}}">
-          </div>
-          </div>
-      </td>
-      <td>{{movement.num_reps}}</td>
-      {% if movement.num_reps_done %}
-      <td>
-          <div class="field has-addons is-one-fifth">
-          <p class="control">
-            <input id = "num_reps_done" class = "num_reps_done is-primary" style="width:50px; text-align: center;" key = "{{movement.pk}}" name="num_reps_done" class="input is-small" type="number" value="{{movement.num_reps_done}}">
-          </p>
-          </div>
-
-      </td>
-      {% else %}
-      <td>
-          <div class="field has-addons is-small">
-          <div class="control">
-            <input id = "num_reps_done" class = "num_reps_done is-primary" style="width:50px; text-align: center;" key = "{{movement.pk}}" name="num_reps_done" class="input is-small" type="number" step="0.01" min=0 value="{{movement.num_reps}}">
-          </div>
-          </div>
-      </td>
-      {%endif%}
-      <td>
-          <div class="field has-addons is-one-fifth">
-          <div class="control">
-            <input id = "rpe" class = "rpe is-primary" style="width:50px; text-align: center;" key = "{{movement.pk}}" name="rpe" class="input is-small" type="number" step="0.5" min=2 value="{{movement.rpe}}">
-          </div>
-          </div>
-      </td>
-
-      </form>
-
-    <td>
-      <!----add generate backoff-->
-
-    {%if movement.is_backoff == False and movement.percentage == None %}
-      <form method="post" action="{% url 'athlete:generate_backoff' movement.pk %}" >
-           {% csrf_token %}
-           <button class = 'button is-small is-link' type="submit">
-            <i class="fas fa-divide" type="submit"></i>
-           </button>
-      </form>
-    {% endif %}
-    </td>
-    <td></td>
-    <td></td>
-
-
-
-
-    {% else %}
+    {% if user.is_authenticated and user.is_coach %}
 
     <form action="{% url 'coach:edit_movement_quick' movement.pk %}" method="post">
       {% csrf_token %}
       <td>
           <div class="field is-small">
           <div class="control">
-            <input id = "movement_name" class = "movement_name is-primary" style="width:200px; text-align: center;" key = "{{movement.pk}}" name="movement_name" class="input is-small" type="text" value="{{movement.movement_name}}">
+            <input id = "movement_name" class = "movement_name input is-primary is-small" style="width:200px; text-align: center;" key = "{{movement.pk}}" name="movement_name" class="input is-small" type="text" value="{{movement.movement_name}}">
           </div>
           </div>
       </td>
       <td>
           <div class="field is-small">
           <div class="control">
-            <input id = "percentage" class = "percentage is-primary" style="width:70px; text-align: center;" key = "{{movement.pk}}" name="percentage" class="input is-small" type="number" step="0.01" min=0 value="{{movement.percentage}}">
+            <input id = "percentage" class = "percentage input is-primary is-small" style="width:70px; text-align: center;" key = "{{movement.pk}}" name="percentage" class="input is-small" type="number" step="0.01" min=0 value="{{movement.percentage}}">
           </div>
           </div>
       </td>
       <td>
           <div class="field is-small">
           <div class="control">
-            <input id = "kg_done" class = "kg_done is-primary" style="width:70px; text-align: center;" key = "{{movement.pk}}"  name="kg" class="input is-small" type="number" step="0.01" min=0 value="{{movement.kg}}">
+            <input id = "kg_done" class = "kg_done input is-primary is-small" style="width:70px; text-align: center;" key = "{{movement.pk}}"  name="kg" class="input is-small" type="number" step="0.01" min=0 value="{{movement.kg}}">
           </div>
           </div>
       </td>
@@ -484,7 +493,7 @@
       <td>
           <div class="field is-small">
           <div class="control">
-            <input id = "num_reps_done" class = "num_reps_done is-primary" style="width:50px; text-align: center;" key = "{{movement.pk}}" name="num_reps" class="input is-small" type="number" value="{{movement.num_reps}}">
+            <input id = "num_reps_done" class = "num_reps_done input is-primary is-small" style="width:50px; text-align: center;" key = "{{movement.pk}}" name="num_reps" class="input is-small" type="number" value="{{movement.num_reps}}">
           </div>
           </div>
       </td>
@@ -492,13 +501,13 @@
       <td>
           <div class="field is-one-fifth">
           <div class="control">
-            <input id = "rpe" class = "rpe is-primary" style="width:50px; text-align: center;" key = "{{movement.pk}}" name="rpe" class="input is-small" type="number" step="0.1" min=2 value="{{movement.rpe}}">
+            <input id = "rpe" class = "rpe input is-primary is-small" style="width:50px; text-align: center;" key = "{{movement.pk}}" name="rpe" class="input is-small" type="number" step="0.1" min=2 value="{{movement.rpe}}">
           </div>
           </div>
       </td>
       <td>
           <div class="custom-control custom-checkbox">
-            <input id = "checked" class = "checked is-primary" key = "{{movement.pk}}" type="checkbox" class="custom-control-input" name="is_backoff"{% if movement.is_backoff %} checked {% endif %}>
+            <input id = "checked" class = "checked is-primary is-small" key = "{{movement.pk}}" type="checkbox" class="custom-control-input" name="is_backoff"{% if movement.is_backoff %} checked {% endif %}>
             <label class="custom-control-label" for="customCheck1">Back-off Set</label>
           </div>
       </td>
@@ -542,7 +551,7 @@
 </div>
 </div>
 </div>
-
+    {% endif %}
 <footer class="card-footer">
 
  <a href="{% url 'app:log_view' pk=workout.athlete.pk%}" class="card-footer-item" role="button">Back to Logs</a>
