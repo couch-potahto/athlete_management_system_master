@@ -174,7 +174,7 @@ def duplicate(request, movement_id):
     copy_movement = get_object_or_404(Movement, pk=movement_id)
     if copy_movement.percentage:
         copy_movement.percentage = copy_movement.percentage * (Decimal(1)-Decimal(load_drop))
-    elif copy_movement.kg:
+    if copy_movement.kg:
         copy_movement.kg = round(copy_movement.kg * (Decimal(1)-Decimal(load_drop)))/Decimal(2.5) * Decimal(2.5)
     copy_movement.pk = None
     copy_movement.save()

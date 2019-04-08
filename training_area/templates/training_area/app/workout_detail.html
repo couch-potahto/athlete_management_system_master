@@ -432,7 +432,12 @@
 
     <div class="card is-fullwidth">
       <header class="card-header">
+        {% if movement.list.0.description %}
+        <p class="card-header-title">{{ movement.grouper }} - {{movement.list.0.description}} </p>
+        {% else %}
         <p class="card-header-title">{{ movement.grouper }}</p>
+        {% endif %}
+
 
         <a class="card-header-icon card-toggle">
           <i class="fa fa-angle-down"></i>

@@ -38,7 +38,7 @@ var $BTN = $('#export-btn');
 var $EXPORT = $('#export');
 
 $(function(){
-  
+
 $('.table-add').click(function () {
   var $clone = $TABLE.find('tr.hide').clone(true).removeClass('hide table-line');
   $TABLE.find('table').append($clone);
@@ -68,25 +68,25 @@ $BTN.click(function () {
   var $rows = $TABLE.find('tr:not(:hidden)');
   var headers = [];
   var data = [];
-  
+
   // Get the headers (add special header logic here)
   $($rows.shift()).find('th:not(:empty)').each(function () {
     headers.push($(this).text().toLowerCase());
   });
-  
+
   // Turn all existing rows into a loopable array
   $rows.each(function () {
     var $td = $(this).find('td');
     var h = {};
-    
+
     // Use the headers from earlier to name our hash keys
     headers.forEach(function (header, i) {
-      h[header] = $td.eq(i).text();   
+      h[header] = $td.eq(i).text();
     });
-    
+
     data.push(h);
   });
-  
+
   // Output the result
   $EXPORT.text(JSON.stringify(data));
 });

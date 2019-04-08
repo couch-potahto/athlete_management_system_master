@@ -119,7 +119,7 @@ class Workout(models.Model):
 
 class Movement(models.Model):
 	movement_name = models.CharField(max_length = 255,blank = False, verbose_name= _('Movement Name'))
-	description = models.CharField(max_length=255, blank = False, null = True, verbose_name= _('Description'))
+	description = models.CharField(max_length=255, blank = True, null = True, verbose_name= _('Description'))
 	num_reps = models.SmallIntegerField(verbose_name= _('Repetitions'))
 	num_reps_done = models.SmallIntegerField(null = True, verbose_name= _('Repetitions Completed'))
 	kg_done = models.DecimalField(
