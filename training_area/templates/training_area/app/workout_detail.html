@@ -740,14 +740,14 @@
             <thead class="has-text-centered">
 
 
-    <th style="text-align: center;">Kg Done</th>
-    <th>Kg</th>
-    <th>Reps Done</th>
-    <th>Reps</th>
+              <th style="text-align: center;">Kg Done</th>
+              <th>Kg</th>
+              <th>Completed</th>
+              <th>Prescribed</th>
 
 
-  </thead>
-  <tbody>
+              </thead>
+           <tbody>
           {% for indiv in accessory.list %}
 
             <tr style="text-align: center;">              
@@ -755,7 +755,7 @@
                 {% if indiv.load_done %}
                   {{indiv.load_done}} kg
                 {% else %}
-                  0 kg
+                  <strong>-</strong>
                 {% endif %}
               </td>
               
@@ -763,7 +763,7 @@
                   {% if indiv.load %}
                   {{indiv.load}} kg
                 {% else %}
-                  0 kg
+                  <strong>-</strong>
                 {% endif %}
               </td>
   
@@ -817,8 +817,8 @@
 
               <th style="text-align: center;">Kg Done</th>
               <th>Kg</th>
-              <th>Reps Done</th>
-              <th>Reps</th>
+              <th>Completed</th>
+              <th>Prescribed</th>
 
 
             </thead>
