@@ -729,34 +729,44 @@
     <h4 class="title is-4"><strong>Accessories</strong></h4>
       {% regroup accessories by accessory_name as accessory_list %}
         {% for accessory in accessory_list %}
-        {% if forloop.counter|divisibleby:2 %}
-        <div class = "card-content has-background-light">
-        {% else %}
         <div class = "card-content">
-        {% endif %}
+        
           <h5 class = "title is-5">{{accessory.grouper}} <span class="icon has-text-danger"><i id = "delete-accessory" key="{{accessory.list.0.accessory_name}}" key_two="{{workout.pk}}" class="fas fa-times delete-accessory"></i></span></h5>
           <tr><h6 class="subtitle is-6 is-italic">- {{accessory.list.0.description}}</h6></tr>
           <div class="table-container">
         
          
-          <table style="width:250px">
+          <table class = "table is-responsive is-striped">
+            <thead class="has-text-centered">
+
+
+    <th style="text-align: center;">Kg Done</th>
+    <th>Kg</th>
+    <th>Reps Done</th>
+    <th>Reps</th>
+
+
+  </thead>
+  <tbody>
           {% for indiv in accessory.list %}
 
-            <tr style="text-align: center;">
-              
+            <tr style="text-align: center;">              
                 <td style="text-align: center; ">
-                {% if indiv.measurement_done %}
+                {% if indiv.load_done %}
                   {{indiv.load_done}} kg
                 {% else %}
                   0 kg
                 {% endif %}
               </td>
-              {% if indiv.load %}
-              <td style="text-align: center;"><strong>/</strong></td>
-                <td style="text-align: center; ">{{indiv.load}} kg</td>
-                
-              {% endif %}
-              <td style="text-align: center;"><strong>x</strong></td>
+              
+                <td style="text-align: center; ">
+                  {% if indiv.load %}
+                  {{indiv.load}} kg
+                {% else %}
+                  0 kg
+                {% endif %}
+              </td>
+  
               <td style="text-align: center;">
                 {% if indiv.measurement_done %}
                   {{indiv.measurement_done}}
@@ -764,11 +774,11 @@
                  0
                  {% endif %}
                {{indiv.get_units_display}}
-             </td>  
-              <td style="text-align: center;"><strong>/</strong></td>
+             </td>
               <td style="text-align: center;">{{indiv.measurement}} {{indiv.get_units_display}}</td>
             </tr>
           {%endfor%}
+  </tbody>
           </table>
      
     </div>
@@ -795,32 +805,43 @@
   <div class="card-content is-hidden">
       
         {% for accessory in accessory_list %}
-        {% if forloop.counter|divisibleby:2 %}
-        <div class = "card-content has-background-light">
-        {% else %}
         <div class = "card-content">
-        {% endif %}
+        
           <h5 class = "title is-5">{{accessory.grouper}}</h5>
           <tr><h6 class="subtitle is-6 is-italic">- {{accessory.list.0.description}}</h6></tr>
           <div class="table-container">
         
-         
-          <table style="width:380px">
+          <table class = "table is-responsive is-striped">
+            <thead class="has-text-centered">
+
+
+              <th style="text-align: center;">Kg Done</th>
+              <th>Kg</th>
+              <th>Reps Done</th>
+              <th>Reps</th>
+
+
+            </thead>
+          <tbody>
           {% for indiv in accessory.list %}
             <tr style="text-align: center;">
               <td style="text-align: center;"><input class = "load-done-accessory" style="text-align: center; width:50px"/ key = "{{indiv.pk}}" placeholder="{{indiv.load_done}}" type="number"> kg</td>
-              {% if indiv.load %}
-              <td style="text-align: center;"><strong>/</strong></td>
-              <td style="text-align: center;">{{indiv.load}} kg</td>
               
-              {%endif%}
+              <td style="text-align: center;">
+                {% if indiv.load %}
+                  {{indiv.load}} kg
+                {% else %}
+                  <strong>-</strong>
+                {% endif %}
+                </td>
+    
               
-              <td style="text-align: center; font:italic;"><strong>x</strong></td>
+              
               <td style="text-align: center;"><input class = "prot-done-accessory" type="number" style="text-align: center; width:50px" key = "{{indiv.pk}}" placeholder="{{indiv.measurement_done}}" /> {{indiv.get_units_display}}</td>
-              <td style="text-align: center;"><strong>/</strong></td>
               <td style="text-align: center;">{{indiv.measurement}} {{indiv.get_units_display}}</td>
             </tr>
           {%endfor%}
+  </tbody>
           </table>
      
     </div>
