@@ -4,6 +4,11 @@
 <script>
   {% block jquery %}
 
+  function popitup(url) {
+    newwindow=window.open(url,'{{title}}','height=200,width=150');
+    if (window.focus) {newwindow.focus()}
+    return false;
+}
 
   function endEdit(e) {
     var input = $(e.target),
@@ -300,7 +305,116 @@
 
     });
 
+    $(".load-done-accessory").change(function () {
+      var load_done = $(this).val();
+      var pk = $(this).attr('key');
+      console.log( pk );
+      console.log( load_done );
 
+      $.ajax({
+        url: "/athlete/ajax/accessory_load_done/",
+        type: "POST",
+        data: {
+          csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+          'pk': pk,
+          'load_done': load_done
+
+        },
+        success: function (data) {
+          console.log(data)
+          $('.animated-success').css("visibility","visible").fadeIn(500);
+          setTimeout(function(){
+              $('.animated-success').fadeOut(500);
+            },1500);
+        }
+      });
+
+    });
+
+    $(".prot-done-accessory").change(function () {
+      var prot_done = $(this).val();
+      var pk = $(this).attr('key');
+      console.log( pk );
+      console.log( prot_done );
+
+      $.ajax({
+        url: "/athlete/ajax/accessory_protocol_done/",
+        type: "POST",
+        data: {
+          csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+          'pk': pk,
+          'prot_done': prot_done
+
+       },
+        success: function (data) {
+          console.log(data)
+          $('.animated-success').css("visibility","visible").fadeIn(500);
+          setTimeout(function(){
+              $('.animated-success').fadeOut(500);
+            },1500);
+        }
+      });
+
+    });
+
+
+    $("#add-accessory").click(function () {
+      
+      $(".modal").addClass("is-active");
+    });
+
+    $(".delete-accessory").click(function () {
+      var pk = $(this).attr('key_two');
+      var accessory_name = $(this).attr('key');
+      console.log(pk)
+      console.log(accessory_name)
+      $.ajax({
+            url: "/coach/ajax/delete_accessory/",
+            type: "POST",
+            data: {
+              csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+              'pk': pk,
+              "accessory_name": accessory_name,
+            },
+            success: function (data) {
+              console.log(data)
+              location.reload();
+            }
+          });
+    });
+
+    $(".no").click(function() {
+       $(".modal").removeClass("is-active");
+    });
+
+    $(".yes").click(function() {
+      var accessory_name = $("#accessory-name").val();
+      var accessory_desc = $("#accessory-desc").val();
+      var accessory_sets = $("#accessory-sets").val();
+      var accessory_reps = $("#accessory-reps").val();
+      var accessory_units = $("#accessory-units").val();
+      var accessory_load = $("#accessory-load").val();
+      var pk = $(this).attr('key');
+       $.ajax({
+            url: "/coach/ajax/add_accessory/",
+            type: "POST",
+            data: {
+              csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+              'pk': pk,
+              "accessory_name": accessory_name,
+              "accessory_desc": accessory_desc,
+              "accessory_sets": accessory_sets,
+              "accessory_reps": accessory_reps,
+              "accessory_units": accessory_units,
+              "accessory_load": accessory_load,
+            },
+            success: function (data) {
+              console.log(data)
+              location.reload();
+            }
+          });
+       $(".modal").removeClass("is-active");
+    });
   {% endblock %}
 </script>
 
@@ -606,10 +720,119 @@
 
 
 {% endfor %}
+
 {% endif %}
 
+{% if request.user.is_authenticated and request.user.is_coach %}
+<div class="card is-fullwidth">
+  <div class="card-content">
+    <h4 class="title is-4"><strong>Accessories</strong></h4>
+      {% regroup accessories by accessory_name as accessory_list %}
+        {% for accessory in accessory_list %}
+        {% if forloop.counter|divisibleby:2 %}
+        <div class = "card-content has-background-light">
+        {% else %}
+        <div class = "card-content">
+        {% endif %}
+          <h5 class = "title is-5">{{accessory.grouper}} <span class="icon has-text-danger"><i id = "delete-accessory" key="{{accessory.list.0.accessory_name}}" key_two="{{workout.pk}}" class="fas fa-times delete-accessory"></i></span></h5>
+          <tr><h6 class="subtitle is-6 is-italic">- {{accessory.list.0.description}}</h6></tr>
+          <div class="table-container">
+        
+         
+          <table style="width:250px">
+          {% for indiv in accessory.list %}
+
+            <tr style="text-align: center;">
+              
+                <td style="text-align: center; ">
+                {% if indiv.measurement_done %}
+                  {{indiv.load_done}} kg
+                {% else %}
+                  0 kg
+                {% endif %}
+              </td>
+              {% if indiv.load %}
+              <td style="text-align: center;"><strong>/</strong></td>
+                <td style="text-align: center; ">{{indiv.load}} kg</td>
+                
+              {% endif %}
+              <td style="text-align: center;"><strong>x</strong></td>
+              <td style="text-align: center;">
+                {% if indiv.measurement_done %}
+                  {{indiv.measurement_done}}
+                {% else %}
+                 0
+                 {% endif %}
+               {{indiv.get_units_display}}
+             </td>  
+              <td style="text-align: center;"><strong>/</strong></td>
+              <td style="text-align: center;">{{indiv.measurement}} {{indiv.get_units_display}}</td>
+            </tr>
+          {%endfor%}
+          </table>
+     
+    </div>
+          
+            
+            
+        </div>
+      {% endfor %}
+    </div>
+</div>
 
 
+{% else %}
+
+{% regroup accessories by accessory_name as accessory_list %}
+{% if accessories %}
+<div class="card is-fullwidth">
+  <header class="card-header">
+        <p class="card-header-title">Accessories</p>
+        <a class="card-header-icon card-toggle">
+          <i class="fa fa-angle-down"></i>
+        </a>
+      </header>
+  <div class="card-content is-hidden">
+      
+        {% for accessory in accessory_list %}
+        {% if forloop.counter|divisibleby:2 %}
+        <div class = "card-content has-background-light">
+        {% else %}
+        <div class = "card-content">
+        {% endif %}
+          <h5 class = "title is-5">{{accessory.grouper}}</h5>
+          <tr><h6 class="subtitle is-6 is-italic">- {{accessory.list.0.description}}</h6></tr>
+          <div class="table-container">
+        
+         
+          <table style="width:380px">
+          {% for indiv in accessory.list %}
+            <tr style="text-align: center;">
+              <td style="text-align: center;"><input class = "load-done-accessory" style="text-align: center; width:50px"/ key = "{{indiv.pk}}" placeholder="{{indiv.load_done}}" type="number"> kg</td>
+              {% if indiv.load %}
+              <td style="text-align: center;"><strong>/</strong></td>
+              <td style="text-align: center;">{{indiv.load}} kg</td>
+              
+              {%endif%}
+              
+              <td style="text-align: center; font:italic;"><strong>x</strong></td>
+              <td style="text-align: center;"><input class = "prot-done-accessory" type="number" style="text-align: center; width:50px" key = "{{indiv.pk}}" placeholder="{{indiv.measurement_done}}" /> {{indiv.get_units_display}}</td>
+              <td style="text-align: center;"><strong>/</strong></td>
+              <td style="text-align: center;">{{indiv.measurement}} {{indiv.get_units_display}}</td>
+            </tr>
+          {%endfor%}
+          </table>
+     
+    </div>
+          
+            
+            
+        </div>
+      {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endif %}
 
 
 <!--{% if user.is_authenticated and user.is_coach %}
@@ -751,8 +974,77 @@
  {% if user.is_authenticated and user.is_coach %}
 
  	<a href="{% url 'coach:add_movement_test' pk=workout.athlete.pk pk_2=workout.pk %}" class="card-footer-item" role="button">Add Movement</a>
+  <a id="add-accessory" class="card-footer-item" role="button">Add Accessory</a>
+  <div class="modal" >
+                    <div class="modal-background"></div>
+                      <div class="modal-card">
+                        <header class="modal-card-head  has-background-info">
+                          <p class="modal-card-title has-text-white">Add Accessory</p>
+                        </header>
+                        <section class="modal-card-body" >
+                          <div class = "column is-5">
+                            <label>Accessory Name</label>
+                            <input id="accessory-name" class="input" type="text" placeholder="e.g. Barbell Row">
+                          </div>
+                          <div class="column is-9">
+                            <label>Description</label>
+                            <input id="accessory-desc" class="input" type="text" placeholder="Optional">
+                          </div>
+                          <div class = "column">
+                          <div class = "columns">
+                            <div class="column is-2">
+                              <label>No. Sets</label>
+                              <input id="accessory-sets" class="input" type="number">
+                            </div>
 
-
+                             <div class="column is-1">
+                              <div class="column is-text-centered"></div>
+                              <span>
+                                <i class="fas fa-times"></i> 
+                              </span>
+                            </div>
+                            <div class = "column is-5">
+                              <label>Protocol</label>
+                              <div class="field has-addons">
+                              
+                                <p class="control">
+                                  <input id="accessory-reps" class="input" type="text"placeholder="e.g. 8-20"> 
+                                </p>
+                                <p class="control">
+                                  <span class="select">
+                                    <select id = "accessory-units">
+                                      <option value="0">metres</option>
+                                      <option value="1">sec</option>
+                                      <option value="2">min</option>
+                                      <option value="3" selected="selected">reps</option>
+                                    </select>
+                                  </span>
+                                </p>
+                              </div>
+                            </div>
+                            
+                            <div class="column is-1">
+                              <div class="column is-text-centered"></div>
+                              <span>
+                                <i class="fas fa-times"></i> 
+                              </span>
+                            </div>
+                            
+                            <div class="column is-2">
+                              <label>Load</label>
+                              <input id="accessory-load" class="input" type="number" placeholder="Optional"> 
+                            </div>
+                          </div>
+                        </div>
+                        </section>
+                        <footer class="modal-card-foot">
+                          <div class = column>
+                          <button class="button yes is-success" key="{{workout.pk}}">Add Accessory</button>
+                          <button class="button is-danger no pull-right">Nevermind!</button>
+                        </div>
+                        </footer>
+                      </div>
+                    </div>
 
  {% endif %}
  {% if user.is_authenticated and user.is_athlete %}
@@ -774,7 +1066,7 @@
 
           <div class="field is-small">
           <div class="control">
-            <input name="content" class="textarea" type="text">
+            <textarea name="content" class="textarea" type="text"></textarea>
           </div>
           </div>
           <button class = 'button is-small is-success' type="submit" value="Save">

@@ -18,7 +18,7 @@ from django.db.models import Q
 
 from ..decorators import coach_required
 from ..forms import CoachSignUpForm, AddWoToMicroForm, WorkoutForm, EditMovementFormCoach, AddRepMaxForm, AddMovementFormCoach, AddMicroToMesoForm, MicroForm, EditRepMaxForm
-from ..models import User, Coach, Athlete, Macrocycle, Mesocycle, Microcycle, Workout, Movement, ExertionPerceived, RepMax, Event, Notifications
+from ..models import User, Coach, Athlete, Macrocycle, Mesocycle, Microcycle, Workout, Movement, ExertionPerceived, RepMax, Event, Notifications, Accessory
 
 
 class CoachSignUpView(CreateView):
@@ -498,5 +498,42 @@ def remove_athlete(request):
     messages.success(request, "Athlete Removed!")
     data = {
         "lol": "lol"
+    }
+    return JsonResponse(data)
+
+@coach_required
+def add_accessory(request):
+    pk = request.POST.get('pk')
+    accessory_name = request.POST.get("accessory_name")
+    accessory_desc = request.POST.get("accessory_desc")
+    accessory_sets = request.POST.get("accessory_sets")
+    accessory_reps = request.POST.get("accessory_reps")
+    accessory_units = request.POST.get("accessory_units")
+    accessory_load = request.POST.get("accessory_load")
+    if not accessory_load:
+        accessory_load = None
+    else:
+        accessory_load = int(accessory_load)
+    workout = get_object_or_404(Workout, pk=pk)
+    for i in range(int(accessory_sets)):
+        accessory = Accessory(accessory_name=accessory_name, description=accessory_desc, load=accessory_load, measurement=accessory_reps, units=int(accessory_units))
+        accessory.workout = workout
+        accessory.save()
+    messages.success(request, "Accessories Created!")
+    data = {
+        "lol": i
+    }
+    return JsonResponse(data)
+
+@coach_required
+def delete_accessory(request):
+    pk = request.POST.get('pk')
+    accessory_name = request.POST.get("accessory_name")
+    workout = get_object_or_404(Workout, pk=pk)
+    for item in workout.accessories.all().filter(accessory_name=accessory_name):
+        item.delete()
+    messages.success(request, accessory_name + " Deleted!")
+    data = {
+        "lol": 'lol'
     }
     return JsonResponse(data)

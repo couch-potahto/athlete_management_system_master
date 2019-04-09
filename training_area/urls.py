@@ -57,6 +57,8 @@ urlpatterns = [
         path('<int:movement_id>/gen_backoff', athlete.gen_backoff, name = 'generate_backoff'),
         path('submit/<int:workout_id>', athlete.submit_workout, name = 'submit'),
         path('ajax/submit_fatigue/', athlete.submit_fatigue, name = 'ajax_submit_fatigue'),
+        path('ajax/accessory_load_done/', athlete.accessory_load_done, name = 'ajax_accessory_load_done'),
+        path('ajax/accessory_protocol_done/', athlete.accessory_protocol_done, name = 'ajax_accessory_protocol_done'),
 
     ], 'training_area'), namespace='athlete')),
 
@@ -65,7 +67,6 @@ urlpatterns = [
         path('delete_micro/<int:athlete_id>/<int:microcycle_id>', coach.MicrocycleDeleteView.as_view(), name = 'delete_micro'),
         path('delete_meso/<int:athlete_id>/<int:mesocycle_id>', coach.MesocycleDeleteView.as_view(), name = 'delete_meso'),
         path('dashboard/', coach.DashboardView.as_view(), name='dashboard'),
-        path('ajax/remove_athlete/', coach.remove_athlete, name = 'ajax_remove_athlete'),
         path('<str:slug>/', coach.CoachDetailView.as_view(), name = 'coach_detail'),
         path('athlete=<int:pk>/add_workout', coach.AddWorkoutView.as_view(), name = 'add_workout'),
         path('<int:microcycle_id>/edit_micro_name', coach.edit_micro_name, name = 'edit_micro_name'),
@@ -83,6 +84,10 @@ urlpatterns = [
         path('<int:movement_id>/quick_edit', coach.edit_movement_quick, name = 'edit_movement_quick'),
         path('<int:athlete_id>/add_rep_max', coach.add_rep_max, name = 'add_rep_max'),
         path('athlete=<int:pk>/workout=<int:pk_2>/add_movement_test', coach.AddMovementViewTest.as_view(), name = 'add_movement_test'),
+
+        path('ajax/remove_athlete/', coach.remove_athlete, name = 'ajax_remove_athlete'),
+        path('ajax/add_accessory/', coach.add_accessory, name = 'ajax_add_accessory'),
+        path('ajax/delete_accessory/', coach.delete_accessory, name = 'ajax_delete_accessory'),
     ], 'training_area'), namespace='coach')),
     #re_path(r'^coach/(?P<user>[\w-]+)/$', coach.CoachDetailView.as_view(), name = 'coach_detail'),
 ]

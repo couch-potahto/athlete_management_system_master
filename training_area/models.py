@@ -212,3 +212,27 @@ class Comment(models.Model):
 		on_delete = models.CASCADE, null = True)
 	creator = models.ForeignKey(User, related_name = "user_comments", null = True, on_delete=models.CASCADE)
 	content = models.TextField(verbose_name="Content")
+
+class Accessory(models.Model):
+	accessory_name = models.CharField(max_length=255)
+	description = models.CharField(max_length=255)
+	created_at = models.DateTimeField(auto_now_add=True, null=True)
+	updated_at = models.DateTimeField(auto_now=True)
+	workout = models.ForeignKey(Workout, related_name = 'accessories',
+		on_delete = models.CASCADE, null = True)
+	load = models.PositiveSmallIntegerField(blank=True, null=True)
+	load_done = models.PositiveSmallIntegerField(blank=True, null=True)
+	measurement = models.CharField(null=True, max_length=255)
+	measurement_done = models.PositiveSmallIntegerField(blank=True, null=True)
+	is_complete = models.BooleanField(default = False)
+	M = 0
+	SEC = 1
+	MIN = 2
+	R = 3
+	Units = (
+		(M, 'metres'),
+		(SEC, 'seconds'),
+		(MIN, 'minutes'),
+		(R, 'reps')
+	)
+	units = models.IntegerField(choices=Units, default=R)

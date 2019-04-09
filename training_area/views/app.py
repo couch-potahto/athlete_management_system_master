@@ -78,6 +78,7 @@ class WorkoutDetail(DetailView):
 
 	def get_context_data(self, **kwargs):
 		 # xxx will be available in the template as the related objects
+		workout=self.get_object()
 		context = super(WorkoutDetail, self).get_context_data(**kwargs)
 		all_movements = Movement.objects.filter(workout=self.get_object()).order_by('id')
 		unique_names = []
@@ -89,10 +90,12 @@ class WorkoutDetail(DetailView):
 				descriptions[item.movement_name]=item.description
 		total = []
 		for name in unique_names:
-			movement = list(Movement.objects.filter(workout=self.get_object(), movement_name=name).order_by('id'))
+			movement = list(workout.work.all().filter(movement_name=name).order_by('id'))
 			total.extend(movement)
 		context['movements'] = total
 		context['descriptions'] = descriptions
+		context['accessories'] = workout.accessories.all().order_by('id')
+		print(workout.accessories.all())
 
 		#context['movements'] = Movement.objects.filter(workout=self.get_object()).order_by('movement_name').order_by('id')
 		context['rm'] = RepMax.objects.filter(athlete__user_id=self.kwargs['pk'])

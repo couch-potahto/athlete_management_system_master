@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Athlete, Coach, Team, Macrocycle, Mesocycle, Microcycle, Workout, Movement, ExertionPerceived, RepMax, User, Event, Comment, Notifications, Comment
+from .models import *
 
 # Register your models here.
 admin.site.register(User)
@@ -16,3 +16,4 @@ admin.site.register(RepMax)
 admin.site.register(Event)
 admin.site.register(Notifications)
 admin.site.register(Comment)
+admin.site.register(Accessory)

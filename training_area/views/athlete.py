@@ -14,7 +14,7 @@ from django.db.models import Q
 
 from ..decorators import athlete_required
 from ..forms import AthleteSignUpForm, WorkoutForm, EditMovementFormAthlete
-from ..models import User, Coach, Athlete, Macrocycle, Mesocycle, Microcycle, Workout, Movement, ExertionPerceived, Event, Notifications, Comment
+from ..models import User, Coach, Athlete, Macrocycle, Mesocycle, Microcycle, Workout, Movement, ExertionPerceived, Event, Notifications, Comment, Accessory
 
 class AthleteSignUpView(CreateView):
 	model = User
@@ -234,6 +234,30 @@ def submit_fatigue(request):
 			movement.percentage = Decimal(movement.percentage) / Decimal(multiplier[int(old_rating)]) * Decimal(multiplier[int(fatigue_rating)])
 		movement.save()
 	workout_of_interest.save()
+	data = {
+		"lol": "lol"
+	}
+	return JsonResponse(data)
+
+def accessory_load_done(request):
+	pk = request.POST.get('pk')
+	load_done = request.POST.get('load_done')
+
+	accessory = get_object_or_404(Accessory, pk=pk)
+	accessory.load_done = load_done
+	accessory.save()
+	data = {
+		"lol": "lol"
+	}
+	return JsonResponse(data)
+
+def accessory_protocol_done(request):
+	pk = request.POST.get('pk')
+	prot_done = request.POST.get('prot_done')
+
+	accessory = get_object_or_404(Accessory, pk=pk)
+	accessory.measurement_done = prot_done
+	accessory.save()
 	data = {
 		"lol": "lol"
 	}
