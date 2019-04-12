@@ -485,12 +485,19 @@ def display_metrics(request):
 				for movement in squats:
 				#print(movement.rpe)
 					if movement.rpe < 2 or movement.rpe > 10:
+						messages.warning(request, movement.movement_name+" in"+movement.workout.workout_name+" has invalid RPE")
 						continue
 					elif movement.num_reps<1 or movement.num_reps > 10:
-						continue
-					exertion = ExertionPerceived.objects.filter(rep_scale=movement.num_reps, exertion_scale=movement.rpe)[0]
+						if movement.percentage:
+							NT = movement.num_reps * (Decimal(movement.percentage)/Decimal(100))
+						else:
+							messages.warning(request, movement.movement_name+" in"+movement.workout.workout_name+" has no percentage or repetitions")
+							continue
+					else:
+						exertion = ExertionPerceived.objects.filter(rep_scale=movement.num_reps, exertion_scale=movement.rpe)[0]
+						NT = movement.num_reps * exertion.percent
 				#print(exertion)
-					NT = movement.num_reps * exertion.percent
+					
 					total_NT = total_NT + NT
 					total_RPE = total_RPE + movement.rpe
 					total_reps += movement.num_reps
@@ -510,8 +517,20 @@ def display_metrics(request):
 				total_RPE = 0
 				total_reps = 0
 				for movement in bench:
+					if movement.rpe < 2 or movement.rpe > 10:
+						messages.warning(request, movement.movement_name+" in"+movement.workout.workout_name+" has invalid RPE")
+						continue
+					elif movement.num_reps<1 or movement.num_reps > 10:
+						if movement.percentage:
+							NT = movement.num_reps * (Decimal(movement.percentage)/Decimal(100))
+						else:
+							messages.warning(request, movement.movement_name+" in"+movement.workout.workout_name+" has no percentage or repetitions")
+							continue
+					else:
+						exertion = ExertionPerceived.objects.filter(rep_scale=movement.num_reps, exertion_scale=movement.rpe)[0]
+						NT = movement.num_reps * exertion.percent
 				#print(movement.rpe)
-					exertion = ExertionPerceived.objects.filter(rep_scale=movement.num_reps, exertion_scale=movement.rpe)[0]
+					#exertion = ExertionPerceived.objects.filter(rep_scale=movement.num_reps, exertion_scale=movement.rpe)[0]
 				#print(exertion)
 					NT = movement.num_reps * exertion.percent
 					total_NT = total_NT + NT
@@ -530,8 +549,20 @@ def display_metrics(request):
 				total_RPE = 0
 				total_reps = 0
 				for movement in deadlift:
+					if movement.rpe < 2 or movement.rpe > 10:
+						messages.warning(request, movement.movement_name+" in"+movement.workout.workout_name+" has invalid RPE")
+						continue
+					elif movement.num_reps<1 or movement.num_reps > 10:
+						if movement.percentage:
+							NT = movement.num_reps * (Decimal(movement.percentage)/Decimal(100))
+						else:
+							messages.warning(request, movement.movement_name+" in"+movement.workout.workout_name+" has no percentage or repetitions")
+							continue
+					else:
+						exertion = ExertionPerceived.objects.filter(rep_scale=movement.num_reps, exertion_scale=movement.rpe)[0]
+						NT = movement.num_reps * exertion.percent
 				#print(movement.rpe)
-					exertion = ExertionPerceived.objects.filter(rep_scale=movement.num_reps, exertion_scale=movement.rpe)[0]
+					#exertion = ExertionPerceived.objects.filter(rep_scale=movement.num_reps, exertion_scale=movement.rpe)[0]
 				#print(exertion)
 					NT = movement.num_reps * exertion.percent
 					total_NT = total_NT + NT
