@@ -3,10 +3,12 @@
 
 <script>
   {% block jquery %}
+
 if(localStorage.getItem('openContent')==null){
   var content_opened = [];
   localStorage.setItem('openContent', content_opened)
 }
+
   function popitup(url) {
     newwindow=window.open(url,'{{title}}','height=200,width=150');
     if (window.focus) {newwindow.focus()}

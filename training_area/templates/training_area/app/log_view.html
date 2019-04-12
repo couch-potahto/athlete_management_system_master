@@ -67,6 +67,10 @@
       document.getElementById("workout").style.display="none";
       document.getElementById(lol).style.display="block";
     }
+    else{
+      $('#tab-workout').addClass('is-active');
+      document.getElementById("workout").style.display="block";
+    }
 {% endblock %}
 </script>
 
@@ -84,7 +88,7 @@
 <nav class="tabs is-boxed is-fullwidth is-large">
         <div class="container">
           <ul>
-            <li id = "tab-workout" class="tab is-active" onclick="openTab(event,'workout')"><a href="#home" data-toggle="tab">Workouts</a></li>
+            <li id = "tab-workout" class="tab" onclick="openTab(event,'workout')"><a href="#home" data-toggle="tab">Workouts</a></li>
             <li id = "tab-micro" class="tab" onclick="openTab(event,'micro')"><a href="#profile" data-toggle="tab">Microcycles</a></li>
             <li id = "tab-block" class="tab" onclick="openTab(event,'block')"><a href="#messages" data-toggle="tab">Blocks</a></li>
           </ul>
