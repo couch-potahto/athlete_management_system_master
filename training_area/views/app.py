@@ -484,6 +484,10 @@ def display_metrics(request):
 				total_reps = 0
 				for movement in squats:
 				#print(movement.rpe)
+					if movement.rpe < 2 or movement.rpe > 10:
+						continue
+					elif movement.num_reps<1 or movement.num_reps > 10:
+						continue
 					exertion = ExertionPerceived.objects.filter(rep_scale=movement.num_reps, exertion_scale=movement.rpe)[0]
 				#print(exertion)
 					NT = movement.num_reps * exertion.percent
