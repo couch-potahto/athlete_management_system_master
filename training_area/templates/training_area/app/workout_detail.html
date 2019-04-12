@@ -3,12 +3,16 @@
 
 <script>
   {% block jquery %}
-
+if(localStorage.getItem('openContent')==null){
+  var content_opened = [];
+  localStorage.setItem('openContent', content_opened)
+}
   function popitup(url) {
     newwindow=window.open(url,'{{title}}','height=200,width=150');
     if (window.focus) {newwindow.focus()}
     return false;
 }
+
 
   function endEdit(e) {
     var input = $(e.target),
@@ -415,6 +419,34 @@
           });
        $(".modal").removeClass("is-active");
     });
+
+    $(".card-toggle").click(function() {
+      var toggle = $(this).attr('id');
+      var openContent = localStorage.getItem('openContent');
+      console.log(openContent.indexOf(toggle));
+      if (openContent.indexOf(toggle)>=0){
+        openContent = openContent.replace(toggle,"");
+        localStorage.setItem('openContent', openContent);
+        console.log(localStorage)
+      }
+      else{
+
+        openContent = openContent + toggle + ", "
+        localStorage.setItem('openContent', openContent);
+        console.log(localStorage)
+      }
+    });
+
+    var toggle = localStorage.getItem('openContent');
+  
+    var all_card_open = toggle.split(', ');
+    $.each(all_card_open, function(index, value){
+      if(value!==""){
+        var toggle_content = value+'-content'
+        $('#'+toggle_content).removeClass('is-hidden');
+        console.log(localStorage)
+      }
+    });
   {% endblock %}
 </script>
 
@@ -542,8 +574,6 @@
 {% regroup movements by movement_name as movement_list %}
   {% for movement in movement_list %}
 
-
-
     <div class="card is-fullwidth">
       <header class="card-header">
         {% if movement.list.0.description %}
@@ -553,11 +583,11 @@
         {% endif %}
 
 
-        <a class="card-header-icon card-toggle">
+        <a id = "{{movement.grouper.0}}{{movement.list.0.pk}}" class="card-header-icon card-toggle">
           <i class="fa fa-angle-down"></i>
         </a>
       </header>
-      <div class="card-content is-hidden">
+      <div id = "{{movement.grouper.0}}{{movement.list.0.pk}}-content" class="card-content is-hidden">
             <div class="table-container">
     <table class = "table is-responsive is-striped is-fullwidth">
       <thead class="has-text-centered">
@@ -798,11 +828,11 @@
 <div class="card is-fullwidth">
   <header class="card-header">
         <p class="card-header-title">Accessories</p>
-        <a class="card-header-icon card-toggle">
+        <a id = "accessories" class="card-header-icon card-toggle">
           <i class="fa fa-angle-down"></i>
         </a>
       </header>
-  <div class="card-content is-hidden">
+  <div id = "accessories-content" class="card-content is-hidden">
       
         {% for accessory in accessory_list %}
         <div class = "card-content">
