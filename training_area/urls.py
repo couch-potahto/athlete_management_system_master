@@ -88,6 +88,8 @@ urlpatterns = [
         path('ajax/remove_athlete/', coach.remove_athlete, name = 'ajax_remove_athlete'),
         path('ajax/add_accessory/', coach.add_accessory, name = 'ajax_add_accessory'),
         path('ajax/delete_accessory/', coach.delete_accessory, name = 'ajax_delete_accessory'),
+        path('ajax/delete_microcycle/', coach.delete_microcycle, name = 'ajax_delete_microcycle'),
+        path('ajax/remove_workout/', coach.remove_workout, name = 'ajax_remove_workout'),
     ], 'training_area'), namespace='coach')),
     #re_path(r'^coach/(?P<user>[\w-]+)/$', coach.CoachDetailView.as_view(), name = 'coach_detail'),
 ]

@@ -71,6 +71,38 @@
       $('#tab-workout').addClass('is-active');
       document.getElementById("workout").style.display="block";
     }
+
+    $('.delete-microcycle').click(function() {
+      var pk = $(this).attr('key')
+      $.ajax({
+            url: "/coach/ajax/delete_microcycle/",
+            type: "POST",
+            data: {
+              csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+              'pk': pk
+            },
+            success: function (data) {
+              console.log(data)
+              location.reload();
+            }
+          });
+    })
+
+    $('.delete-workout').click(function() {
+      var pk = $(this).attr('key')
+      $.ajax({
+            url: "/coach/ajax/remove_workout/",
+            type: "POST",
+            data: {
+              csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+              'pk': pk
+            },
+            success: function (data) {
+              console.log(data)
+              location.reload();
+            }
+          });
+    })
 {% endblock %}
 </script>
 
@@ -221,6 +253,9 @@
 
                     <tr><td>
                       <a href="{% url 'app:workout_detail' pk=workout.athlete.pk pk_2=workout.pk %}">{{workout.workout_name}}</a>
+                      {% if request.user.is_authenticated and request.user.is_coach %}
+                        <span class="icon has-text-danger"><i key="{{workout.pk}}" class="fas fa-times delete-workout"></i></td>
+                      {% endif %}
                     </tr></td>
 
                     {% endfor %}
@@ -248,13 +283,13 @@
     <div class="field is-grouped is-grouped-centered">
       {% if user.is_authenticated and user.is_coach %}
       <p class="control">
-        <a class="button is-primary" href="{% url 'coach:create_meso' pk=pk %}">Add Mesocycle</a>
+        <a class="button is-primary" href="{% url 'coach:create_meso' pk=pk %}">Create Block</a>
       </p>
       {% endif %}
 
         <div class="field has-addons">
           <p class="control">
-            <input id="search_box" class="input" type="text" name="search_box" placeholder="Search Mesocycles">
+            <input id="search_box" class="input" type="text" name="search_box" placeholder="Search Blocks">
           </p>
           <div class="control">
             <form method = "GET" action="{% url 'app:search_coach' %}">
@@ -296,14 +331,18 @@
               <div class="card-content is-hidden">
                 <div class="content">
                   {% if mesocycle.meso.all %}
-                  <a>{{microcycle.micro.workout_name}}</a>
+                  
 
                   <table>
                     {% for microcycle in mesocycle.meso.all %}
 
-                    <tr><td>
-                      <a href="{% url 'app:micro_detail' pk=mesocycle.athlete.pk pk_2=microcycle.pk %}">{{microcycle.microcycle_name}}</a>
-                    </tr></td>
+                    <tr>
+                      <td><a href="{% url 'app:micro_detail' pk=mesocycle.athlete.pk pk_2=microcycle.pk %}">{{microcycle.microcycle_name}}</a>
+                      {% if request.user.is_authenticated and request.user.is_coach %}
+                        <span class="icon has-text-danger"><i key="{{microcycle.pk}}" class="fas fa-times delete-microcycle"></i></td>
+                      {% endif %}
+                      
+                    </tr>
 
                     {% endfor %}
                   </table>

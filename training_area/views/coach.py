@@ -409,6 +409,7 @@ def add_micro_to_meso(request, athlete_id, pk_2):
             micro.save()
             mesocycle.athlete = micro.athlete
             mesocycle.coach = micro.coach
+            mesocycle.meso.all().order_by('id')
             mesocycle.save()
         return redirect('app:log_view', athlete_id)
     else:
@@ -533,6 +534,30 @@ def delete_accessory(request):
     for item in workout.accessories.all().filter(accessory_name=accessory_name):
         item.delete()
     messages.success(request, accessory_name + " Deleted!")
+    data = {
+        "lol": 'lol'
+    }
+    return JsonResponse(data)
+
+@coach_required
+def delete_microcycle(request):
+    pk = request.POST.get('pk')
+    microcycle = get_object_or_404(Microcycle, pk=pk)
+    microcycle.mesocycle = None
+    microcycle.save()
+    messages.success(request, microcycle.microcycle_name + " removed!")
+    data = {
+        "lol": 'lol'
+    }
+    return JsonResponse(data)
+
+@coach_required
+def remove_workout(request):
+    pk = request.POST.get('pk')
+    workout = get_object_or_404(Workout, pk=pk)
+    workout.microcycle = None
+    workout.save()
+    messages.success(request, workout.workout_name + " removed!")
     data = {
         "lol": 'lol'
     }
