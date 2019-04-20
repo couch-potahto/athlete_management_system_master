@@ -175,7 +175,7 @@ def duplicate(request, movement_id):
     if copy_movement.percentage:
         copy_movement.percentage = copy_movement.percentage * (Decimal(1)-Decimal(load_drop))
     if copy_movement.kg:
-        copy_movement.kg = round(copy_movement.kg * (Decimal(1)-Decimal(load_drop)))/Decimal(2.5) * Decimal(2.5)
+        copy_movement.kg = round(copy_movement.kg * (Decimal(1)-Decimal(load_drop))/Decimal(2.5)) * Decimal(2.5)
     copy_movement.pk = None
     copy_movement.save()
     print(copy_movement.description)
@@ -195,6 +195,7 @@ def duplicate_microcycle(request, microcycle_id):
         movements = workout.work.all().order_by('id')
         copy_workout = get_object_or_404(Workout, pk=workout.pk)
         copy_workout.pk = None
+        copy_workout.fatigue_rating=5
         copy_workout.microcycle=copy_micro
         copy_workout.completed=False
         copy_workout.save()
@@ -205,6 +206,15 @@ def duplicate_microcycle(request, microcycle_id):
             copy_move.num_reps_done = 0
             copy_move.workout = copy_workout
             copy_move.save()
+        for accessory in workout.accessories.all():
+            original = get_object_or_404(Accessory, pk=accessory.pk)
+            copy_accessory = get_object_or_404(Accessory, pk=accessory.pk)
+            copy_accessory.pk = None
+            copy_accessory.load_done = 0
+            copy_accessory.measurement_done=0
+            copy_accessory.workout=copy_workout
+            copy_accessory.save()
+
     messages.success(request, "Duplicated!")
     return redirect('app:micro_detail', copy_micro.athlete.pk, copy_micro.pk)
 
@@ -525,6 +535,56 @@ def add_accessory(request):
         "lol": i
     }
     return JsonResponse(data)
+
+@coach_required
+def add_movement(request):
+    pk = request.POST.get('pk')
+    use_rep_max = request.POST.get("use_rep_max")
+    movement_name = request.POST.get("movement_name")
+    movement_desc = request.POST.get("movement_desc")
+    movement_intensity = request.POST.get("movement_intensity")
+    if movement_intensity == "":
+        movement_intensity = None
+    else:
+        movement_intensity = Decimal(int(movement_intensity))
+    movement_rep_max = request.POST.get("movement_rep_max")
+    movement_reps = request.POST.get("movement_reps")
+    if movement_reps == "":
+        movement_reps = None
+    else:
+        movement_reps = Decimal(int(movement_reps))
+    movement_rpe = request.POST.get("movement_rpe")
+    if movement_rpe == "":
+        movement_rpe = None
+    else:
+        movement_rpe = Decimal(int(movement_rpe))
+    movement_load = request.POST.get("movement_load")
+    if movement_load == "":
+        movement_load = None
+    else:
+        movement_load = Decimal(int(movement_load))
+
+    movement = Movement(
+        movement_name = movement_name,
+        description = movement_desc,
+        kg =  movement_load,
+        percentage = movement_intensity,
+        is_backoff = False,
+        rpe = movement_rpe,
+        num_reps = movement_reps,
+    )
+    print(use_rep_max)
+    if use_rep_max == "1":
+        movement.kg = round((Decimal(float(movement_rep_max)) * (Decimal(movement_intensity)/Decimal(100)))/Decimal(2.5)) * Decimal(2.5)
+    movement.workout = Workout.objects.filter(id=pk)[0]
+    movement.save()
+    messages.success(request, "Movement Created!")
+    data = {
+        "lol": 'LOL'
+    }
+    return JsonResponse(data)
+
+
 
 @coach_required
 def delete_accessory(request):
