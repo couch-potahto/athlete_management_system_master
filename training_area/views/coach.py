@@ -194,6 +194,7 @@ def duplicate_microcycle(request, microcycle_id):
     for workout in all_workouts:
         movements = workout.work.all().order_by('id')
         copy_workout = get_object_or_404(Workout, pk=workout.pk)
+        copy_workout.fatigue_rating = 5
         copy_workout.pk = None
         copy_workout.fatigue_rating=5
         copy_workout.microcycle=copy_micro
