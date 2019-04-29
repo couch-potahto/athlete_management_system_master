@@ -91,6 +91,8 @@ urlpatterns = [
         path('ajax/delete_accessory/', coach.delete_accessory, name = 'ajax_delete_accessory'),
         path('ajax/delete_microcycle/', coach.delete_microcycle, name = 'ajax_delete_microcycle'),
         path('ajax/remove_workout/', coach.remove_workout, name = 'ajax_remove_workout'),
+        path('ajax/duplicate_movement/', coach.duplicate_movement, name = 'ajax_duplicate_movement'),
+        path('ajax/fast_delete_movement/', coach.fast_delete_movement, name = 'ajax_fast_delete_movement'),
     ], 'training_area'), namespace='coach')),
     #re_path(r'^coach/(?P<user>[\w-]+)/$', coach.CoachDetailView.as_view(), name = 'coach_detail'),
 ]

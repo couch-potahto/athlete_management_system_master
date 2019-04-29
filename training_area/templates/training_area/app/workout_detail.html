@@ -500,6 +500,72 @@ if(localStorage.getItem('openContent')==null){
         console.log(localStorage)
       }
     });
+
+
+    $('.duplicate').click(function(e){
+      e.preventDefault();
+
+      var tb = '#' + $(this).attr('tablebody_id')
+
+      var tbid = '#' + $(this).attr('tablebody_id') + ' tr'
+      var i = $(tbid).length;
+      var $tr = $(this).closest('tr');
+
+
+
+      $.ajax({
+            url: "/coach/ajax/duplicate_movement/",
+            type: "POST",
+            data: {
+              csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+              'pk': $tr.attr('movement'),
+              'load_drop': $tr.find('.load_drop').val(),
+            },
+            success: function (data) {
+              var $clone = $tr.clone(true).attr("id", data.coeff + data.pk)
+              $clone.attr("movement", data.pk)
+              $clone.find('#kg_done').attr('value', data.load_done).attr('key', data.pk)
+              $clone.find('.percentage').attr('value', data.percent)
+              $clone.find('.percentage').attr('id', 'percentage' + data.pk).attr('key', data.pk)
+              $clone.find('#num_reps_done').attr('key', data.pk)
+              $clone.find('#rpe').attr('key', data.pk)
+              $clone.find('#checked').attr('key', data.pk)
+              $clone.find('#rm').attr('key', data.pk)
+              $clone.find('#load_drop').attr('key', data.pk)
+              console.log($clone.find("#kg_done").attr('value'))
+              console.log($clone.attr('id'))
+              $(tb).append($clone);
+              //$tr.after($clone);
+              i++;
+              }
+          });
+    });
+
+    $(document).on('click', '#deleting', function(e) {
+      e.preventDefault();
+      var $tr = $(this).closest('tr');
+      console.log($tr.attr('movement'))
+      tr = '#' + $(this).attr('tablerow_id');
+              console.log(tr);
+              var tbid = '#' + $(this).attr('tablebody_id') + ' tr'
+              var i = $(tbid).length;
+    
+                $(this).closest('tr').remove();
+                i--;
+              
+      $.ajax({
+          url: "/coach/ajax/fast_delete_movement/",
+          type: "POST",
+          data: {
+              csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+              'pk': $tr.attr('movement'),
+            },
+            success: function(data){
+              
+            }
+          });
+      });
+
   {% endblock %}
 </script>
 
@@ -728,10 +794,10 @@ if(localStorage.getItem('openContent')==null){
 
         </thead>
 
-  <tbody>
+  <tbody id = "{{movement.grouper.0}}{{movement.list.0.pk}}">
 
     {% for indiv in movement.list %}
-    <tr>
+    <tr id = "{{indiv.movement_name.0}}{{indiv.pk}}" movement = "{{indiv.pk}}">
       <td style="text-align: center;">
         <input id = "percentage{{indiv.pk}}" class = "percentage input is-primary is-small" style="width:70px; text-align: center;" key = "{{indiv.pk}}" name="percentage" class="input is-small" type="number" step="0.01" min=0 value="{{indiv.percentage}}">
       </td>
@@ -777,7 +843,7 @@ if(localStorage.getItem('openContent')==null){
           <form method="post" id="duplicate{{indiv.pk}}" action="{% url 'coach:duplicate' indiv.pk %}" >
            {% csrf_token %}
 
-           <button class = 'button is-small' type="submit">
+           <button class = 'button duplicate is-small' tablebody_id = "{{movement.grouper.0}}{{movement.list.0.pk}}" type="submit">
             <i class="fas fa-clone" type="submit"></i>
            </button>
            </form>
@@ -785,7 +851,7 @@ if(localStorage.getItem('openContent')==null){
         <div class = "column is-1">
         <form method="post" action="{% url 'coach:delete' indiv.pk %}" >
           {% csrf_token %}
-          <button class = 'button is-small' type="submit">
+          <button id = 'deleting' class = 'button is-small' tablebody_id = "{{movement.grouper.0}}{{movement.list.0.pk}}" tablerow_id = "{{indiv.movement_name.0}}{{indiv.pk}}" type="submit">
             <i class="fas fa-eraser" type="submit"></i>
            </button>
         </form>

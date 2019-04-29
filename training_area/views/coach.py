@@ -180,7 +180,11 @@ def duplicate(request, movement_id):
     copy_movement.save()
     print(copy_movement.description)
     messages.success(request, "Duplicated!")
-    return redirect('app:workout_detail', copy_movement.workout.athlete.pk, copy_movement.workout.pk)
+    data = {
+        "lol": 'LOL'
+    }
+    return JsonResponse(data)
+    #return redirect('app:workout_detail', copy_movement.workout.athlete.pk, copy_movement.workout.pk)
 
 @login_required
 @coach_required
@@ -621,5 +625,38 @@ def remove_workout(request):
     messages.success(request, workout.workout_name + " removed!")
     data = {
         "lol": 'lol'
+    }
+    return JsonResponse(data)
+
+@coach_required
+def duplicate_movement(request):
+    pk = request.POST.get('pk')
+    load_drop = float(request.POST.get('load_drop'))
+    copy_movement = get_object_or_404(Movement, pk=pk)
+    if copy_movement.percentage:
+        copy_movement.percentage = copy_movement.percentage * (Decimal(1)-Decimal(load_drop))
+    if copy_movement.kg:
+        copy_movement.kg = round(copy_movement.kg * (Decimal(1)-Decimal(load_drop))/Decimal(2.5)) * Decimal(2.5)
+    copy_movement.pk = None
+    copy_movement.save()
+    print(copy_movement.description)
+    messages.success(request, "Duplicated!")
+    data = {
+        "coeff": copy_movement.movement_name[0],
+        "percent": copy_movement.percentage,
+        "load_done": copy_movement.kg,
+        "pk": copy_movement.pk,
+    }
+    return JsonResponse(data)
+
+@login_required
+@coach_required
+def fast_delete_movement(request):
+    pk = request.POST.get('pk')
+    movement = get_object_or_404(Movement, pk=pk)
+    movement.delete()
+    messages.success(request, "Deleted!")
+    data = {
+        "good_delete": "good_delete",
     }
     return JsonResponse(data)
